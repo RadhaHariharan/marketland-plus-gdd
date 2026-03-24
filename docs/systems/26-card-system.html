@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>26 — Card System — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🎴 26 — Card System</h1>
+<p>Cards are the tactical layer of Marketland+. Four card types let players manipulate customer behaviour, deliveries, products, and harvests in strategic ways. Cards are earned through play and spent for powerful short-term effects.</p>
+<hr />
+<h2>🎴 Card Type Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Card</th>
+<th>Symbol</th>
+<th>Effect</th>
+<th>Earn Rate</th>
+<th>Max Hold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Shopper Card</td>
+<td>🔵</td>
+<td>Triples one customer's budget</td>
+<td>2/level, attractions, neighbours</td>
+<td>50</td>
+</tr>
+<tr>
+<td>Quick Delivery Card</td>
+<td>🟢</td>
+<td>Speeds up a shipment by 1 hr</td>
+<td>5/level, neighbours</td>
+<td>100</td>
+</tr>
+<tr>
+<td>Product Card</td>
+<td>🟡</td>
+<td>Instant stock / insurance / upgrade</td>
+<td>5/level</td>
+<td>30</td>
+</tr>
+<tr>
+<td>Harvest Card</td>
+<td>🟠</td>
+<td>Instant harvest / double yield / skip job</td>
+<td>3/level from Lv.10+</td>
+<td>30</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🔵 Shopper Cards</h2>
+<p><strong>How they work:</strong> Tap to play on a customer currently in the store. That customer's budget is tripled for their current visit.</p>
+<h3>Best Uses:</h3>
+<ul>
+<li>Play on a Tycoon or Celebrity customer for maximum effect</li>
+<li>Use before a Campaign to stack bonuses</li>
+<li>Use when luxury displays are fully stocked and ready</li>
+</ul>
+<h3>Earn Shopper Cards:</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level up</td>
+<td>+2 per level</td>
+</tr>
+<tr>
+<td>Attraction visit milestone</td>
+<td>+1 per 100 attraction visits</td>
+</tr>
+<tr>
+<td>Neighbour gift</td>
+<td>+1–3 per gift</td>
+</tr>
+<tr>
+<td>Quest reward</td>
+<td>+5–15 per quest</td>
+</tr>
+<tr>
+<td>Achievement reward</td>
+<td>Variable</td>
+</tr>
+</tbody>
+</table>
+<h3>Campaigns using Shopper Cards:</h3>
+<table>
+<thead>
+<tr>
+<th>Campaign</th>
+<th>Cards Required</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Flash Sale</td>
+<td>5 Shopper Cards</td>
+</tr>
+<tr>
+<td>Farm Fresh Festival</td>
+<td>10 Shopper + 5 Harvest</td>
+</tr>
+<tr>
+<td>Grand Sale</td>
+<td>20 Shopper Cards</td>
+</tr>
+<tr>
+<td>Harvest Mega Event</td>
+<td>30 Shopper + 10 Harvest</td>
+</tr>
+<tr>
+<td>VIP Night</td>
+<td>15 Shopper Cards</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🟢 Quick Delivery Cards</h2>
+<p><strong>How they work:</strong> Apply to any in-transit shipment to reduce its remaining timer by 1 hour. Stack multiple cards on the same shipment.</p>
+<h3>Best Uses:</h3>
+<ul>
+<li>Speed up a 4-hour premium supplier delivery</li>
+<li>Use when stockroom is critical and no farm goods available</li>
+<li>Stack 3–4 cards to get near-instant delivery</li>
+</ul>
+<h3>Earn Quick Delivery Cards:</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level up</td>
+<td>+5 per level</td>
+</tr>
+<tr>
+<td>Neighbour visit</td>
+<td>+1–2 per visit</td>
+</tr>
+<tr>
+<td>Daily quest</td>
+<td>+10 per quest</td>
+</tr>
+<tr>
+<td>Achievement</td>
+<td>Variable</td>
+</tr>
+<tr>
+<td>Rewarded ad (optional)</td>
+<td>+1 per ad</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🟡 Product Cards</h2>
+<p><strong>How they work:</strong> Four distinct uses — player chooses when spending:</p>
+<table>
+<thead>
+<tr>
+<th>Use</th>
+<th>Effect</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Instant Stock</td>
+<td>Fills one display to maximum immediately</td>
+<td>1 Card</td>
+</tr>
+<tr>
+<td>Shipment Insurance</td>
+<td>Protects next shipment from storm damage</td>
+<td>1 Card</td>
+</tr>
+<tr>
+<td>Stockroom Upgrade</td>
+<td>+10 stockroom capacity slots permanently</td>
+<td>1 Card</td>
+</tr>
+<tr>
+<td>Fifth Display Unlock</td>
+<td>Unlocks a 5th slot in one aisle section</td>
+<td>1 Card</td>
+</tr>
+</tbody>
+</table>
+<h3>Earn Product Cards:</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level up</td>
+<td>+5 per level</td>
+</tr>
+<tr>
+<td>Daily quest</td>
+<td>+5 per quest</td>
+</tr>
+<tr>
+<td>Achievement</td>
+<td>Variable</td>
+</tr>
+<tr>
+<td>Collection completion</td>
+<td>+2–5 per collection</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🟠 Harvest Cards</h2>
+<p><strong>How they work:</strong> Three distinct uses for the farm:</p>
+<table>
+<thead>
+<tr>
+<th>Use</th>
+<th>Effect</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Instant Harvest</td>
+<td>Instantly harvests all ready crops in a zone</td>
+<td>1 Card</td>
+</tr>
+<tr>
+<td>Double Yield</td>
+<td>Next harvest in a zone yields 2×</td>
+<td>1 Card</td>
+</tr>
+<tr>
+<td>Skip Processing Job</td>
+<td>Instant-completes one processing job</td>
+<td>1 Card</td>
+</tr>
+</tbody>
+</table>
+<h3>Earn Harvest Cards:</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Amount</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Level up (Lv.10+)</td>
+<td>+3 per level</td>
+</tr>
+<tr>
+<td>Farm quest reward</td>
+<td>+5–15</td>
+</tr>
+<tr>
+<td>Rainbow weather</td>
+<td>+2–5 (bonus yield event)</td>
+</tr>
+<tr>
+<td>Collection completion</td>
+<td>+2–5</td>
+</tr>
+<tr>
+<td>Farm mastery milestone</td>
+<td>+5 per star achieved</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎲 Card Strategy Tips</h2>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> Cards should feel powerful but not required. The game is fully playable without ever using a card — they are accelerators and satisfying power-ups, not essential mechanics.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Situation</th>
+<th>Best Card</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Celebrity customer just arrived</td>
+<td>🔵 Shopper Card → 3× budget</td>
+</tr>
+<tr>
+<td>Shipment 3 hours away, shelves empty</td>
+<td>🟢 Stack 3 Quick Delivery cards</td>
+</tr>
+<tr>
+<td>Heatwave wilting premium crops</td>
+<td>🟠 Harvest Card → instant harvest</td>
+</tr>
+<tr>
+<td>Grand Sale campaign needs 20 Shoppers</td>
+<td>Accumulate and save them</td>
+</tr>
+<tr>
+<td>Storm damaged incoming shipment</td>
+<td>🟡 Product Card → Insurance</td>
+</tr>
+</tbody>
+</table>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="25-customer-system.html"><span>◀</span><span><span class="nav-label">Previous</span>25 — Customer System</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="27-quest-system.html"><span><span class="nav-label">Next</span>27 — Quest System</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

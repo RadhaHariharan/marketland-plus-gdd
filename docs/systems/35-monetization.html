@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>35 — Monetization — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>💳 35 — Monetization</h1>
+<p>Marketland+ is built on a player-first monetization philosophy. Every design decision regarding monetization is tested against a single question: <strong>"Does this respect the player's time and make the game better?"</strong></p>
+<hr />
+<h2>🏛️ Core Monetization Principles</h2>
+<table>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⚡ No Energy System</td>
+<td>Players are <strong>never</strong> forced to stop playing</td>
+</tr>
+<tr>
+<td>🚫 No Paywall</td>
+<td>All content is reachable through regular gameplay</td>
+</tr>
+<tr>
+<td>🌿 Farm Tokens Never Sold</td>
+<td>Farm Tokens cannot be purchased with real money — ever</td>
+</tr>
+<tr>
+<td>⏩ Cash Speeds, Never Gates</td>
+<td>Premium currency only accelerates timers; it never locks content</td>
+</tr>
+<tr>
+<td>🎁 Fair Monetization</td>
+<td>Every premium feature has a free equivalent (just slower)</td>
+</tr>
+<tr>
+<td>🔒 No Loot Boxes</td>
+<td>Spending Cash always results in a known, specific outcome</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>💵 Cash (Premium Currency) Spending</h2>
+<p>Cash is the only real-money currency. It is also earnable through play (+1 per level).</p>
+<h3>Cash Sinks (What Players Spend Cash On):</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Cash Cost</th>
+<th>Free Alternative</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Instant crop harvest</td>
+<td>1–3 Cash</td>
+<td>Wait for harvest timer</td>
+</tr>
+<tr>
+<td>Skip processing timer</td>
+<td>1–5 Cash</td>
+<td>Wait for processing job</td>
+</tr>
+<tr>
+<td>Instant supplier delivery</td>
+<td>2–5 Cash</td>
+<td>Wait 30 min–4 hr</td>
+</tr>
+<tr>
+<td>Repair storm-damaged shipment</td>
+<td>1 Cash</td>
+<td>Accept reduced quantity</td>
+</tr>
+<tr>
+<td>Premium decorations</td>
+<td>5–20 Cash</td>
+<td>No free equivalent (cosmetic only)</td>
+</tr>
+<tr>
+<td>Extra delivery truck slot</td>
+<td>10 Cash</td>
+<td>Use existing 2 slots</td>
+</tr>
+<tr>
+<td>Unlock zone immediately</td>
+<td>10–30 Cash</td>
+<td>Wait for level requirement</td>
+</tr>
+<tr>
+<td>Skip a quest</td>
+<td>3 Cash</td>
+<td>Complete quest normally</td>
+</tr>
+<tr>
+<td>Rare animal direct purchase</td>
+<td>15–50 Cash</td>
+<td>Unlock through leveling</td>
+</tr>
+<tr>
+<td>Exclusive event cosmetics</td>
+<td>5–15 Cash</td>
+<td>None (limited cosmetics)</td>
+</tr>
+<tr>
+<td>Greenhouse slot unlock</td>
+<td>5 Cash</td>
+<td>Earn with Farm Tokens</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📺 Rewarded Ads (Optional)</h2>
+<p>All ads are <strong>strictly optional</strong> and always player-initiated:</p>
+<table>
+<thead>
+<tr>
+<th>Ad Reward</th>
+<th>Watching Time</th>
+<th>Frequency Limit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>+1 Quick Delivery Card</td>
+<td>30 seconds</td>
+<td>5× per day</td>
+</tr>
+<tr>
+<td>+30 min shipment skip</td>
+<td>30 seconds</td>
+<td>3× per day</td>
+</tr>
+<tr>
+<td>Small coin bonus (500 coins)</td>
+<td>30 seconds</td>
+<td>5× per day</td>
+</tr>
+<tr>
+<td>Double next harvest yield</td>
+<td>30 seconds</td>
+<td>3× per day</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> Rewarded ads are never shown automatically. Players must tap an "Ad" button to opt in. They are shown in the game HUD as an opportunity, not a requirement.</p>
+</blockquote>
+<hr />
+<h2>🎟️ Season Pass / Farm Pass (Monthly Subscription)</h2>
+<p>An optional monthly subscription available via in-app purchase:</p>
+<h3>What It Includes:</h3>
+<table>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌱 Daily Seed Pack</td>
+<td>5 random seeds delivered daily</td>
+</tr>
+<tr>
+<td>🎴 Daily Card Pack</td>
+<td>3 Shopper + 3 QD + 3 Product + 3 Harvest</td>
+</tr>
+<tr>
+<td>🐄 Exclusive Animal Skins</td>
+<td>2 exclusive skins per season</td>
+</tr>
+<tr>
+<td>⭐ XP Boost</td>
+<td>+20% XP on all actions</td>
+</tr>
+<tr>
+<td>🏗️ Exclusive Building Skin</td>
+<td>1 farm building visual reskin</td>
+</tr>
+<tr>
+<td>🎊 Exclusive Seasonal Events</td>
+<td>3 pass-exclusive quests per month</td>
+</tr>
+</tbody>
+</table>
+<h3>What It Does NOT Include:</h3>
+<ul>
+<li>No Farm Tokens</li>
+<li>No exclusive gameplay content (all quests completable without pass)</li>
+<li>No permanent power advantage</li>
+<li>No exclusive story content</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> The Season Pass is purely about enriching the experience — more cosmetics, slightly faster progression, and exclusive aesthetics. The entire game is playable, enjoyable, and winnable without the Season Pass.</p>
+</blockquote>
+<hr />
+<h2>💰 Monetization Projections</h2>
+<table>
+<thead>
+<tr>
+<th>Player Type</th>
+<th>Avg Monthly Spend</th>
+<th>Model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Free Player</td>
+<td>$0</td>
+<td>Earns Cash through leveling; completes all content</td>
+</tr>
+<tr>
+<td>Light Spender</td>
+<td>$2–5</td>
+<td>Occasional Cash purchases for timer skips</td>
+</tr>
+<tr>
+<td>Regular Spender</td>
+<td>$5–10</td>
+<td>Season Pass subscriber</td>
+</tr>
+<tr>
+<td>Heavy Spender</td>
+<td>$10–25</td>
+<td>Season Pass + occasional large Cash purchases</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🛡️ Anti-Pay-to-Win Guarantees</h2>
+<ol>
+<li><strong>All displays reachable</strong> without spending real money</li>
+<li><strong>Leaderboards</strong> based on time-played and strategy, not spending</li>
+<li><strong>Farm Tokens</strong> have their own economy, 100% free-to-earn</li>
+<li><strong>Neighbours</strong> only see each other's LP and achievements — no spending display</li>
+<li><strong>Cash rewards</strong> from leveling ensure even free players have premium currency</li>
+<li><strong>No energy = no "energy wall"</strong> that premium currency bypasses</li>
+</ol>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="34-level-unlock-table.html"><span>◀</span><span><span class="nav-label">Previous</span>34 — Level Unlock Table</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="36-technical-systems.html"><span><span class="nav-label">Next</span>36 — Technical Systems</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

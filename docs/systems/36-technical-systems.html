@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>36 — Technical Systems — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>⚙️ 36 — Technical Systems</h1>
+<p>This document describes the technical architecture of Marketland+, covering the data, logic, and view layers for every major system in the game.</p>
+<hr />
+<h2>🏗️ Architecture Overview</h2>
+<p>Marketland+ follows an <strong>MVC-inspired layered architecture</strong>:<br />
+- <strong>Data Layer</strong> — Plain data classes (serialisable to JSON for save/load)<br />
+- <strong>Logic Layer</strong> — Manager classes that own state and enforce rules<br />
+- <strong>View Layer</strong> — Unity MonoBehaviour/UI components that display state</p>
+<p>All communication between layers uses events and callbacks to maintain separation of concerns.</p>
+<hr />
+<h2>📊 Complete System Architecture Table</h2>
+<table>
+<thead>
+<tr>
+<th>System</th>
+<th>Data Layer</th>
+<th>Logic Layer</th>
+<th>View Layer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Store Grid</td>
+<td>TileData[][]</td>
+<td>GridManager</td>
+<td>TileView</td>
+</tr>
+<tr>
+<td>Farm Grid</td>
+<td>FarmTileData[][]</td>
+<td>FarmGridManager</td>
+<td>FarmTileView</td>
+</tr>
+<tr>
+<td>Store Zones</td>
+<td>ZoneData[]</td>
+<td>ZoneManager</td>
+<td>ZoneView</td>
+</tr>
+<tr>
+<td>Farm Zones</td>
+<td>FarmZoneData[]</td>
+<td>FarmZoneManager</td>
+<td>FarmZoneView</td>
+</tr>
+<tr>
+<td>Displays</td>
+<td>DisplayData</td>
+<td>DisplayManager</td>
+<td>DisplayView</td>
+</tr>
+<tr>
+<td>Crop Plots</td>
+<td>CropPlotData[][]</td>
+<td>CropManager</td>
+<td>CropPlotView</td>
+</tr>
+<tr>
+<td>Animal Pens</td>
+<td>AnimalPenData[]</td>
+<td>AnimalManager</td>
+<td>AnimalPenView</td>
+</tr>
+<tr>
+<td>Processing Buildings</td>
+<td>BuildingData[]</td>
+<td>ProcessingManager</td>
+<td>BuildingView</td>
+</tr>
+<tr>
+<td>Farm Workers</td>
+<td>WorkerData[]</td>
+<td>WorkerAI</td>
+<td>WorkerView</td>
+</tr>
+<tr>
+<td>Farm-to-Store Supply</td>
+<td>FarmSupplyData</td>
+<td>SupplyChainManager</td>
+<td>SupplyLaneView</td>
+</tr>
+<tr>
+<td>Farm Stockroom</td>
+<td>FarmInventoryData</td>
+<td>FarmInventoryManager</td>
+<td>FarmInventoryUI</td>
+</tr>
+<tr>
+<td>Store Stockroom</td>
+<td>InventoryData</td>
+<td>InventoryManager</td>
+<td>InventoryUI</td>
+</tr>
+<tr>
+<td>Customers</td>
+<td>CustomerData</td>
+<td>CustomerAI</td>
+<td>CustomerView</td>
+</tr>
+<tr>
+<td>Seasons/Weather</td>
+<td>SeasonData</td>
+<td>SeasonManager</td>
+<td>WeatherView</td>
+</tr>
+<tr>
+<td>Quests</td>
+<td>QuestData[]</td>
+<td>QuestManager</td>
+<td>QuestPanelUI</td>
+</tr>
+<tr>
+<td>Currency</td>
+<td>WalletData</td>
+<td>WalletManager</td>
+<td>CurrencyHUD</td>
+</tr>
+<tr>
+<td>Cards</td>
+<td>CardData (4 types)</td>
+<td>CardManager</td>
+<td>CardHUD</td>
+</tr>
+<tr>
+<td>Campaigns</td>
+<td>CampaignData</td>
+<td>CampaignManager</td>
+<td>CampaignUI</td>
+</tr>
+<tr>
+<td>Collections</td>
+<td>CollectionData</td>
+<td>CollectionManager</td>
+<td>CollectionUI</td>
+</tr>
+<tr>
+<td>Shipments</td>
+<td>ShipmentData</td>
+<td>ShipmentManager</td>
+<td>ShipmentUI</td>
+</tr>
+<tr>
+<td>Mastery (Store)</td>
+<td>MasteryData[]</td>
+<td>MasteryManager</td>
+<td>MasteryStarUI</td>
+</tr>
+<tr>
+<td>Mastery (Farm)</td>
+<td>FarmMasteryData[]</td>
+<td>FarmMasteryManager</td>
+<td>FarmMasteryUI</td>
+</tr>
+<tr>
+<td>Achievements</td>
+<td>AchievementData</td>
+<td>AchievementManager</td>
+<td>AchievementUI</td>
+</tr>
+<tr>
+<td>Farm Market Stand</td>
+<td>MarketListingData[]</td>
+<td>MarketManager</td>
+<td>FarmMarketUI</td>
+</tr>
+<tr>
+<td>Save/Load</td>
+<td>SaveData (JSON)</td>
+<td>SaveManager</td>
+<td>LoadingScreen</td>
+</tr>
+<tr>
+<td>Events</td>
+<td>EventData</td>
+<td>EventManager</td>
+<td>EventBanner</td>
+</tr>
+<tr>
+<td>Social/Neighbours</td>
+<td>NeighbourData[]</td>
+<td>SocialManager</td>
+<td>NeighbourUI</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>💾 Save System</h2>
+<p>The save system uses <strong>JSON serialisation</strong> for full cross-platform compatibility:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>SaveData {
+  version: string
+  playerId: string
+  timestamp: long
+  wallet: WalletData
+  level: int
+  xp: float
+  store: StoreData
+  farm: FarmData
+  quests: QuestSaveData
+  achievements: AchievementSaveData
+  collections: CollectionSaveData
+  cards: CardSaveData
+  settings: SettingsData
+}
+</code></pre></div>
+
+<h3>Save Frequency:</h3>
+<ul>
+<li>Auto-save: Every 2 minutes while playing</li>
+<li>Auto-save: On every state change (purchase, harvest, etc.)</li>
+<li>Cloud sync: Every 5 minutes (when online)</li>
+<li>Manual save: On app background/close</li>
+</ul>
+<hr />
+<h2>⏱️ Timer System</h2>
+<p>All time-based progression uses <strong>server-side timestamps</strong>:<br />
+- Crop timers, processing jobs, and shipments are tracked on the server<br />
+- Client side shows calculated remaining time from server timestamp<br />
+- <strong>Offline progress</strong> is calculated on next login (farm worked while offline)<br />
+- No timer cheating possible via device clock manipulation</p>
+<hr />
+<h2>🌿 Fresh Tag Propagation</h2>
+<p>The Fresh tag is implemented as a metadata flag:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>ItemData<span style="color: #bbbbbb"> </span>{
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">type</span>:<span style="color: #bbbbbb"> </span>ItemType
+<span style="color: #bbbbbb">  </span>quantity:<span style="color: #bbbbbb"> </span>int
+<span style="color: #bbbbbb">  </span>origin:<span style="color: #bbbbbb"> </span>ItemOrigin.FARM<span style="color: #bbbbbb"> </span><span style="color: #666666">|</span><span style="color: #bbbbbb"> </span>ItemOrigin.SUPPLIER
+<span style="color: #bbbbbb">  </span>freshTag:<span style="color: #bbbbbb"> </span><span style="color: #B00040">bool</span><span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// true only for FARM-origin</span>
+<span style="color: #bbbbbb">  </span>harvestTime:<span style="color: #bbbbbb"> </span>timestamp
+}
+</code></pre></div>
+
+<p>The fresh tag is preserved through:<br />
+- Barn storage (copied to stored item)<br />
+- Processing (preserved if any input is FARM-origin)<br />
+- Supply lane transfer (tag preserved in transit)<br />
+- Display placement (tag displayed as 🌿 badge)</p>
+<hr />
+<h2>🤖 Customer AI</h2>
+<p>Customers use a <strong>simple goal-based AI</strong>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">CustomerAI</span>.<span style="color: #19177C">Update()</span><span style="color: #bbbbbb"> </span>{
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">(hasTarget</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;&amp;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">!</span><span style="color: #19177C">targetEmpty)</span><span style="color: #bbbbbb"> </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">walk</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">to</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">target</span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">findBestTarget()</span>
+<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">filter</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">budget</span>
+<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">filter</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">preference</span>
+<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">weight</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">Fresh</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">badge</span>
+<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">weight</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">category</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">preference</span>
+<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">select</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">highest</span><span style="color: #666666">-</span><span style="color: #19177C">weighted</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">display</span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">(noTarget)</span><span style="color: #bbbbbb"> </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">leave</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">store</span>
+}
+</code></pre></div>
+
+<p>Pathfinding uses <strong>A* on the store grid</strong> with aisle width factored into movement cost.</p>
+<hr />
+<h2>🔧 Worker AI</h2>
+<p>Farm workers use a <strong>priority-based task queue</strong>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">WorkerAI</span>.<span style="color: #19177C">Tick()</span><span style="color: #bbbbbb"> </span>{
+<span style="color: #bbbbbb">  </span><span style="color: #19177C">currentTask</span><span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">taskQueue</span>.<span style="color: #19177C">peek()</span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">(currentTask</span><span style="color: #bbbbbb"> </span><span style="color: #666666">!=</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">null)</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">executeTask(currentTask)</span>
+<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>{
+<span style="color: #bbbbbb">    </span><span style="color: #19177C">tasks</span><span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">scanForAvailableTasks()</span>
+<span style="color: #bbbbbb">    </span><span style="color: #19177C">taskQueue</span>.<span style="color: #19177C">addRange(prioritySort(tasks))</span>
+<span style="color: #bbbbbb">  </span>}
+}
+</code></pre></div>
+
+<p>Worker priorities are set by:<br />
+1. Player-set priority overrides<br />
+2. Urgency (wilting crops &gt; ready crops &gt; unwatered crops)<br />
+3. Value (high-value crops first)<br />
+4. Distance (closest first, unless overridden)</p>
+<hr />
+<h2>📱 Performance Targets</h2>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Target FPS</th>
+<th>Max Objects</th>
+<th>Memory Budget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>iOS (iPhone 12+)</td>
+<td>60 FPS</td>
+<td>500 active</td>
+<td>512 MB</td>
+</tr>
+<tr>
+<td>iOS (iPhone 8–11)</td>
+<td>30 FPS</td>
+<td>300 active</td>
+<td>384 MB</td>
+</tr>
+<tr>
+<td>Android (High)</td>
+<td>60 FPS</td>
+<td>500 active</td>
+<td>512 MB</td>
+</tr>
+<tr>
+<td>Android (Mid)</td>
+<td>30 FPS</td>
+<td>300 active</td>
+<td>256 MB</td>
+</tr>
+<tr>
+<td>Android (Low)</td>
+<td>20 FPS</td>
+<td>150 active</td>
+<td>128 MB</td>
+</tr>
+</tbody>
+</table>
+<h3>Performance Optimisations:</h3>
+<ul>
+<li>Object pooling for customers, items, and effects</li>
+<li>LOD system for off-screen objects</li>
+<li>Sprite atlasing for all in-game assets</li>
+<li>Background processing on separate threads</li>
+<li>Server-side timer calculations reduce client computation</li>
+</ul>
+<hr />
+<h2>🔒 Security</h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Timer cheating</td>
+<td>Server-side timestamps; client cannot alter timers</td>
+</tr>
+<tr>
+<td>Currency cheating</td>
+<td>Wallet updates server-validated; client is display-only</td>
+</tr>
+<tr>
+<td>Exploit prevention</td>
+<td>All major actions validated server-side before applying</td>
+</tr>
+<tr>
+<td>Save data integrity</td>
+<td>Save file checksummed; tampering detected on load</td>
+</tr>
+<tr>
+<td>Neighbour fraud</td>
+<td>Social gifts server-authenticated per session</td>
+</tr>
+</tbody>
+</table>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="35-monetization.html"><span>◀</span><span><span class="nav-label">Previous</span>35 — Monetization</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a></div>
+  </main>
+</body>
+</html>

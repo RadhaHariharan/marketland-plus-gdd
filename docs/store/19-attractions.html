@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>19 — Attractions — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🏪 Store</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🎪 19 — Attractions</h1>
+<p>Attractions are large, high-LP installations that significantly increase customer foot traffic and customer type quality. They don't sell products directly but create an environment that draws more customers and higher-spending visitors.</p>
+<hr />
+<h2>🏛️ Complete Attractions Table</h2>
+<table>
+<thead>
+<tr>
+<th>Attraction</th>
+<th>Unlock</th>
+<th>Size</th>
+<th>LP Bonus</th>
+<th>Cost</th>
+<th>Customer Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌊 Aquarium</td>
+<td>Lv.12</td>
+<td>4×2</td>
+<td>200 LP</td>
+<td>5,000 coins</td>
+<td>+20% Family Shoppers, all customers stay 20% longer</td>
+</tr>
+<tr>
+<td>🎠 Kids Play Area</td>
+<td>Lv.15</td>
+<td>4×4</td>
+<td>250 LP</td>
+<td>8,000 coins</td>
+<td>+30% Family Shoppers, +15% customer count</td>
+</tr>
+<tr>
+<td>🎹 Music Corner</td>
+<td>Lv.5</td>
+<td>2×2</td>
+<td>50 LP</td>
+<td>1,000 coins</td>
+<td>All nearby customer spend +5%</td>
+</tr>
+<tr>
+<td>🎸 Grand Piano</td>
+<td>Lv.45</td>
+<td>3×3</td>
+<td>300 LP</td>
+<td>20,000 coins</td>
+<td>+25% Socialite/Businessman spawns</td>
+</tr>
+<tr>
+<td>⛲ Fountain</td>
+<td>Lv.30</td>
+<td>3×3</td>
+<td>350 LP</td>
+<td>15,000 coins</td>
+<td>+15% all customer count, +20% LP aura</td>
+</tr>
+<tr>
+<td>🖼️ Art Gallery</td>
+<td>Lv.40</td>
+<td>4×3</td>
+<td>400 LP</td>
+<td>25,000 coins</td>
+<td>+30% luxury customer spawns</td>
+</tr>
+<tr>
+<td>🛋️ VIP Lounge</td>
+<td>Lv.60</td>
+<td>4×4</td>
+<td>500 LP</td>
+<td>50,000 coins</td>
+<td>+50% Tycoon/Celebrity/Royalty spawns</td>
+</tr>
+<tr>
+<td>🌺 Indoor Garden</td>
+<td>Lv.35</td>
+<td>4×4</td>
+<td>380 LP</td>
+<td>22,000 coins</td>
+<td>+20% Health Nut/Foodie spawns, Fresh badge +10%</td>
+</tr>
+<tr>
+<td>🎭 Stage</td>
+<td>Lv.50</td>
+<td>6×4</td>
+<td>450 LP</td>
+<td>35,000 coins</td>
+<td>During performances: +40% all customer count</td>
+</tr>
+<tr>
+<td>🍳 Live Kitchen Demo</td>
+<td>Lv.55</td>
+<td>4×3</td>
+<td>420 LP</td>
+<td>30,000 coins</td>
+<td>+30% Foodie spawns, +15% food section sales</td>
+</tr>
+<tr>
+<td>🏆 Trophy Wall</td>
+<td>Lv.60</td>
+<td>3×2</td>
+<td>300 LP</td>
+<td>18,000 coins</td>
+<td>Prestige display; unlocks after 10 achievements</td>
+</tr>
+<tr>
+<td>🌿 Farm Corner Display</td>
+<td>Lv.20</td>
+<td>4×4</td>
+<td>350 LP</td>
+<td>12,000 coins</td>
+<td>+25% Fresh badge interest, shows live farm feed</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>⚙️ Attraction Mechanics</h2>
+<h3>Passive Effects</h3>
+<p>All attractions provide a <strong>continuous aura effect</strong> to their surrounding tiles:<br />
+- Radius: 5 tiles<br />
+- All displays within radius receive +10% customer visit frequency<br />
+- Stacking: Multiple attractions stack (diminishing returns after 3)</p>
+<h3>Active Events (Some Attractions)</h3>
+<p>Certain attractions have <strong>active event modes</strong> triggered by the player:<br />
+- 🎹 Grand Piano: "Live Concert" event (costs 5 Shopper Cards) — 1 hour of +50% all spend<br />
+- 🎭 Stage: "Performance Night" (costs 10 Shopper Cards) — 2 hours of +40% all customers<br />
+- 🍳 Live Kitchen Demo: "Chef's Special" (uses 1 farm ingredient) — 3 hours of +30% food sales</p>
+<h3>LP Aura</h3>
+<p>Some attractions project an <strong>LP aura</strong> that adds bonus LP to nearby decorations:<br />
+- Fountain: +20% LP to decorations within 4 tiles<br />
+- Grand Piano: +15% LP to displays within 3 tiles<br />
+- VIP Lounge: +25% LP to luxury items within 5 tiles</p>
+<hr />
+<h2>🎨 Attraction Upgrades</h2>
+<p>Each attraction can be upgraded up to <strong>Tier 3</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Upgrade</th>
+<th>Tier 1</th>
+<th>Tier 2</th>
+<th>Tier 3</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Aquarium</td>
+<td>Add fish types</td>
+<td>+100 LP, +10% effect</td>
+<td>Live coral reef theme</td>
+</tr>
+<tr>
+<td>Kids Play Area</td>
+<td>Add slide</td>
+<td>Add carousel</td>
+<td>Full adventure zone</td>
+</tr>
+<tr>
+<td>VIP Lounge</td>
+<td>Add bar service</td>
+<td>Add concierge</td>
+<td>Butler service (auto-collect tips)</td>
+</tr>
+<tr>
+<td>Fountain</td>
+<td>Add lighting</td>
+<td>Add music sync</td>
+<td>Coin fountain (players tap for bonus coins)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>💡 Placement Tips</h2>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> Place attractions near the centre of the store rather than corners. A central attraction acts as a "magnet," pulling customers past more displays before they reach it and on the way out.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Placement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maximise foot traffic</td>
+<td>Centre of store</td>
+</tr>
+<tr>
+<td>Boost luxury customers</td>
+<td>Near luxury displays (Zone 6/7)</td>
+</tr>
+<tr>
+<td>Boost family customers</td>
+<td>Near baby/toy section</td>
+</tr>
+<tr>
+<td>Boost Fresh interest</td>
+<td>Farm Corner near food section</td>
+</tr>
+</tbody>
+</table>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="18-coin-op-items.html"><span>◀</span><span><span class="nav-label">Previous</span>18 — Coin-Op Items</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="20-decorations.html"><span><span class="nav-label">Next</span>20 — Decorations</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>09 — Processing Buildings — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🌾 Farm</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🏭 09 — Processing Buildings</h1>
+<p>Processing buildings transform raw farm materials into finished goods that the store can sell for premium prices. With 16 buildings ranging from the basic Bakery Oven to the elite Gourmet Kitchen, the processing layer adds manufacturing depth to the farm.</p>
+<hr />
+<h2>🏗️ Complete Processing Building Table</h2>
+<table>
+<thead>
+<tr>
+<th>Building</th>
+<th>Unlock</th>
+<th>Input → Output</th>
+<th>Process Time</th>
+<th>Queue Slots</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🏚️ Barn</td>
+<td>Lv.1</td>
+<td>Storage only</td>
+<td>—</td>
+<td>50 slots</td>
+</tr>
+<tr>
+<td>🌿 Compost Shed</td>
+<td>Lv.8</td>
+<td>Animal Waste → Fertiliser</td>
+<td>30 min</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🍞 Bakery Oven</td>
+<td>Lv.5</td>
+<td>Wheat+Eggs+Milk → Bread/Muffins/Croissants</td>
+<td>10–20 min</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🧀 Dairy Factory</td>
+<td>Lv.12</td>
+<td>Milk → Cheese/Yoghurt/Butter</td>
+<td>20–40 min</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🍓 Jam Kitchen</td>
+<td>Lv.14</td>
+<td>Strawberry+Sugar → Jam/Jelly</td>
+<td>15–30 min</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🥤 Juice Press</td>
+<td>Lv.16</td>
+<td>Tomato/Grapes/Corn → Juice/Smoothie</td>
+<td>15 min</td>
+<td>3</td>
+</tr>
+<tr>
+<td>☕ Roastery</td>
+<td>Lv.18</td>
+<td>Coffee Beans → Roasted Coffee</td>
+<td>25 min</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🍺 Brewery</td>
+<td>Lv.32</td>
+<td>Hops+Sugarcane+Yeast → Craft Beer</td>
+<td>2 hr</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🍷 Winery</td>
+<td>Lv.35</td>
+<td>Grapes+Sugar → Wine</td>
+<td>4 hr</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🧴 Cosmetics Lab</td>
+<td>Lv.40</td>
+<td>Lavender+Goat Milk+Beeswax → Skincare</td>
+<td>1 hr</td>
+<td>3</td>
+</tr>
+<tr>
+<td>🧵 Textile Mill</td>
+<td>Lv.45</td>
+<td>Wool/Cotton → Fabric → Clothing</td>
+<td>1.5 hr</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🍫 Chocolate Factory</td>
+<td>Lv.50</td>
+<td>Sugarcane+Vanilla+Milk → Artisan Chocolates</td>
+<td>45 min</td>
+<td>3</td>
+</tr>
+<tr>
+<td>🍯 Honey Studio</td>
+<td>Lv.62</td>
+<td>Honey+Beeswax → Luxury Honey/Candles</td>
+<td>30 min</td>
+<td>3</td>
+</tr>
+<tr>
+<td>🥃 Distillery</td>
+<td>Lv.65</td>
+<td>Grapes/Grain → Whiskey/Vodka</td>
+<td>6 hr</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🌸 Perfume Atelier</td>
+<td>Lv.70</td>
+<td>Lavender+Orchid+Vanilla → Luxury Perfume</td>
+<td>3 hr</td>
+<td>2</td>
+</tr>
+<tr>
+<td>🍽️ Gourmet Kitchen</td>
+<td>Lv.80</td>
+<td>Truffle+Saffron+Wagyu → Luxury Meals</td>
+<td>2 hr</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🔧 Building Upgrade System</h2>
+<p>Each processing building can be upgraded through <strong>3 tiers</strong> (beyond the base level):</p>
+<table>
+<thead>
+<tr>
+<th>Upgrade Tier</th>
+<th>Queue Bonus</th>
+<th>Speed Bonus</th>
+<th>Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier 1 (Base)</td>
+<td>Default</td>
+<td>Base speed</td>
+<td>Free (built-in)</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>+1 queue slot</td>
+<td>−10% time</td>
+<td>1,000–5,000 FT</td>
+</tr>
+<tr>
+<td>Tier 3</td>
+<td>+2 queue slots</td>
+<td>−25% time</td>
+<td>5,000–20,000 FT</td>
+</tr>
+<tr>
+<td>Tier 4 (Master)</td>
+<td>+3 queue slots</td>
+<td>−40% time</td>
+<td>20,000–100,000 FT</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>⚙️ Processing Job System</h2>
+<h3>Manual Operation:</h3>
+<ol>
+<li>Player opens building UI</li>
+<li>Selects recipe</li>
+<li>Assigns raw materials from Barn</li>
+<li>Job queues and starts immediately</li>
+<li>Player returns to collect finished goods</li>
+</ol>
+<h3>Automatic Operation (with Kitchen Hand worker):</h3>
+<ul>
+<li>Worker scans barn inventory and queues all available recipes automatically</li>
+<li>Prioritises recipes for displays that are low on stock</li>
+<li>Player can set recipe priority order</li>
+</ul>
+<hr />
+<h2>📦 Recipe Output Details</h2>
+<h3>Bakery Oven Recipes</h3>
+<table>
+<thead>
+<tr>
+<th>Recipe</th>
+<th>Inputs</th>
+<th>Output</th>
+<th>Time</th>
+<th>Store Value (Fresh)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bread</td>
+<td>3 Wheat + 1 Egg</td>
+<td>2 Bread</td>
+<td>10 min</td>
+<td>45 coins</td>
+</tr>
+<tr>
+<td>Muffins</td>
+<td>2 Wheat + 1 Egg + 1 Milk</td>
+<td>3 Muffins</td>
+<td>15 min</td>
+<td>60 coins</td>
+</tr>
+<tr>
+<td>Croissants</td>
+<td>3 Wheat + 2 Milk + 1 Butter</td>
+<td>2 Croissants</td>
+<td>20 min</td>
+<td>85 coins</td>
+</tr>
+</tbody>
+</table>
+<h3>Dairy Factory Recipes</h3>
+<table>
+<thead>
+<tr>
+<th>Recipe</th>
+<th>Inputs</th>
+<th>Output</th>
+<th>Time</th>
+<th>Store Value (Fresh)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cheese</td>
+<td>3 Milk</td>
+<td>1 Cheese</td>
+<td>20 min</td>
+<td>70 coins</td>
+</tr>
+<tr>
+<td>Yoghurt</td>
+<td>2 Milk + 1 Sugar</td>
+<td>2 Yoghurt</td>
+<td>25 min</td>
+<td>55 coins</td>
+</tr>
+<tr>
+<td>Butter</td>
+<td>4 Milk</td>
+<td>2 Butter</td>
+<td>15 min</td>
+<td>40 coins</td>
+</tr>
+</tbody>
+</table>
+<h3>Brewery Recipes</h3>
+<table>
+<thead>
+<tr>
+<th>Recipe</th>
+<th>Inputs</th>
+<th>Output</th>
+<th>Time</th>
+<th>Store Value (Fresh)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Craft Lager</td>
+<td>3 Hops + 2 Sugarcane + Yeast</td>
+<td>3 Bottles</td>
+<td>2 hr</td>
+<td>180 coins</td>
+</tr>
+<tr>
+<td>Craft Stout</td>
+<td>4 Hops + 2 Sugarcane + Yeast</td>
+<td>2 Bottles</td>
+<td>2.5 hr</td>
+<td>220 coins</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🏅 Processing Mastery</h2>
+<p>Each building tracks total jobs completed and awards <strong>Mastery Stars</strong>:<br />
+- ⭐ 1 Star: 50 jobs → +5% yield<br />
+- ⭐⭐ 2 Stars: 200 jobs → +10% yield, +1 queue slot bonus<br />
+- ⭐⭐⭐ 3 Stars: 500 jobs → +20% yield, −15% time, unlock exclusive recipe</p>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="08-animal-husbandry.html"><span>◀</span><span><span class="nav-label">Previous</span>08 — Animal Husbandry</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="10-crafting-chains.html"><span><span class="nav-label">Next</span>10 — Crafting Chains</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

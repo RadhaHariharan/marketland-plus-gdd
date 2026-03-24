@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>05 — Unified Game World — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🌐 Core</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🌐 05 — Unified Game World</h1>
+<p>The defining feature of Marketland+ is that the farm and the store are not separate modes or mini-games — they exist as <strong>one continuous world</strong>, visible at the same time, connected by a real supply lane. This document explains how the two worlds are designed to feel like a single, unified empire.</p>
+<hr />
+<h2>🗺️ World Layout</h2>
+<p>The game world is divided into two adjacent areas visible on the same map:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="border: 1px solid #FF0000">┌────────────────────────────────────────────────────┐</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">                   </span>FARM<span style="color: #bbbbbb"> </span>ZONE<span style="color: #bbbbbb">                        </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">  </span>[Crop<span style="color: #bbbbbb"> </span>Plots]<span style="color: #bbbbbb"> </span>[Animal<span style="color: #bbbbbb"> </span>Pens]<span style="color: #bbbbbb"> </span>[Processing<span style="color: #bbbbbb"> </span>Buildings]<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">                                                    </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">         </span><span style="border: 1px solid #FF0000">🚜──────</span>Supply<span style="color: #bbbbbb"> </span>Lane<span style="border: 1px solid #FF0000">──────🏭</span><span style="color: #bbbbbb">                </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">                                                    </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">                   </span>STORE<span style="color: #bbbbbb"> </span>ZONE<span style="color: #bbbbbb">                       </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">│</span><span style="color: #bbbbbb">  </span>[Storefront]<span style="color: #bbbbbb"> </span>[Displays]<span style="color: #bbbbbb"> </span>[Stockroom]<span style="color: #bbbbbb"> </span>[Coin<span style="color: #666666">-</span>Op]<span style="color: #bbbbbb">     </span><span style="border: 1px solid #FF0000">│</span>
+<span style="border: 1px solid #FF0000">└────────────────────────────────────────────────────┘</span>
+</code></pre></div>
+
+<p>Players can scroll between zones or tap a <strong>Map Button</strong> to zoom out and see both zones simultaneously on a mini-map.</p>
+<hr />
+<h2>🔗 The Supply Lane</h2>
+<p>The Supply Lane is the physical, visible connection between farm and store. It is a short animated road or conveyor belt that shows:</p>
+<ul>
+<li>📦 Crates moving from farm stockroom → store stockroom</li>
+<li>Colour-coded by product type (green = produce, yellow = dairy, brown = baked, etc.)</li>
+<li>Speed affected by worker assignment and level upgrades</li>
+<li>Visually upgradable from dirt track → paved road → glass conveyor → golden highway</li>
+</ul>
+<h3>Supply Lane States:</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Visual</th>
+<th>Player Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Empty</td>
+<td>Idle animation</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Active (manual)</td>
+<td>Crates moving</td>
+<td>Player tapped "Send to Store"</td>
+</tr>
+<tr>
+<td>Active (worker)</td>
+<td>Automatic crate flow</td>
+<td>Delivery Runner assigned</td>
+</tr>
+<tr>
+<td>Blocked (full stockroom)</td>
+<td>Red indicator</td>
+<td>Clear store stockroom space</td>
+</tr>
+<tr>
+<td>Blocked (no goods)</td>
+<td>Yellow indicator</td>
+<td>Harvest/process more goods</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>💱 Economic Connection</h2>
+<table>
+<thead>
+<tr>
+<th>Farm Action</th>
+<th>Store Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Harvest wheat</td>
+<td>Bakery can restock bread shelf (🌿 Fresh, +40%)</td>
+</tr>
+<tr>
+<td>Collect eggs</td>
+<td>Egg display available at +30% value</td>
+</tr>
+<tr>
+<td>Process milk → cheese</td>
+<td>Dairy Fridge restocked at +60%</td>
+</tr>
+<tr>
+<td>Brew craft beer</td>
+<td>Beer Fridge stocked at +75%</td>
+</tr>
+<tr>
+<td>Process lavender → perfume</td>
+<td>Luxury Beauty at +90%</td>
+</tr>
+<tr>
+<td>All fresh goods</td>
+<td>🌿 Fresh badge shown to customers</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Store Action</th>
+<th>Farm Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Earn coins</td>
+<td>Fund new crop seeds</td>
+</tr>
+<tr>
+<td>Earn coins</td>
+<td>Buy animal pen upgrades</td>
+</tr>
+<tr>
+<td>Earn coins</td>
+<td>Hire farm workers</td>
+</tr>
+<tr>
+<td>Earn coins</td>
+<td>Expand farm zones</td>
+</tr>
+<tr>
+<td>Complete quests</td>
+<td>Earn Farm Tokens</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌿 The Fresh Premium System</h2>
+<p>Any display can be switched between three supply modes:</p>
+<ol>
+<li><strong>🏭 Supplier Mode</strong> — Always available. Base coin value. No badge.</li>
+<li><strong>🌿 Farm Mode</strong> — Requires active farm stock. +30–90% coins. 🌿 Fresh badge visible to customers.</li>
+<li><strong>🔀 Hybrid Mode</strong> — Uses farm stock first; falls back to supplier if farm is empty.</li>
+</ol>
+<p>The Fresh Premium multiplier depends on the product category:</p>
+<table>
+<thead>
+<tr>
+<th>Product Category</th>
+<th>Farm Premium</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Eggs, Vegetables</td>
+<td>+30%</td>
+</tr>
+<tr>
+<td>Dairy Products</td>
+<td>+40–50%</td>
+</tr>
+<tr>
+<td>Baked Goods</td>
+<td>+40%</td>
+</tr>
+<tr>
+<td>Jams, Juices</td>
+<td>+50%</td>
+</tr>
+<tr>
+<td>Craft Beer, Wine</td>
+<td>+70–75%</td>
+</tr>
+<tr>
+<td>Cosmetics, Skincare</td>
+<td>+80%</td>
+</tr>
+<tr>
+<td>Luxury Perfume</td>
+<td>+90%</td>
+</tr>
+<tr>
+<td>Gourmet Meals</td>
+<td>+85%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>👁️ UI Integration</h2>
+<p>The game HUD reflects both worlds simultaneously:<br />
+- <strong>Top Bar:</strong> Coins 🪙 | Cash 💵 | Farm Tokens 🌿 | Level + XP bar<br />
+- <strong>Bottom Tab Bar:</strong> 🏪 Store | 🌾 Farm | 📋 Quests | 🎴 Cards | 👥 Social<br />
+- <strong>Mini-map</strong> (corner): Shows both zones, active workers, ready harvests<br />
+- <strong>Supply Lane Indicator:</strong> Shows what's in transit and ETA</p>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="04-leveling-xp.html"><span>◀</span><span><span class="nav-label">Previous</span>04 — Leveling & XP</span></a><a class="nav-btn" href="../index.html">🏠 Index</a><a class="nav-btn next" href="farm/06-farm-overview.html"><span><span class="nav-label">Next</span>06 — Farm Overview</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

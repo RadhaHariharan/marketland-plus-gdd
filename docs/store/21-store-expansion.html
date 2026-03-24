@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>21 — Store Expansion — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🏪 Store</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🏗️ 21 — Store Expansion</h1>
+<p>Store expansion is the primary long-term strategic investment in the store half of the game. Each new zone unlocks more floor space, new display categories, and higher-tier attractions.</p>
+<hr />
+<h2>🗺️ Zone Expansion Table</h2>
+<table>
+<thead>
+<tr>
+<th>Zone</th>
+<th>Unlock Level</th>
+<th>Size Added</th>
+<th>Cost</th>
+<th>Key New Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Zone 1 (Starter)</td>
+<td>Lv.1</td>
+<td>10×10</td>
+<td>Free</td>
+<td>Basic food, beverages</td>
+</tr>
+<tr>
+<td>Zone 2</td>
+<td>Lv.8</td>
+<td>+8×10</td>
+<td>2,000 coins</td>
+<td>Household, cleaning</td>
+</tr>
+<tr>
+<td>Zone 3</td>
+<td>Lv.15</td>
+<td>+10×10</td>
+<td>5,000 coins</td>
+<td>Kids, toy section</td>
+</tr>
+<tr>
+<td>Zone 4</td>
+<td>Lv.25</td>
+<td>+12×10</td>
+<td>12,000 coins</td>
+<td>Beauty, fashion</td>
+</tr>
+<tr>
+<td>Zone 5</td>
+<td>Lv.35</td>
+<td>+12×12</td>
+<td>25,000 coins</td>
+<td>Electronics</td>
+</tr>
+<tr>
+<td>Zone 6</td>
+<td>Lv.50</td>
+<td>+14×12</td>
+<td>50,000 coins</td>
+<td>Luxury section</td>
+</tr>
+<tr>
+<td>Zone 7</td>
+<td>Lv.65</td>
+<td>+14×14</td>
+<td>80,000 coins</td>
+<td>VIP area, exclusive items</td>
+</tr>
+<tr>
+<td>Zone 8</td>
+<td>Lv.80</td>
+<td>+16×14</td>
+<td>150,000 coins</td>
+<td>Royal Wing, premium only</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📐 Zone Layout Recommendations</h2>
+<h3>Zone 1-2: The Essential Market</h3>
+<ul>
+<li>Food &amp; Grocery displays (rows 1–3)</li>
+<li>Beverages (row 4)</li>
+<li>Basic coin-op items (ATM, vending)</li>
+<li>Small decorations and plants</li>
+</ul>
+<h3>Zone 3-4: The Full Supermarket</h3>
+<ul>
+<li>Add household/cleaning section</li>
+<li>Add kids/toy section</li>
+<li>Install first attraction (Aquarium or Kids Play Area)</li>
+<li>Health &amp; Beauty section</li>
+</ul>
+<h3>Zone 5-6: The Department Store</h3>
+<ul>
+<li>Electronics section</li>
+<li>Clothing &amp; Apparel area</li>
+<li>Art &amp; prestige decorations</li>
+<li>Grand Piano attraction</li>
+<li>Fountain as centrepiece</li>
+</ul>
+<h3>Zone 7-8: The Luxury Empire</h3>
+<ul>
+<li>VIP Lounge attraction</li>
+<li>Royal Fashion, Perfume Atelier</li>
+<li>Crystal floors, gold inlay</li>
+<li>Royal Feast Counter</li>
+<li>Golden Gates entrance</li>
+</ul>
+<hr />
+<h2>🔑 Special Zone Features</h2>
+<h3>VIP Zone (Zone 7)</h3>
+<ul>
+<li>Separate entrance for VIP customers (higher spending, no queue)</li>
+<li>VIP Lounge unlocks here</li>
+<li>All displays in VIP zone receive +20% budget from eligible customers</li>
+<li>Requires 22,000+ LP to attract Celebrity customers</li>
+</ul>
+<h3>Farm-to-Table Section (Zone 3+)</h3>
+<p>A dedicated farm-themed section that can be placed in any zone:<br />
+- Farm Market Stand (4×3)<br />
+- Farm Corner Display (4×4)<br />
+- Herb Garden decorations<br />
+- Farm Fresh Basket display<br />
+- All items in section: +10% Fresh premium on top of normal rate</p>
+<hr />
+<h2>💰 Expansion Cost Multipliers</h2>
+<p>If a player wants to expand a zone early (before the unlock level), they can pay with Cash:</p>
+<table>
+<thead>
+<tr>
+<th>Early Unlock</th>
+<th>Cash Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 level early</td>
+<td>10 Cash</td>
+</tr>
+<tr>
+<td>5 levels early</td>
+<td>25 Cash</td>
+</tr>
+<tr>
+<td>10 levels early</td>
+<td>50 Cash</td>
+</tr>
+<tr>
+<td>Before unlock level</td>
+<td>Not available</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🏆 Store Rating</h2>
+<p>The overall store receives a <strong>Star Rating</strong> (0–5 stars) based on:<br />
+- % of displays stocked<br />
+- LP score tier<br />
+- Customer satisfaction (review ratings)<br />
+- Zone utilisation (tiles used vs. available)<br />
+- Number of active attractions</p>
+<table>
+<thead>
+<tr>
+<th>Rating</th>
+<th>Bonus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⭐ 1 Star</td>
+<td>Base</td>
+</tr>
+<tr>
+<td>⭐⭐ 2 Stars</td>
+<td>+5% all customer spend</td>
+</tr>
+<tr>
+<td>⭐⭐⭐ 3 Stars</td>
+<td>+10% spend, +1 Shopper Card/day</td>
+</tr>
+<tr>
+<td>⭐⭐⭐⭐ 4 Stars</td>
+<td>+15% spend, +2 cards/day, Mystery Shopper 2×</td>
+</tr>
+<tr>
+<td>⭐⭐⭐⭐⭐ 5 Stars</td>
+<td>+25% spend, +5 cards/day, daily Cash bonus</td>
+</tr>
+</tbody>
+</table>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="20-decorations.html"><span>◀</span><span><span class="nav-label">Previous</span>20 — Decorations</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="../systems/22-supply-chain.html"><span><span class="nav-label">Next</span>22 — Supply Chain</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

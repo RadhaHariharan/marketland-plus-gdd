@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>13 — Farm Mastery — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🌾 Farm</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🌟 13 — Farm Mastery</h1>
+<p>Farm Mastery is the star-rating system for each individual crop and animal on the farm. As players grow more of a specific crop or collect more from a specific animal, they earn Mastery Stars that permanently improve yield, speed, and value for that item.</p>
+<hr />
+<h2>⭐ How Mastery Works</h2>
+<p>Each crop and animal has its own <strong>Mastery Level</strong> from 0 to 3 stars, tracked separately:<br />
+- Mastery progress is measured in <strong>total harvests</strong> (crops) or <strong>total collections</strong> (animals)<br />
+- Stars are permanent — they do not reset<br />
+- Stars provide compounding bonuses as they accumulate</p>
+<hr />
+<h2>🌾 Crop Mastery Thresholds</h2>
+<table>
+<thead>
+<tr>
+<th>Star Level</th>
+<th>Harvests Required</th>
+<th>Bonus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⭐ 1 Star</td>
+<td>25 harvests</td>
+<td>+10% yield per plot</td>
+</tr>
+<tr>
+<td>⭐⭐ 2 Stars</td>
+<td>100 harvests</td>
+<td>+20% yield, +5% Farm Token bonus</td>
+</tr>
+<tr>
+<td>⭐⭐⭐ 3 Stars</td>
+<td>300 harvests</td>
+<td>+35% yield, +10% FT, wilt timer +50%</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example for Wheat:</strong><br />
+- Base yield: 8–12 per harvest<br />
+- At 3 Stars: 10.8–16.2 per harvest (+35%)<br />
+- Wilt timer: 45 min instead of 30 min (+50%)</p>
+<hr />
+<h2>🐄 Animal Mastery Thresholds</h2>
+<table>
+<thead>
+<tr>
+<th>Star Level</th>
+<th>Collections Required</th>
+<th>Bonus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⭐ 1 Star</td>
+<td>50 collections</td>
+<td>+10% product quality</td>
+</tr>
+<tr>
+<td>⭐⭐ 2 Stars</td>
+<td>200 collections</td>
+<td>+20% quality, chance of bonus product doubles</td>
+</tr>
+<tr>
+<td>⭐⭐⭐ 3 Stars</td>
+<td>500 collections</td>
+<td>+35% quality, +25% chance of special drop, happiness regenerates 20% faster</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🏆 Building Mastery</h2>
+<p>Processing buildings also have mastery (see <a href="09-processing-buildings.html">09-processing-buildings.md</a> for details):</p>
+<table>
+<thead>
+<tr>
+<th>Star Level</th>
+<th>Jobs Required</th>
+<th>Bonus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⭐ 1 Star</td>
+<td>50 jobs</td>
+<td>+5% yield</td>
+</tr>
+<tr>
+<td>⭐⭐ 2 Stars</td>
+<td>200 jobs</td>
+<td>+10% yield, +1 queue slot</td>
+</tr>
+<tr>
+<td>⭐⭐⭐ 3 Stars</td>
+<td>500 jobs</td>
+<td>+20% yield, −15% time, exclusive recipe unlocked</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎯 Farm Mastery Score</h2>
+<p>A player's <strong>Total Farm Mastery Score</strong> is the sum of all individual mastery stars across crops, animals, and buildings. This score is visible on the farm overview screen and in the social leaderboard.</p>
+<table>
+<thead>
+<tr>
+<th>Score Range</th>
+<th>Farm Rank</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–10 stars</td>
+<td>Apprentice Farmer</td>
+</tr>
+<tr>
+<td>11–25 stars</td>
+<td>Skilled Farmer</td>
+</tr>
+<tr>
+<td>26–50 stars</td>
+<td>Expert Farmer</td>
+</tr>
+<tr>
+<td>51–75 stars</td>
+<td>Master Farmer</td>
+</tr>
+<tr>
+<td>76+ stars</td>
+<td>Legendary Farmer</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🏅 Mastery Achievements</h2>
+<table>
+<thead>
+<tr>
+<th>Achievement</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Green Thumb</td>
+<td>First crop at 1 star</td>
+<td>50 XP + 10 FT</td>
+</tr>
+<tr>
+<td>Master Farmer</td>
+<td>10 crops at 3 stars</td>
+<td>500 XP + 50 FT</td>
+</tr>
+<tr>
+<td>Old MacDonald</td>
+<td>All 9 animals at 1 star</td>
+<td>300 XP + 30 FT</td>
+</tr>
+<tr>
+<td>Happy Herd</td>
+<td>All animals at 100% happiness for 7 days</td>
+<td>1,000 XP + 100 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>Processing King</td>
+<td>All buildings at 2 stars</td>
+<td>800 XP + 80 FT</td>
+</tr>
+<tr>
+<td>Farm Legend</td>
+<td>All crops + animals + buildings at 3 stars</td>
+<td>5,000 XP + 500 FT + 20 Cash</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📊 Mastery UI</h2>
+<p>The Farm Mastery screen shows:<br />
+- Grid of all crops/animals/buildings with star status<br />
+- Progress bar to next star for selected item<br />
+- Total Farm Mastery Score<br />
+- Rank badge<br />
+- "Highest Mastery" crops/animals highlighted</p>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="12-seasons-weather.html"><span>◀</span><span><span class="nav-label">Previous</span>12 — Seasons & Weather</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="14-farm-expansion.html"><span><span class="nav-label">Next</span>14 — Farm Expansion</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>
