@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>33 — Achievements — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🏅 33 — Achievements</h1>
+<p>Achievements celebrate player milestones, reward mastery, and provide long-term goals that span the entire game. They are divided into categories and award XP, Cash, coins, and Farm Tokens.</p>
+<hr />
+<h2>🏪 Store Achievements</h2>
+<table>
+<thead>
+<tr>
+<th>Achievement</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🎉 First Sale</td>
+<td>Earn first coin from a customer</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>🏪 Full House</td>
+<td>Have 10 displays stocked simultaneously</td>
+<td>200 XP + 500 coins</td>
+</tr>
+<tr>
+<td>💰 Millionaire</td>
+<td>Earn 1,000,000 total coins across all time</td>
+<td>1,000 XP + 10 Cash</td>
+</tr>
+<tr>
+<td>⭐ Five Star Store</td>
+<td>Earn 3 mastery stars on 10 displays</td>
+<td>800 XP + 5 Cash</td>
+</tr>
+<tr>
+<td>👑 Luxury Empire</td>
+<td>Reach 30,000 LP</td>
+<td>2,000 XP + 20 Cash</td>
+</tr>
+<tr>
+<td>🎪 Entertainment King</td>
+<td>Have 5 attractions placed simultaneously</td>
+<td>600 XP + 8 Cash</td>
+</tr>
+<tr>
+<td>🎴 Card Shark</td>
+<td>Use 100 cards total</td>
+<td>500 XP + 5 Cash</td>
+</tr>
+<tr>
+<td>📣 Campaign Master</td>
+<td>Complete 20 campaigns</td>
+<td>1,000 XP + 10 Cash</td>
+</tr>
+<tr>
+<td>🏆 Supply Chain King</td>
+<td>Have 5 farm-stocked displays simultaneously</td>
+<td>800 XP + 10 Cash</td>
+</tr>
+<tr>
+<td>🛒 Grand Market</td>
+<td>Reach 50,000 LP</td>
+<td>3,000 XP + 30 Cash</td>
+</tr>
+<tr>
+<td>💳 ATM Hero</td>
+<td>Collect from ATM 100 times</td>
+<td>200 XP + 200 coins</td>
+</tr>
+<tr>
+<td>🌟 Perfect Day</td>
+<td>Earn 10,000 coins in a single day</td>
+<td>400 XP + 3 Cash</td>
+</tr>
+<tr>
+<td>🎪 Attraction Magnet</td>
+<td>Trigger 50 active attraction events</td>
+<td>600 XP + 5 Cash</td>
+</tr>
+<tr>
+<td>👔 VIP Host</td>
+<td>Complete 5 VIP Night campaigns</td>
+<td>1,500 XP + 15 Cash</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌾 Farm Achievements</h2>
+<table>
+<thead>
+<tr>
+<th>Achievement</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌱 Green Thumb</td>
+<td>Complete first crop harvest</td>
+<td>50 XP + 10 FT</td>
+</tr>
+<tr>
+<td>🌾 Full Barn</td>
+<td>Have all animal pens occupied</td>
+<td>300 XP + 30 FT</td>
+</tr>
+<tr>
+<td>🏆 Master Farmer</td>
+<td>Earn 3 stars on 10 crops</td>
+<td>500 XP + 50 FT</td>
+</tr>
+<tr>
+<td>🐄 Animal Whisperer</td>
+<td>Achieve 100% happiness on all animals for 7 days</td>
+<td>1,000 XP + 100 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>🍷 Winemaker</td>
+<td>Produce 100 bottles of wine total</td>
+<td>600 XP + 60 FT</td>
+</tr>
+<tr>
+<td>🍯 Beekeeper</td>
+<td>Collect from bees 100 times</td>
+<td>400 XP + 40 FT</td>
+</tr>
+<tr>
+<td>🐝 Happy Herd</td>
+<td>Maintain 100% animal happiness for 7 consecutive days</td>
+<td>800 XP + 80 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>🌈 Rainbow Chaser</td>
+<td>Harvest during 10 Rainbow weather events</td>
+<td>500 XP + 50 FT</td>
+</tr>
+<tr>
+<td>⛓️ The Full Chain</td>
+<td>Complete one full multi-step crafting chain</td>
+<td>200 XP + 20 FT</td>
+</tr>
+<tr>
+<td>🐖 Old MacDonald</td>
+<td>Unlock all 9 animal types</td>
+<td>600 XP + 60 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>💰 Farm Millionaire</td>
+<td>Earn 10,000 Farm Tokens total</td>
+<td>1,000 XP + 10 Cash</td>
+</tr>
+<tr>
+<td>🌿 Greenhouse Master</td>
+<td>Have all 4 greenhouse crops planted simultaneously</td>
+<td>500 XP + 50 FT</td>
+</tr>
+<tr>
+<td>🏭 Processing King</td>
+<td>Complete 1,000 total processing jobs</td>
+<td>800 XP + 80 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>👷 Full Crew</td>
+<td>Have all 6 worker types hired</td>
+<td>500 XP + 50 FT</td>
+</tr>
+<tr>
+<td>🌾 Seasonal Expert</td>
+<td>Harvest each seasonal crop during its peak season</td>
+<td>600 FT + 600 XP</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🤝 Social Achievements</h2>
+<table>
+<thead>
+<tr>
+<th>Achievement</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>👫 First Friend</td>
+<td>Add first neighbour</td>
+<td>100 XP</td>
+</tr>
+<tr>
+<td>🎁 Generous</td>
+<td>Give 10 gifts to neighbours</td>
+<td>200 XP + 500 coins</td>
+</tr>
+<tr>
+<td>🌍 World Market</td>
+<td>Have 10 neighbours</td>
+<td>500 XP + 5 Cash</td>
+</tr>
+<tr>
+<td>🏆 Top Ranked</td>
+<td>Reach #1 on weekly leaderboard</td>
+<td>1,000 XP + 10 Cash</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📅 Event Achievements</h2>
+<table>
+<thead>
+<tr>
+<th>Achievement</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌸 Spring Has Sprung</td>
+<td>Complete all Bloom Festival quests</td>
+<td>500 XP + Spring Decoration</td>
+</tr>
+<tr>
+<td>☀️ Summer Champion</td>
+<td>Earn 20,000 coins during Beach Blast</td>
+<td>600 XP + 5 Cash</td>
+</tr>
+<tr>
+<td>🍂 Harvest Hero</td>
+<td>Complete Great Harvest during Harvest Festival</td>
+<td>800 XP + 50 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>❄️ Winter Warmer</td>
+<td>Have 5 hot drink displays active during Winter Wonderland</td>
+<td>400 XP + Winter Decoration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🏅 Achievement UI</h2>
+<ul>
+<li>All achievements visible in the Achievement panel</li>
+<li>Progress bars for multi-step achievements</li>
+<li>Completed achievements show gold badge + claim button</li>
+<li>"Achievement Feed" shows recent community achievements</li>
+<li>Total achievement score displayed on player profile</li>
+</ul>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="32-special-events.html"><span>◀</span><span><span class="nav-label">Previous</span>32 — Special Events</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="34-level-unlock-table.html"><span><span class="nav-label">Next</span>34 — Level Unlock Table</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Marketland+ — Game Design Document</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <h1>🏪🌾 Marketland+</h1>
+    <p class="sub">Farm &amp; Supermarket Empire — Complete Game Design Document v3.0</p>
+    <div class="badges">
+      <span class="badge">🎮 Unity · 2D</span>
+      <span class="badge">📱 Mobile-first</span>
+      <span class="badge">⚡ No Energy System</span>
+      <span class="badge">💎 No Paywall</span>
+      <span class="badge">📄 36 Sections</span>
+    </div>
+  </header>
+  <main style="max-width:var(--max-w);margin:0 auto;padding:0 1rem;">
+    <section class="section-group"><h2>🌐 Core</h2><div class="cards"><a class="card" href="docs/01-game-overview.html"><div class="num">01</div><div class="title">Game Overview</div></a>
+<a class="card" href="docs/02-core-game-loop.html"><div class="num">02</div><div class="title">Core Game Loop</div></a>
+<a class="card" href="docs/03-currency-system.html"><div class="num">03</div><div class="title">Currency System</div></a>
+<a class="card" href="docs/04-leveling-xp.html"><div class="num">04</div><div class="title">Leveling & XP</div></a>
+<a class="card" href="docs/05-unified-game-world.html"><div class="num">05</div><div class="title">Unified Game World</div></a>
+</div></section>
+<section class="section-group"><h2>🌾 Farm</h2><div class="cards"><a class="card" href="docs/farm/06-farm-overview.html"><div class="num">06</div><div class="title">Farm Overview</div></a>
+<a class="card" href="docs/farm/07-crop-system.html"><div class="num">07</div><div class="title">Crop System</div></a>
+<a class="card" href="docs/farm/08-animal-husbandry.html"><div class="num">08</div><div class="title">Animal Husbandry</div></a>
+<a class="card" href="docs/farm/09-processing-buildings.html"><div class="num">09</div><div class="title">Processing Buildings</div></a>
+<a class="card" href="docs/farm/10-crafting-chains.html"><div class="num">10</div><div class="title">Crafting Chains</div></a>
+<a class="card" href="docs/farm/11-farm-workers.html"><div class="num">11</div><div class="title">Farm Workers</div></a>
+<a class="card" href="docs/farm/12-seasons-weather.html"><div class="num">12</div><div class="title">Seasons & Weather</div></a>
+<a class="card" href="docs/farm/13-farm-mastery.html"><div class="num">13</div><div class="title">Farm Mastery</div></a>
+<a class="card" href="docs/farm/14-farm-expansion.html"><div class="num">14</div><div class="title">Farm Expansion</div></a>
+</div></section>
+<section class="section-group"><h2>🏪 Store</h2><div class="cards"><a class="card" href="docs/store/15-store-grid-layout.html"><div class="num">15</div><div class="title">Store Grid & Layout</div></a>
+<a class="card" href="docs/store/16-supply-modes.html"><div class="num">16</div><div class="title">Supply Modes</div></a>
+<a class="card" href="docs/store/17-displays-all.html"><div class="num">17</div><div class="title">Displays — All Categories</div></a>
+<a class="card" href="docs/store/18-coin-op-items.html"><div class="num">18</div><div class="title">Coin-Op Items</div></a>
+<a class="card" href="docs/store/19-attractions.html"><div class="num">19</div><div class="title">Attractions</div></a>
+<a class="card" href="docs/store/20-decorations.html"><div class="num">20</div><div class="title">Decorations</div></a>
+<a class="card" href="docs/store/21-store-expansion.html"><div class="num">21</div><div class="title">Store Expansion</div></a>
+</div></section>
+<section class="section-group"><h2>⚙️ Systems</h2><div class="cards"><a class="card" href="docs/systems/22-supply-chain.html"><div class="num">22</div><div class="title">Supply Chain</div></a>
+<a class="card" href="docs/systems/23-suppliers-shipments.html"><div class="num">23</div><div class="title">Suppliers & Shipments</div></a>
+<a class="card" href="docs/systems/24-stockroom.html"><div class="num">24</div><div class="title">Stockroom</div></a>
+<a class="card" href="docs/systems/25-customer-system.html"><div class="num">25</div><div class="title">Customer System</div></a>
+<a class="card" href="docs/systems/26-card-system.html"><div class="num">26</div><div class="title">Card System</div></a>
+<a class="card" href="docs/systems/27-quest-system.html"><div class="num">27</div><div class="title">Quest System</div></a>
+<a class="card" href="docs/systems/28-collections.html"><div class="num">28</div><div class="title">Collections</div></a>
+<a class="card" href="docs/systems/29-campaigns.html"><div class="num">29</div><div class="title">Campaigns</div></a>
+<a class="card" href="docs/systems/30-luxury-points.html"><div class="num">30</div><div class="title">Luxury Points</div></a>
+<a class="card" href="docs/systems/31-mastery-stars.html"><div class="num">31</div><div class="title">Mastery Stars</div></a>
+<a class="card" href="docs/systems/32-special-events.html"><div class="num">32</div><div class="title">Special Events</div></a>
+<a class="card" href="docs/systems/33-achievements.html"><div class="num">33</div><div class="title">Achievements</div></a>
+<a class="card" href="docs/systems/34-level-unlock-table.html"><div class="num">34</div><div class="title">Level Unlock Table</div></a>
+<a class="card" href="docs/systems/35-monetization.html"><div class="num">35</div><div class="title">Monetization</div></a>
+<a class="card" href="docs/systems/36-technical-systems.html"><div class="num">36</div><div class="title">Technical Systems</div></a>
+</div></section>
+
+  </main>
+</body>
+</html>

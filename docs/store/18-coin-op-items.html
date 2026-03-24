@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>18 — Coin-Op Items — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🏪 Store</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🪙 18 — Coin-Op Items</h1>
+<p>Coin-op items are automated revenue generators placed in the store that earn coins on a timer without requiring customer interaction. They also contribute Luxury Points, increasing the class of customers the store attracts.</p>
+<hr />
+<h2>🏧 Complete Coin-Op Table</h2>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Unlock</th>
+<th>Size</th>
+<th>Earn</th>
+<th>Timer</th>
+<th>LP</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🧃 Vending Machine</td>
+<td>Lv.3</td>
+<td>1×1</td>
+<td>15–25 coins</td>
+<td>5 min</td>
+<td>5 LP</td>
+<td>Basic, low-maintenance</td>
+</tr>
+<tr>
+<td>💳 ATM Machine</td>
+<td>Lv.8</td>
+<td>1×1</td>
+<td>50–80 coins</td>
+<td>15 min</td>
+<td>10 LP</td>
+<td>Earns when customers use it</td>
+</tr>
+<tr>
+<td>🎰 Ticket Machine</td>
+<td>Lv.12</td>
+<td>1×1</td>
+<td>30–60 coins</td>
+<td>10 min</td>
+<td>8 LP</td>
+<td>Entertainment area</td>
+</tr>
+<tr>
+<td>☕ Coffee Machine</td>
+<td>Lv.15</td>
+<td>1×2</td>
+<td>40–70 coins</td>
+<td>8 min</td>
+<td>12 LP</td>
+<td>Boosts nearby customer mood</td>
+</tr>
+<tr>
+<td>🎮 Arcade Cabinet</td>
+<td>Lv.20</td>
+<td>1×2</td>
+<td>60–100 coins</td>
+<td>12 min</td>
+<td>20 LP</td>
+<td>Attracts younger customer types</td>
+</tr>
+<tr>
+<td>📰 Newspaper Stand</td>
+<td>Lv.5</td>
+<td>1×1</td>
+<td>20–35 coins</td>
+<td>6 min</td>
+<td>5 LP</td>
+<td>Low-cost early investment</td>
+</tr>
+<tr>
+<td>🎰 Prize Machine</td>
+<td>Lv.25</td>
+<td>1×2</td>
+<td>80–120 coins</td>
+<td>20 min</td>
+<td>25 LP</td>
+<td>Rare item drops for customers</td>
+</tr>
+<tr>
+<td>💈 Photo Booth</td>
+<td>Lv.30</td>
+<td>2×2</td>
+<td>100–150 coins</td>
+<td>20 min</td>
+<td>35 LP</td>
+<td>Social share mechanic</td>
+</tr>
+<tr>
+<td>🎯 Skill Game</td>
+<td>Lv.35</td>
+<td>2×2</td>
+<td>120–180 coins</td>
+<td>25 min</td>
+<td>40 LP</td>
+<td>Increases store dwell time</td>
+</tr>
+<tr>
+<td>🏧 Premium ATM</td>
+<td>Lv.45</td>
+<td>1×1</td>
+<td>150–220 coins</td>
+<td>30 min</td>
+<td>20 LP</td>
+<td>High-value customers only</td>
+</tr>
+<tr>
+<td>🎶 Jukebox</td>
+<td>Lv.40</td>
+<td>1×2</td>
+<td>80–120 coins</td>
+<td>15 min</td>
+<td>30 LP</td>
+<td>+5% all customer spend nearby</td>
+</tr>
+<tr>
+<td>🍭 Candy Dispenser</td>
+<td>Lv.10</td>
+<td>1×1</td>
+<td>25–45 coins</td>
+<td>8 min</td>
+<td>8 LP</td>
+<td>Kids customers love it</td>
+</tr>
+<tr>
+<td>🥤 Smoothie Kiosk</td>
+<td>Lv.30</td>
+<td>2×1</td>
+<td>70–110 coins</td>
+<td>12 min</td>
+<td>20 LP</td>
+<td>+Fresh premium if farm-sourced</td>
+</tr>
+<tr>
+<td>🎪 Lottery Terminal</td>
+<td>Lv.50</td>
+<td>1×1</td>
+<td>200–400 coins</td>
+<td>45 min</td>
+<td>15 LP</td>
+<td>Random large payout</td>
+</tr>
+<tr>
+<td>💎 VIP Lounge Access</td>
+<td>Lv.60</td>
+<td>2×2</td>
+<td>500–800 coins</td>
+<td>1 hr</td>
+<td>50 LP</td>
+<td>VIP customers only</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>⚙️ Coin-Op Mechanics</h2>
+<h3>Collection</h3>
+<ul>
+<li>All coin-op items require manual collection (tap to collect) OR automatic collection via the <strong>Cashier Upgrade</strong> (Lv.30)</li>
+<li>Each item shows a progress bar filling towards maximum capacity</li>
+<li>At maximum capacity, the item stops earning until collected</li>
+<li>Visual indicator: filling progress bar, coin animation when ready</li>
+</ul>
+<h3>Upgrade System</h3>
+<p>Each coin-op item can be upgraded through <strong>3 tiers</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Cost</th>
+<th>Earnings Boost</th>
+<th>Timer Reduction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Tier 1</td>
+<td>Base</td>
+<td>—</td>
+<td>—</td>
+</tr>
+<tr>
+<td>Tier 2</td>
+<td>500–2,000 coins</td>
+<td>+25%</td>
+<td>−10%</td>
+</tr>
+<tr>
+<td>Tier 3</td>
+<td>2,000–8,000 coins</td>
+<td>+50%</td>
+<td>−20%</td>
+</tr>
+<tr>
+<td>Tier 4</td>
+<td>8,000–30,000 coins</td>
+<td>+100%</td>
+<td>−30%</td>
+</tr>
+</tbody>
+</table>
+<h3>Placement Strategy</h3>
+<ul>
+<li>Coin-op items near <strong>Attractions</strong> earn 10% more (increased foot traffic)</li>
+<li>Coffee Machine near checkout: +5% all customer budgets (queuing customers buy impulse items)</li>
+<li>ATM near luxury section: attracts Businessman/Socialite customers</li>
+<li>Arcade Cabinet near toy section: synergy with Family Shoppers</li>
+</ul>
+<hr />
+<h2>🎁 Special Coin-Op Events</h2>
+<p>During seasonal events, limited coin-op items become available:<br />
+| Event | Coin-Op Item | Earn Rate | Duration |<br />
+|-------|-------------|---------|----------|<br />
+| Winter Wonderland | ❄️ Gift Dispenser | 200–350 coins / 30 min | Winter season only |<br />
+| Harvest Festival | 🎃 Prize Wheel | 300–500 coins / 45 min | Autumn event only |<br />
+| Beach Blast | 🌊 Surf Simulator | 250–400 coins / 35 min | Summer event only |<br />
+| Bloom Festival | 🌸 Flower Fortune | 180–280 coins / 25 min | Spring event only |</p>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="17-displays-all.html"><span>◀</span><span><span class="nav-label">Previous</span>17 — Displays — All Categories</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="19-attractions.html"><span><span class="nav-label">Next</span>19 — Attractions</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03 — Currency System — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🌐 Core</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>💰 03 — Currency System</h1>
+<p>Marketland+ uses <strong>four distinct currencies</strong>, each with a clear role in the economy. This layered approach keeps the economy balanced, prevents inflation, and ensures that each type of progression feels distinct and rewarding.</p>
+<hr />
+<h2>🪙 Currency 1: Coins (Soft Currency)</h2>
+<p><strong>Symbol:</strong> 🪙 | <strong>Type:</strong> Soft (earnable through play) | <strong>Starting Amount:</strong> 500</p>
+<p>Coins are the primary currency and the backbone of all store operations.</p>
+<h3>Earn Coins By:</h3>
+<ul>
+<li>Customers purchasing from displays (main source)</li>
+<li>Coin-op items (ATM, vending machines, ticket machines)</li>
+<li>Completing daily quests</li>
+<li>Campaign bonuses</li>
+<li>Selling overstock from stockroom</li>
+<li>Completing collections</li>
+<li>Neighbour visits</li>
+</ul>
+<h3>Spend Coins On:</h3>
+<ul>
+<li>Buying new display units</li>
+<li>Upgrading displays to higher tiers</li>
+<li>Purchasing supplier shipments</li>
+<li>Hiring farm workers</li>
+<li>Unlocking store zones</li>
+<li>Buying decorations and attractions</li>
+<li>Replenishing display stock (in Supplier mode)</li>
+</ul>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> Coins should always feel abundant but never surplus — there should always be a meaningful upgrade to spend them on.</p>
+</blockquote>
+<hr />
+<h2>💵 Currency 2: Cash (Premium Currency)</h2>
+<p><strong>Symbol:</strong> 💵 | <strong>Type:</strong> Premium (real money OR earned in-game) | <strong>Starting Amount:</strong> 10</p>
+<p>Cash is the premium currency but is intentionally earnable through regular play to avoid paywalls.</p>
+<h3>Earn Cash By:</h3>
+<ul>
+<li>Leveling up (+1 Cash per level)</li>
+<li>Completing achievements (variable)</li>
+<li>Watching optional rewarded ads (small amounts)</li>
+<li>Purchasing with real money (optional)</li>
+</ul>
+<h3>Spend Cash On:</h3>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Cash Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Instant crop harvest</td>
+<td>1–3 Cash</td>
+</tr>
+<tr>
+<td>Skip processing timer</td>
+<td>1–5 Cash</td>
+</tr>
+<tr>
+<td>Instant supplier delivery</td>
+<td>2–5 Cash</td>
+</tr>
+<tr>
+<td>Repair storm-damaged crops</td>
+<td>1 Cash</td>
+</tr>
+<tr>
+<td>Premium decoration items</td>
+<td>5–20 Cash</td>
+</tr>
+<tr>
+<td>Extra delivery truck slot</td>
+<td>10 Cash</td>
+</tr>
+<tr>
+<td>Unlock zone immediately</td>
+<td>10–30 Cash</td>
+</tr>
+<tr>
+<td>Skip quest</td>
+<td>3 Cash</td>
+</tr>
+<tr>
+<td>Rare animal direct purchase</td>
+<td>15–50 Cash</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> Cash <strong>never</strong> gates core content. It only speeds up timers or provides cosmetic/convenience options. All content is reachable without spending Cash.</p>
+</blockquote>
+<hr />
+<h2>🌿 Currency 3: Farm Tokens (Farm-Only Currency)</h2>
+<p><strong>Symbol:</strong> 🌿 | <strong>Type:</strong> Farm-only (NEVER sold for real money) | <strong>Starting Amount:</strong> 50</p>
+<p>Farm Tokens are the dedicated currency for all farm operations. They cannot be purchased with real money — ever. This ensures the farm economy stays fair and meaningful.</p>
+<h3>Earn Farm Tokens By:</h3>
+<ul>
+<li>Harvesting crops (1–15 per harvest, based on crop rarity)</li>
+<li>Collecting animal products</li>
+<li>Completing farm quests</li>
+<li>Rainbow weather bonus harvest (2× tokens)</li>
+<li>Completing farm collections</li>
+<li>Daily farm login bonus (after Lv.10)</li>
+</ul>
+<h3>Farm Token Costs:</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>FT Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wheat seeds (×10)</td>
+<td>5 FT</td>
+</tr>
+<tr>
+<td>Exotic Orchid seeds (×5)</td>
+<td>60 FT</td>
+</tr>
+<tr>
+<td>Animal food upgrade</td>
+<td>20–100 FT</td>
+</tr>
+<tr>
+<td>Processing building upgrade</td>
+<td>50–500 FT</td>
+</tr>
+<tr>
+<td>Farm zone unlock</td>
+<td>100–1,000 FT</td>
+</tr>
+<tr>
+<td>Worker hire</td>
+<td>0 FT (paid in Coins)</td>
+</tr>
+<tr>
+<td>Greenhouse slot unlock</td>
+<td>200 FT</td>
+</tr>
+</tbody>
+</table>
+<h3>Crop Farm Token Yield (on harvest):</h3>
+<table>
+<thead>
+<tr>
+<th>Crop</th>
+<th>FT per Harvest</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Wheat, Tomato, Carrot, Corn, Potato, Cucumber</td>
+<td>1 FT</td>
+</tr>
+<tr>
+<td>Strawberry, Sunflower, Sugarcane, Chilli</td>
+<td>2 FT</td>
+</tr>
+<tr>
+<td>Coffee Beans, Cotton</td>
+<td>3 FT</td>
+</tr>
+<tr>
+<td>Grapes, Lavender, Hops</td>
+<td>4 FT</td>
+</tr>
+<tr>
+<td>Vanilla</td>
+<td>6 FT</td>
+</tr>
+<tr>
+<td>Exotic Orchid</td>
+<td>12 FT</td>
+</tr>
+<tr>
+<td>Saffron</td>
+<td>10 FT</td>
+</tr>
+<tr>
+<td>Truffle</td>
+<td>15 FT</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>💎 Currency 4: Luxury Points (LP Score)</h2>
+<p><strong>Symbol:</strong> 💎 | <strong>Type:</strong> Score (accumulated, never spent) | <strong>Starting Amount:</strong> 0</p>
+<p>Luxury Points are a <strong>score</strong>, not a spendable currency. They accumulate as players place decorations, attractions, and premium displays. A higher LP score unlocks wealthier customer types who spend significantly more per visit.</p>
+<h3>Earn Luxury Points By:</h3>
+<ul>
+<li>Placing decorations (1–50 LP each)</li>
+<li>Installing attractions (50–500 LP each)</li>
+<li>Placing coin-op items (5–30 LP each)</li>
+<li>Upgrading display tiers (5–25 LP each upgrade)</li>
+<li>Completing store expansions (100–500 LP per zone)</li>
+</ul>
+<h3>LP → Customer Unlock Tiers:</h3>
+<table>
+<thead>
+<tr>
+<th>LP Threshold</th>
+<th>Unlocked Customer</th>
+<th>Budget Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Bargain Hunter</td>
+<td>50–100 coins</td>
+</tr>
+<tr>
+<td>100</td>
+<td>Daily Shopper</td>
+<td>80–150 coins</td>
+</tr>
+<tr>
+<td>300</td>
+<td>Family Shopper</td>
+<td>120–200 coins</td>
+</tr>
+<tr>
+<td>600</td>
+<td>Health Nut</td>
+<td>150–250 coins</td>
+</tr>
+<tr>
+<td>1,000</td>
+<td>Foodie</td>
+<td>200–350 coins</td>
+</tr>
+<tr>
+<td>2,000</td>
+<td>Office Worker</td>
+<td>250–400 coins</td>
+</tr>
+<tr>
+<td>4,000</td>
+<td>Fashionista</td>
+<td>300–500 coins</td>
+</tr>
+<tr>
+<td>7,000</td>
+<td>Businessman</td>
+<td>400–700 coins</td>
+</tr>
+<tr>
+<td>11,000</td>
+<td>Socialite</td>
+<td>500–900 coins</td>
+</tr>
+<tr>
+<td>16,000</td>
+<td>Tycoon</td>
+<td>700–1,200 coins</td>
+</tr>
+<tr>
+<td>22,000</td>
+<td>Celebrity</td>
+<td>1,000–2,000 coins</td>
+</tr>
+<tr>
+<td>30,000</td>
+<td>Royalty/VIP</td>
+<td>2,000–5,000 coins</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>💡 <strong>Design Note:</strong> LP is purely accumulative — players never lose LP. This means a beautifully decorated store permanently attracts premium customers, rewarding long-term investment.</p>
+</blockquote>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="02-core-game-loop.html"><span>◀</span><span><span class="nav-label">Previous</span>02 — Core Game Loop</span></a><a class="nav-btn" href="../index.html">🏠 Index</a><a class="nav-btn next" href="04-leveling-xp.html"><span><span class="nav-label">Next</span>04 — Leveling & XP</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

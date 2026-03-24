@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>07 — Crop System — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🌾 Farm</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🌱 07 — Crop System</h1>
+<p>Crops are the foundation of the farm. With 19 crop types spanning from a 5-minute wheat harvest to a 12-hour truffle cultivation, the crop system provides short, medium, and long-term rhythms that keep the farm engaging at every play frequency.</p>
+<hr />
+<h2>🌾 Complete Crop Table</h2>
+<table>
+<thead>
+<tr>
+<th>Crop</th>
+<th>Unlock</th>
+<th>Grow Time</th>
+<th>Wilt Timer</th>
+<th>Yield</th>
+<th>Farm Tokens</th>
+<th>Season</th>
+<th>Makes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌾 Wheat</td>
+<td>Lv.1</td>
+<td>5 min</td>
+<td>30 min</td>
+<td>8–12</td>
+<td>1</td>
+<td>Autumn</td>
+<td>Bread, Cereal, Flour, Hay</td>
+</tr>
+<tr>
+<td>🍅 Tomato</td>
+<td>Lv.1</td>
+<td>8 min</td>
+<td>45 min</td>
+<td>6–10</td>
+<td>1</td>
+<td>Summer</td>
+<td>Ketchup, Pasta Sauce, Soup</td>
+</tr>
+<tr>
+<td>🥕 Carrot</td>
+<td>Lv.2</td>
+<td>10 min</td>
+<td>1 hr</td>
+<td>6–10</td>
+<td>1</td>
+<td>Spring</td>
+<td>Veg Rack, Baby Food, Rabbit Feed</td>
+</tr>
+<tr>
+<td>🌽 Corn</td>
+<td>Lv.3</td>
+<td>15 min</td>
+<td>1.5 hr</td>
+<td>8–14</td>
+<td>1</td>
+<td>Summer</td>
+<td>Popcorn, Cereal, Pig Feed</td>
+</tr>
+<tr>
+<td>🍓 Strawberry</td>
+<td>Lv.4</td>
+<td>12 min</td>
+<td>1 hr</td>
+<td>5–9</td>
+<td>2</td>
+<td>Spring</td>
+<td>Jam, Smoothies, Pastries</td>
+</tr>
+<tr>
+<td>🥔 Potato</td>
+<td>Lv.5</td>
+<td>20 min</td>
+<td>2 hr</td>
+<td>10–16</td>
+<td>1</td>
+<td>Autumn</td>
+<td>Chips, Baby Food, Soup</td>
+</tr>
+<tr>
+<td>🥒 Cucumber</td>
+<td>Lv.6</td>
+<td>18 min</td>
+<td>1.5 hr</td>
+<td>6–10</td>
+<td>1</td>
+<td>Summer</td>
+<td>Salad, Pickles, Skincare</td>
+</tr>
+<tr>
+<td>🌻 Sunflower</td>
+<td>Lv.8</td>
+<td>25 min</td>
+<td>2 hr</td>
+<td>4–7</td>
+<td>2</td>
+<td>Summer</td>
+<td>Oil, Decoration, Bee Food</td>
+</tr>
+<tr>
+<td>🎋 Sugarcane</td>
+<td>Lv.10</td>
+<td>30 min</td>
+<td>3 hr</td>
+<td>8–14</td>
+<td>2</td>
+<td>Summer</td>
+<td>Sugar, Candy, Soft Drinks</td>
+</tr>
+<tr>
+<td>🧵 Cotton</td>
+<td>Lv.12</td>
+<td>45 min</td>
+<td>4 hr</td>
+<td>4–8</td>
+<td>3</td>
+<td>Summer</td>
+<td>Fabric, Textile Mill</td>
+</tr>
+<tr>
+<td>☕ Coffee Beans</td>
+<td>Lv.15</td>
+<td>1 hr</td>
+<td>6 hr</td>
+<td>4–7</td>
+<td>3</td>
+<td>All year</td>
+<td>Coffee Corner, Roastery</td>
+</tr>
+<tr>
+<td>🍇 Grapes</td>
+<td>Lv.20</td>
+<td>2 hr</td>
+<td>8 hr</td>
+<td>6–10</td>
+<td>4</td>
+<td>Autumn</td>
+<td>Wine, Juice, Distillery</td>
+</tr>
+<tr>
+<td>🌶️ Chilli</td>
+<td>Lv.22</td>
+<td>40 min</td>
+<td>4 hr</td>
+<td>5–9</td>
+<td>2</td>
+<td>Summer</td>
+<td>Hot Sauce, Spice Display</td>
+</tr>
+<tr>
+<td>💜 Lavender</td>
+<td>Lv.25</td>
+<td>1.5 hr</td>
+<td>8 hr</td>
+<td>3–6</td>
+<td>4</td>
+<td>Spring</td>
+<td>Perfume, Cosmetics, Bee Food</td>
+</tr>
+<tr>
+<td>🍺 Hops</td>
+<td>Lv.28</td>
+<td>2 hr</td>
+<td>12 hr</td>
+<td>5–9</td>
+<td>4</td>
+<td>Autumn</td>
+<td>Brewery, Craft Beer</td>
+</tr>
+<tr>
+<td>🌼 Vanilla</td>
+<td>Lv.35</td>
+<td>3 hr</td>
+<td>12 hr</td>
+<td>2–4</td>
+<td>6</td>
+<td>Greenhouse</td>
+<td>Bakery, Chocolate, Perfume</td>
+</tr>
+<tr>
+<td>🌸 Saffron</td>
+<td>Lv.50</td>
+<td>6 hr</td>
+<td>24 hr</td>
+<td>1–3</td>
+<td>10</td>
+<td>Greenhouse</td>
+<td>Luxury Meals, Royal Feast</td>
+</tr>
+<tr>
+<td>🍄 Truffle</td>
+<td>Lv.60</td>
+<td>12 hr</td>
+<td>24 hr</td>
+<td>1–2</td>
+<td>15</td>
+<td>Greenhouse</td>
+<td>Gourmet Deli, Royal Feast</td>
+</tr>
+<tr>
+<td>🌺 Exotic Orchid</td>
+<td>Lv.70</td>
+<td>8 hr</td>
+<td>24 hr</td>
+<td>2–4</td>
+<td>12</td>
+<td>Greenhouse</td>
+<td>Luxury Beauty, Perfume Atelier</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌱 Crop Growth Stages</h2>
+<p>Each crop passes through <strong>4 growth stages</strong>:<br />
+1. <strong>Planted</strong> — Seeds in soil; tapping shows progress<br />
+2. <strong>Sprouting</strong> — Small plant visible; 25% grown<br />
+3. <strong>Growing</strong> — Full plant size; 75% grown<br />
+4. <strong>Ready</strong> — Harvest animation plays; golden glow indicates readiness<br />
+5. <strong>Wilting</strong> (if not harvested in time) — Plant degrades; reduced or zero yield</p>
+<h3>Wilt Mechanics:</h3>
+<ul>
+<li>Once a crop reaches the <strong>Wilt Timer</strong> after becoming ready, it begins to visually wilt</li>
+<li>Partial wilt (50% through wilt timer): yield reduced by 50%</li>
+<li>Full wilt: yield drops to 0 and plot must be cleared (costs nothing, but wastes seeds)</li>
+<li><strong>Fertiliser</strong> extends the wilt timer by 2× for that plot</li>
+</ul>
+<hr />
+<h2>💧 Watering System</h2>
+<p>Crops require watering <strong>once</strong> during their growth cycle:<br />
+- Manual tap-to-water is always free<br />
+- <strong>Rain weather</strong> auto-waters all plots<br />
+- <strong>Field Hand</strong> worker auto-waters assigned plots<br />
+- Skipping water reduces yield by 25%<br />
+- Watered crops produce maximum yield</p>
+<hr />
+<h2>🌿 Fertiliser</h2>
+<p>Fertiliser is produced in the <strong>Compost Shed</strong> from animal waste:<br />
+- Applying fertiliser to a plot:<br />
+  - +30% yield on harvest<br />
+  - Wilt timer extended by 2×<br />
+  - Plot glows green while active<br />
+- Fertiliser expires after one harvest<br />
+- <strong>Botanist</strong> worker auto-applies fertiliser if available</p>
+<hr />
+<h2>🌡️ Seasonal Effects on Crops</h2>
+<table>
+<thead>
+<tr>
+<th>Season</th>
+<th>Affected Crops</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🌸 Spring</td>
+<td>Lavender, Carrot, Strawberry</td>
+<td>+50% / +20% / +20% yield</td>
+</tr>
+<tr>
+<td>☀️ Summer</td>
+<td>Tomato, Corn, Cucumber, Sunflower, Sugarcane, Chilli</td>
+<td>+25% yield; wilt 25% faster</td>
+</tr>
+<tr>
+<td>🍂 Autumn</td>
+<td>Wheat, Potato, Grapes, Hops</td>
+<td>+10% coins on harvest</td>
+</tr>
+<tr>
+<td>❄️ Winter</td>
+<td>All outdoor crops</td>
+<td>50% slower growth</td>
+</tr>
+<tr>
+<td>—</td>
+<td>Greenhouse crops (Vanilla, Saffron, Truffle, Orchid)</td>
+<td>Unaffected by seasons</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌾 Multi-Tile Crop Plots</h2>
+<p>Players can plant on larger plots for greater efficiency:</p>
+<table>
+<thead>
+<tr>
+<th>Plot Size</th>
+<th>Required Zone</th>
+<th>Yield Bonus</th>
+<th>Seed Cost</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1×1</td>
+<td>Any</td>
+<td>Base</td>
+<td>1 seed</td>
+</tr>
+<tr>
+<td>2×2</td>
+<td>Zone 2+</td>
+<td>+20%</td>
+<td>4 seeds</td>
+</tr>
+<tr>
+<td>3×3</td>
+<td>Zone 4+</td>
+<td>+50%</td>
+<td>9 seeds</td>
+</tr>
+<tr>
+<td>4×4</td>
+<td>Zone 6+</td>
+<td>+100%</td>
+<td>16 seeds</td>
+</tr>
+</tbody>
+</table>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="06-farm-overview.html"><span>◀</span><span><span class="nav-label">Previous</span>06 — Farm Overview</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="08-animal-husbandry.html"><span><span class="nav-label">Next</span>08 — Animal Husbandry</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

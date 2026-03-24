@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>23 — Suppliers & Shipments — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🚚 23 — Suppliers &amp; Shipments</h1>
+<p>The supplier system is the external supply chain that keeps the store stocked when farm production is insufficient or for items not produced on the farm. Shipments arrive by delivery truck on a timer.</p>
+<hr />
+<h2>🏭 Supplier Tiers</h2>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Unlock</th>
+<th>Products</th>
+<th>Delivery Time</th>
+<th>Cost per Shipment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Local Supplier</td>
+<td>Lv.1</td>
+<td>Basic food, beverages</td>
+<td>30 min</td>
+<td>100–300 coins</td>
+</tr>
+<tr>
+<td>Regional Supplier</td>
+<td>Lv.15</td>
+<td>Extended food, household</td>
+<td>1 hr</td>
+<td>300–600 coins</td>
+</tr>
+<tr>
+<td>National Supplier</td>
+<td>Lv.30</td>
+<td>Electronics, clothing basics</td>
+<td>2 hr</td>
+<td>600–1,200 coins</td>
+</tr>
+<tr>
+<td>Premium Supplier</td>
+<td>Lv.50</td>
+<td>Luxury items, specialty goods</td>
+<td>3 hr</td>
+<td>1,200–3,000 coins</td>
+</tr>
+<tr>
+<td>Global Supplier</td>
+<td>Lv.70</td>
+<td>Rare items, exotic goods</td>
+<td>4 hr</td>
+<td>3,000–8,000 coins</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🚛 Delivery Truck System</h2>
+<p>Delivery trucks bring shipments to the store:<br />
+- <strong>Default:</strong> 2 truck slots (2 simultaneous shipments in transit)<br />
+- Upgrades available: 3 / 4 / 5 truck slots (via coins or Cash)<br />
+- Each truck can carry up to 50 items per delivery<br />
+- Trucks have a <strong>cooldown</strong> of 30 minutes after unloading before reuse</p>
+<h3>Truck Upgrades:</h3>
+<table>
+<thead>
+<tr>
+<th>Upgrade</th>
+<th>Cost</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Extra Truck Slot</td>
+<td>10 Cash</td>
+<td>+1 concurrent shipment</td>
+</tr>
+<tr>
+<td>Bigger Truck</td>
+<td>5,000 coins</td>
+<td>+25 items per delivery</td>
+</tr>
+<tr>
+<td>Express Truck</td>
+<td>8 Cash</td>
+<td>−30 min all delivery times</td>
+</tr>
+<tr>
+<td>Fleet Upgrade</td>
+<td>3,000 coins</td>
+<td>All trucks +20% capacity</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📦 Shipment Process</h2>
+<ol>
+<li>Player opens the <strong>Supplier Panel</strong></li>
+<li>Selects supplier tier and items</li>
+<li>Pays coins upfront</li>
+<li>Truck dispatched → timer starts</li>
+<li>Notification when truck arrives</li>
+<li>Player accepts delivery → items go to stockroom</li>
+<li>Items placed on displays manually or by Delivery Runner</li>
+</ol>
+<h3>Shipment Repair:</h3>
+<p>If a storm hits while a shipment is in transit:<br />
+- 25% chance of damaged goods<br />
+- Damaged goods arrive at 50% quantity<br />
+- Player can pay <strong>1 Cash</strong> to repair/insure the shipment before it arrives</p>
+<hr />
+<h2>📋 Product Cards &amp; Shipments</h2>
+<p>Product Cards interact with the shipment system in four ways:<br />
+1. <strong>Instant Stock</strong> — Immediately fills a display without a truck delivery<br />
+2. <strong>Shipment Insurance</strong> — Protects next shipment from storm damage<br />
+3. <strong>Stockroom Upgrade</strong> — Permanently increases stockroom capacity by 10 slots<br />
+4. <strong>Fifth Display Unlock</strong> — Unlocks a bonus 5th display slot for a chosen aisle</p>
+<hr />
+<h2>⏰ Quick Delivery Cards</h2>
+<p>Quick Delivery Cards speed up shipment timers:<br />
+- Each card reduces 1 active shipment timer by <strong>1 hour</strong><br />
+- Multiple cards can be stacked on one shipment<br />
+- Earn: +5 per level-up, neighbour gifts, achievements</p>
+<hr />
+<h2>🤝 Supplier Relationships</h2>
+<p>Each supplier has a <strong>Relationship Score</strong> (0–100):<br />
+- Increases by ordering regularly (+5 per order)<br />
+- Decreases if shipments are cancelled (−10)<br />
+- High relationship (80+): 5% discount on all orders<br />
+- Max relationship (100): Access to exclusive supplier items not available otherwise</p>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="22-supply-chain.html"><span>◀</span><span><span class="nav-label">Previous</span>22 — Supply Chain</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="24-stockroom.html"><span><span class="nav-label">Next</span>24 — Stockroom</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

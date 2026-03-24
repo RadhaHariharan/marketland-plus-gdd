@@ -76,7 +76,7 @@
 
 ## 🚀 Quick Start
 
-1. **Browse online** → [GitHub Pages GDD](https://radhahariharan.github.io/marketland-plus-gdd/) for the full styled single-page document.
+1. **Browse online** → [GitHub Pages GDD](https://radhahariharan.github.io/marketland-plus-gdd/) — each section is its own page.
 2. **Browse by topic** → Use the Table of Contents above to jump to any section.
 3. **Start here** → Read [01-game-overview.md](docs/01-game-overview.md) then [02-core-game-loop.md](docs/02-core-game-loop.md).
 4. **Farm systems** → Explore the [farm/](docs/farm/) folder.
@@ -112,13 +112,14 @@
 
 ```
 marketland-plus-gdd/
-├── README.md              ← You are here
-├── index.html             ← Full GDD (GitHub Pages)
+├── README.md                ← You are here
+├── generate_html.py         ← Builds one HTML page per GDD section
+├── index.html               ← Navigation hub (GitHub Pages)
 ├── docs/
-│   ├── 01–05 Core systems
-│   ├── farm/   06–14 Farm systems
-│   ├── store/  15–21 Store systems
-│   └── systems/ 22–36 Game systems
+│   ├── 01–05 Core systems   (*.md + *.html per section)
+│   ├── farm/   06–14        (*.md + *.html per section)
+│   ├── store/  15–21        (*.md + *.html per section)
+│   └── systems/ 22–36       (*.md + *.html per section)
 └── .github/workflows/pages.yml
 ```
 

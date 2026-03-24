@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>32 — Special Events — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🎉 32 — Special Events</h1>
+<p>Special Events are time-limited in-game celebrations tied to real-world seasons and festivals. They bring exclusive content, boosted rewards, new customers, and special decorations to Marketland+.</p>
+<hr />
+<h2>📅 Annual Event Calendar</h2>
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Event</th>
+<th>Duration</th>
+<th>Key Features</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>March–April</td>
+<td>🌸 Bloom Festival</td>
+<td>14 days</td>
+<td>Cherry blossoms, Spring quests, Lavender boost</td>
+</tr>
+<tr>
+<td>June–July</td>
+<td>☀️ Beach Blast</td>
+<td>14 days</td>
+<td>Tropical theme, Tourist customer, cold drinks +60%</td>
+</tr>
+<tr>
+<td>September–October</td>
+<td>🍂 Harvest Festival</td>
+<td>14 days</td>
+<td>Pumpkin decor, all crops +10% coin, Harvest campaign available</td>
+</tr>
+<tr>
+<td>October</td>
+<td>🎃 Halloween Haunt</td>
+<td>10 days</td>
+<td>Spooky decor, Mystery customer rate 5×</td>
+</tr>
+<tr>
+<td>December</td>
+<td>❄️ Winter Wonderland</td>
+<td>21 days</td>
+<td>Snow, holiday decor, Gift Shopper customer</td>
+</tr>
+<tr>
+<td>February</td>
+<td>💕 Valentine's Market</td>
+<td>7 days</td>
+<td>Heart decor, couples visiting together</td>
+</tr>
+<tr>
+<td>Ongoing</td>
+<td>🌈 Rainbow Events</td>
+<td>Random, 30 min</td>
+<td>2× Farm Tokens, luxury customer +20%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌸 Bloom Festival (Spring)</h2>
+<p><strong>Duration:</strong> 14 days (March–April)<br />
+<strong>Theme:</strong> Nature's renewal, fresh starts</p>
+<h3>Event Features:</h3>
+<ul>
+<li><strong>Cherry Blossom Trees</strong> available as limited decorations (+60 LP)</li>
+<li><strong>Lavender boost</strong> — all lavender yield ×1.75 during event</li>
+<li><strong>Flower Fortune</strong> coin-op item available (180–280 coins/25 min)</li>
+<li><strong>Spring Collection</strong> appears in Collections panel</li>
+<li><strong>Event Quest Line:</strong> 10 spring-themed quests with exclusive rewards</li>
+</ul>
+<h3>Exclusive Customer (Spring): 🌸 Garden Party Guest</h3>
+<ul>
+<li>Budget: 400–650 coins</li>
+<li>LP Required: 5,000</li>
+<li>Only buys from Fresh displays</li>
+<li>Leaves a Lavender gift (5 FT) after each purchase</li>
+</ul>
+<hr />
+<h2>☀️ Beach Blast (Summer)</h2>
+<p><strong>Duration:</strong> 14 days (June–July)<br />
+<strong>Theme:</strong> Summer holiday, tropical vibes</p>
+<h3>Event Features:</h3>
+<ul>
+<li><strong>Tropical Decorations</strong> — beach umbrellas, palm trees, surfboards</li>
+<li><strong>Surf Simulator</strong> coin-op item (250–400 coins/35 min)</li>
+<li><strong>Tourist Customer</strong> (exclusive to Beach Blast): Budget 350–600 coins; buys refreshments, sunscreen, snacks</li>
+<li>Cold beverages sell at +60% during event</li>
+<li>Ice cream display (limited event display) available</li>
+</ul>
+<h3>Exclusive Customer: 🏖️ Tourist</h3>
+<ul>
+<li>Budget: 350–600 coins</li>
+<li>LP Required: 3,000</li>
+<li>Buys: Juices, smoothies, fresh produce, sunscreen</li>
+<li>Leaves camera icon (rare collection item)</li>
+</ul>
+<hr />
+<h2>🍂 Harvest Festival (Autumn)</h2>
+<p><strong>Duration:</strong> 14 days (September–October)<br />
+<strong>Theme:</strong> Bountiful harvest, community celebration</p>
+<h3>Event Features:</h3>
+<ul>
+<li><strong>Pumpkin decorations</strong>, scarecrows, hay bales</li>
+<li><strong>Harvest Festival Booth</strong> display available (farm-themed)</li>
+<li><strong>Harvest Mega Event</strong> campaign gets +20% bonus during this period</li>
+<li>All crops +10% coin on top of normal Autumn bonus = +20% total</li>
+<li><strong>Prize Wheel</strong> coin-op (300–500 coins/45 min)</li>
+<li>Exclusive Harvest Collection (8 items) with 2,000 coin reward</li>
+</ul>
+<h3>Special Rule: The Great Harvest</h3>
+<p>For 48 hours at the event peak:<br />
+- All farm production 3× speed<br />
+- Harvest Cards cost 0 (free) for those 48 hours<br />
+- Mass harvest achievement unlockable</p>
+<hr />
+<h2>🎃 Halloween Haunt</h2>
+<p><strong>Duration:</strong> 10 days (October)<br />
+<strong>Theme:</strong> Spooky mystery, treats</p>
+<h3>Event Features:</h3>
+<ul>
+<li><strong>Jack-o-Lanterns</strong> available (30 LP each)</li>
+<li><strong>Haunted Market Stand</strong> — spooky version of Farm Market Stand</li>
+<li>Mystery Shopper rate: 5× normal</li>
+<li>Spooky Customer: wears costume, pays normal + leaves trick-or-treat candy (collection item)</li>
+<li>All displays renamed with spooky names (cosmetic overlay)</li>
+<li>1 Cash reward for completing all 5 Halloween quests</li>
+</ul>
+<hr />
+<h2>❄️ Winter Wonderland</h2>
+<p><strong>Duration:</strong> 21 days (December)<br />
+<strong>Theme:</strong> Holiday magic, warmth, giving</p>
+<h3>Event Features:</h3>
+<ul>
+<li><strong>Christmas Tree</strong> (+80 LP) — most LP-efficient single decoration</li>
+<li><strong>Snow overlay</strong> on store and farm</li>
+<li><strong>Gift Dispenser</strong> coin-op (200–350 coins/30 min)</li>
+<li><strong>Gift Shopper</strong> exclusive customer: buys for others, double purchase rate</li>
+<li>Hot beverages: +50% during event</li>
+<li><strong>Gift Boxes</strong> as collectibles — given by neighbour visits</li>
+</ul>
+<h3>Exclusive Customer: 🎁 Gift Shopper</h3>
+<ul>
+<li>Budget: 300–500 coins</li>
+<li>Always buys 2 items per visit (one for themselves, one as gift)</li>
+<li>Leaves a wrapped gift (random card) after each visit</li>
+</ul>
+<hr />
+<h2>💕 Valentine's Market</h2>
+<p><strong>Duration:</strong> 7 days (February)<br />
+<strong>Theme:</strong> Romance, gifts, flowers</p>
+<h3>Event Features:</h3>
+<ul>
+<li>Heart decorations available (+25 LP)</li>
+<li><strong>Couples</strong> visit together (2 customers sharing 1 visit, double budget pooled)</li>
+<li>Chocolate and perfume displays earn +50% during event</li>
+<li>Limited display: <strong>Valentine's Gift Counter</strong> (farm flowers + chocolates)</li>
+</ul>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="31-mastery-stars.html"><span>◀</span><span><span class="nav-label">Previous</span>31 — Mastery Stars</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="33-achievements.html"><span><span class="nav-label">Next</span>33 — Achievements</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

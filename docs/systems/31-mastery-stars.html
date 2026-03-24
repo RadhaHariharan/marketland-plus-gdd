@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>31 — Mastery Stars — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>⭐ 31 — Mastery Stars</h1>
+<p>Mastery Stars are the long-term engagement system that rewards dedicated players for specialising in specific products, crops, and animals. There are two parallel mastery tracks: <strong>Store Mastery</strong> and <strong>Farm Mastery</strong>.</p>
+<hr />
+<h2>🏪 Store Mastery</h2>
+<p>Each display type earns mastery through <strong>total customer purchases</strong> from that display.</p>
+<table>
+<thead>
+<tr>
+<th>Mastery Level</th>
+<th>Purchases Required</th>
+<th>Bonus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>⭐ 1 Star</td>
+<td>100 purchases</td>
+<td>+5% coins per sale</td>
+</tr>
+<tr>
+<td>⭐⭐ 2 Stars</td>
+<td>500 purchases</td>
+<td>+10% coins, chance of bonus coins</td>
+</tr>
+<tr>
+<td>⭐⭐⭐ 3 Stars</td>
+<td>2,000 purchases</td>
+<td>+20% coins, exclusive display skin unlocked</td>
+</tr>
+</tbody>
+</table>
+<h3>Display Mastery Benefits Stack:</h3>
+<p>A Bread Shelf at 3-star mastery earns 20% more than a fresh Bread Shelf.<br />
+Combined with Farm Mode (+40%) and a Grand Sale campaign (+50%):<br />
+<strong>Total multiplier: 1.20 × 1.40 × 1.50 = 2.52× base value</strong></p>
+<hr />
+<h2>🌾 Farm Mastery</h2>
+<p>Farm Mastery covers crops, animals, and processing buildings (detailed in <a href="../farm/13-farm-mastery.html">13-farm-mastery.md</a>).</p>
+<h3>Farm Mastery Summary:</h3>
+<table>
+<thead>
+<tr>
+<th>Track</th>
+<th>Metric</th>
+<th>3-Star Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Crops</td>
+<td>Harvests</td>
+<td>300 per crop</td>
+</tr>
+<tr>
+<td>Animals</td>
+<td>Collections</td>
+<td>500 per animal</td>
+</tr>
+<tr>
+<td>Buildings</td>
+<td>Jobs completed</td>
+<td>500 per building</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌟 Combined Mastery Score</h2>
+<p>The <strong>Total Mastery Score</strong> combines store and farm mastery:<br />
+- 1 mastery star = 1 point<br />
+- Maximum possible stars: ~200 (70+ display types + 19 crops + 9 animals + 16 buildings) × 3 stars each</p>
+<h3>Mastery Rank Titles:</h3>
+<table>
+<thead>
+<tr>
+<th>Score</th>
+<th>Title</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0–25</td>
+<td>Trainee Shopkeeper</td>
+</tr>
+<tr>
+<td>26–50</td>
+<td>Junior Manager</td>
+</tr>
+<tr>
+<td>51–100</td>
+<td>Store Manager</td>
+</tr>
+<tr>
+<td>101–150</td>
+<td>Senior Manager</td>
+</tr>
+<tr>
+<td>151–200</td>
+<td>Area Director</td>
+</tr>
+<tr>
+<td>201–300</td>
+<td>Regional Executive</td>
+</tr>
+<tr>
+<td>301–400</td>
+<td>Master Merchant</td>
+</tr>
+<tr>
+<td>401–500</td>
+<td>Grand Master</td>
+</tr>
+<tr>
+<td>500+</td>
+<td>Legendary Tycoon</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎨 Mastery Skins</h2>
+<p>Reaching 3-star mastery on a display unlocks an exclusive <strong>display skin</strong> — a visual reskin that makes the display look premium/themed.</p>
+<table>
+<thead>
+<tr>
+<th>Display</th>
+<th>3-Star Skin</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bread Shelf</td>
+<td>Artisan Bakery Display</td>
+</tr>
+<tr>
+<td>Wine Rack</td>
+<td>Crystal Wine Cellar</td>
+</tr>
+<tr>
+<td>Luxury Fashion</td>
+<td>Gold-Trimmed Boutique</td>
+</tr>
+<tr>
+<td>Royal Feast Counter</td>
+<td>Royal Banquet Table</td>
+</tr>
+<tr>
+<td>Beer Fridge</td>
+<td>Craft Brewery Tap Wall</td>
+</tr>
+<tr>
+<td>Perfume Display</td>
+<td>Jewelled Perfume Cabinet</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📈 Mastery XP Acceleration</h2>
+<p>Higher mastery levels also speed up future leveling:<br />
+- Each 3-star display: +2% XP from all customer purchases<br />
+- Each 3-star crop: +1% XP from all harvests<br />
+- Full Farm Mastery (all 3 stars): +50 FT bonus per day<br />
+- Full Store Mastery (all 3 stars on all displays): +5% all coin earnings permanently</p>
+<hr />
+<h2>🏆 Mastery Achievements</h2>
+<table>
+<thead>
+<tr>
+<th>Achievement</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Star Pupil</td>
+<td>First display at 1 star</td>
+<td>50 XP</td>
+</tr>
+<tr>
+<td>Five Star Store</td>
+<td>3 stars on 10 displays</td>
+<td>1,000 XP + 5 Cash</td>
+</tr>
+<tr>
+<td>Master Farmer</td>
+<td>3 stars on 10 crops</td>
+<td>500 XP + 50 FT</td>
+</tr>
+<tr>
+<td>Old MacDonald</td>
+<td>All 9 animals at 1 star</td>
+<td>300 XP + 30 FT</td>
+</tr>
+<tr>
+<td>Supply Chain King</td>
+<td>5 farm-stocked displays at 2+ stars</td>
+<td>800 XP + 10 Cash</td>
+</tr>
+<tr>
+<td>Legendary Tycoon</td>
+<td>Total mastery score 500+</td>
+<td>10,000 XP + 50 Cash</td>
+</tr>
+</tbody>
+</table>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="30-luxury-points.html"><span>◀</span><span><span class="nav-label">Previous</span>30 — Luxury Points</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="32-special-events.html"><span><span class="nav-label">Next</span>32 — Special Events</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>27 — Quest System — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">⚙️ Systems</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>📋 27 — Quest System</h1>
+<p>The quest system provides structured goals that guide progression, reward consistent play, and introduce new mechanics. Three quest types keep the experience fresh: Daily Quests, Story Quests, and Farm Quests.</p>
+<hr />
+<h2>📅 Daily Quests</h2>
+<p>Daily Quests reset every 24 hours. Players receive <strong>5 daily quests</strong> each day:<br />
+- 3 Easy (quick tasks)<br />
+- 1 Medium (moderate effort)<br />
+- 1 Hard (significant effort)</p>
+<h3>Sample Daily Quests:</h3>
+<table>
+<thead>
+<tr>
+<th>Quest</th>
+<th>Type</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Restock 5 displays</td>
+<td>Easy</td>
+<td>100 coins + 5 QD Cards</td>
+</tr>
+<tr>
+<td>Serve 10 customers</td>
+<td>Easy</td>
+<td>150 coins + 5 Product Cards</td>
+</tr>
+<tr>
+<td>Harvest 3 crop types</td>
+<td>Easy</td>
+<td>50 FT + 3 Harvest Cards</td>
+</tr>
+<tr>
+<td>Earn 1,000 coins from sales</td>
+<td>Medium</td>
+<td>300 coins + 10 XP</td>
+</tr>
+<tr>
+<td>Complete 1 processing job</td>
+<td>Easy</td>
+<td>20 FT + 2 Harvest Cards</td>
+</tr>
+<tr>
+<td>Run a Flash Sale campaign</td>
+<td>Medium</td>
+<td>500 coins + 15 Shopper Cards</td>
+</tr>
+<tr>
+<td>Stock a Farm Mode display</td>
+<td>Easy</td>
+<td>100 coins + 5 FT</td>
+</tr>
+<tr>
+<td>Earn coins from 3 coin-op items</td>
+<td>Easy</td>
+<td>200 coins</td>
+</tr>
+<tr>
+<td>Have 3 displays active simultaneously</td>
+<td>Medium</td>
+<td>400 coins + 10 XP</td>
+</tr>
+<tr>
+<td>Achieve 4-star customer satisfaction</td>
+<td>Hard</td>
+<td>800 coins + 20 XP + 1 Cash</td>
+</tr>
+</tbody>
+</table>
+<h3>Daily Quest Streak Bonus:</h3>
+<table>
+<thead>
+<tr>
+<th>Streak</th>
+<th>Bonus</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 days</td>
+<td>+50% quest rewards</td>
+</tr>
+<tr>
+<td>7 days</td>
+<td>+100% + 1 Cash</td>
+</tr>
+<tr>
+<td>14 days</td>
+<td>+150% + 5 Harvest Cards + 1 Cash</td>
+</tr>
+<tr>
+<td>30 days</td>
+<td>+200% + Exclusive decoration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>📖 Story Quests</h2>
+<p>Story Quests guide the player through major milestones and introduce key features. They do not reset.</p>
+<h3>Story Quest Arc Chapters:</h3>
+<table>
+<thead>
+<tr>
+<th>Chapter</th>
+<th>Title</th>
+<th>Key Tasks</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Opening Day</td>
+<td>Place first display, earn first coins, hire first supplier</td>
+<td>500 coins + 10 XP</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Down on the Farm</td>
+<td>Plant first crop, harvest, send to store</td>
+<td>200 FT + 50 XP</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Growing Empire</td>
+<td>Unlock Zone 2, add 3 new displays</td>
+<td>1,000 coins + 100 XP</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Fresh &amp; Local</td>
+<td>Enable Farm Mode on 2 displays</td>
+<td>300 FT + 5 Harvest Cards</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Market Maestro</td>
+<td>Earn 5,000 coins in a single day</td>
+<td>2 Cash + 200 XP</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Animal Kingdom</td>
+<td>Place Chicken and Cow pens</td>
+<td>500 FT + 100 XP</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Processing Power</td>
+<td>Build the Bakery Oven, make bread</td>
+<td>500 coins + 5 Product Cards</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Campaign Launch</td>
+<td>Run your first campaign</td>
+<td>1,000 coins + 15 Shopper Cards</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Luxury Horizon</td>
+<td>Reach 1,000 LP</td>
+<td>5 Cash + 500 XP</td>
+</tr>
+<tr>
+<td>10</td>
+<td>The Full Chain</td>
+<td>Complete one full multi-step crafting chain</td>
+<td>10 Cash + 1,000 XP</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🌾 Farm Quests</h2>
+<p>Farm Quests are specific to the farm and reward Farm Tokens:</p>
+<h3>Sample Farm Quests:</h3>
+<table>
+<thead>
+<tr>
+<th>Quest</th>
+<th>Requirement</th>
+<th>Reward</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Planting Pro</td>
+<td>Plant 10 crop plots simultaneously</td>
+<td>50 FT</td>
+</tr>
+<tr>
+<td>Harvest Bounty</td>
+<td>Harvest 100 total crops</td>
+<td>100 FT</td>
+</tr>
+<tr>
+<td>Full House</td>
+<td>Have all animal pens occupied</td>
+<td>200 FT + 5 Cash</td>
+</tr>
+<tr>
+<td>Processing Master</td>
+<td>Complete 50 total processing jobs</td>
+<td>150 FT</td>
+</tr>
+<tr>
+<td>Chain Reaction</td>
+<td>Complete 3 multi-step crafting chains</td>
+<td>300 FT + 10 Harvest Cards</td>
+</tr>
+<tr>
+<td>Seasonal Farmer</td>
+<td>Harvest seasonal bonus crops 3 times</td>
+<td>100 FT</td>
+</tr>
+<tr>
+<td>Rainbow Chase</td>
+<td>Harvest during Rainbow weather</td>
+<td>50 FT + 5 Harvest Cards</td>
+</tr>
+<tr>
+<td>Farm Army</td>
+<td>Have 3 workers active simultaneously</td>
+<td>200 FT</td>
+</tr>
+<tr>
+<td>Green Thumb Star</td>
+<td>Earn 3 stars on any crop</td>
+<td>150 FT</td>
+</tr>
+<tr>
+<td>Animal Whisperer</td>
+<td>Achieve 100% happiness on 3 animal types</td>
+<td>250 FT + 5 Cash</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎯 Quest UI</h2>
+<ul>
+<li>Quest panel accessible from bottom navigation (📋 tab)</li>
+<li>Progress bars for active quests</li>
+<li>Completed quests show green checkmark and tap-to-claim button</li>
+<li>Story quest progress shown as a visual chapter map</li>
+<li>Farm quests on a separate sub-tab</li>
+</ul>
+<hr />
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="26-card-system.html"><span>◀</span><span><span class="nav-label">Previous</span>26 — Card System</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="28-collections.html"><span><span class="nav-label">Next</span>28 — Collections</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>
