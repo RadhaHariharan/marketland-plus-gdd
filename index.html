@@ -189,6 +189,94 @@
   .card .num { font-size: .75rem; color: var(--muted); }
   .card .title { font-weight: 600; margin-top: .15rem; }
 
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label {
+    color: var(--muted);
+    font-size: .9rem;
+    white-space: nowrap;
+  }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus {
+    border-color: var(--accent);
+  }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+
   @media (max-width: 600px) {
     .hero h1 { font-size: 1.8rem; }
     .nav-btn { max-width: 100%; }
@@ -208,7 +296,93 @@
       <span class="badge">📄 36 Sections</span>
     </div>
   </header>
-  <main style="max-width:var(--max-w);margin:0 auto;padding:0 1rem;">
+
+  <div class="xp-calc-box">
+    <h2>🧮 XP Calculator</h2>
+    <div class="xp-calc-row">
+      <label for="xp-input">Enter your total XP:</label>
+      <input type="number" id="xp-input" min="0" placeholder="e.g. 100">
+      <button class="xp-calc-btn" onclick="calcXP()">Calculate</button>
+    </div>
+    <div class="xp-calc-result" id="xp-result"></div>
+  </div>
+
+  <script>
+  function xpToReachLevel(n) {
+    if (n <= 1) return 0;
+    return Math.floor(50 * n * n + 150 * n - 200);
+  }
+
+  function getCurrentLevel(totalXP) {
+    if (totalXP <= 0) return 1;
+    return Math.floor((Math.sqrt(200 * totalXP + 62500) - 150) / 100);
+  }
+
+  function calcXP() {
+    var xpInputValue = document.getElementById('xp-input').value;
+    var totalXP = parseInt(xpInputValue, 10);
+    var resultEl = document.getElementById('xp-result');
+
+    if (isNaN(totalXP) || totalXP < 0) {
+      resultEl.innerHTML = '<span style="color:var(--accent)">⚠️ Please enter a valid non-negative XP value.</span>';
+      resultEl.classList.add('visible');
+      return;
+    }
+
+    var level = getCurrentLevel(totalXP);
+    var xpCurrentLevel = xpToReachLevel(level);
+    var xpNextLevel = xpToReachLevel(level + 1);
+    var xpNeeded = xpNextLevel - totalXP;
+    var xpInLevel = totalXP - xpCurrentLevel;
+    var xpRange = xpNextLevel - xpCurrentLevel;
+    var pct = Math.min(100, (xpInLevel / xpRange) * 100);
+    var pctStr = pct.toFixed(1);
+
+    // Build a 16-character progress bar (each segment = 100/16 = 6.25%)
+    var BAR_SEGMENTS = 16;
+    var filled = Math.round(pct / (100 / BAR_SEGMENTS));
+    var empty = BAR_SEGMENTS - filled;
+    var bar = '▓'.repeat(filled) + '░'.repeat(empty);
+
+    var sqrtVal = Math.sqrt(200 * totalXP + 62500).toFixed(2);
+    var ratio = ((parseFloat(sqrtVal) - 150) / 100).toFixed(4);
+    var nextLvl = level + 1;
+
+    var steps = [
+      'Step 1 — Find current level:',
+      `  level = floor( (sqrt(200 × ${totalXP} + 62500) − 150) / 100 )`,
+      `        = floor( (sqrt(${200 * totalXP} + 62500) − 150) / 100 )`,
+      `        = floor( (${sqrtVal} − 150) / 100 )`,
+      `        = floor( ${ratio} )`,
+      `        = ${level}`,
+      '',
+      `Step 2 — XP to reach Level ${nextLvl}:`,
+      `  XP_to_reach(${nextLvl}) = floor(50 × ${nextLvl}² + 150 × ${nextLvl} − 200)`,
+      `                   = ${xpNextLevel} XP`,
+      '',
+      'Step 3 — XP accumulated in current level:',
+      `  XP_in_level = ${totalXP} − ${xpCurrentLevel} = ${xpInLevel} XP`,
+      '',
+      'Step 4 — XP still needed:',
+      `  XP_needed = ${xpNextLevel} − ${totalXP} = ${xpNeeded} XP`
+    ].join('\n');
+
+    resultEl.innerHTML = `
+      <div>📊 <strong>Current Level: ${level}</strong></div>
+      <div>📈 XP to Next Level (Level ${nextLvl}): <strong>${xpNeeded} more XP needed</strong> (you have ${xpInLevel} / ${xpRange})</div>
+      <div class="xp-progress-bar"><div class="xp-progress-fill" style="width:${pct}%"></div></div>
+      <div style="color:var(--muted);font-size:.85rem">${bar}  ${pctStr}%</div>
+      <div class="xp-steps">${steps}</div>`;
+
+    resultEl.classList.add('visible');
+  }
+
+  document.getElementById('xp-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') calcXP();
+  });
+  </script>
+
+  <main style="max-width:var(--max-w);margin:0 auto;padding:0 1rem;margin-top:1.5rem;">
     <section class="section-group"><h2>🌐 Core</h2><div class="cards"><a class="card" href="docs/01-game-overview.html"><div class="num">01</div><div class="title">Game Overview</div></a>
 <a class="card" href="docs/02-core-game-loop.html"><div class="num">02</div><div class="title">Core Game Loop</div></a>
 <a class="card" href="docs/03-currency-system.html"><div class="num">03</div><div class="title">Currency System</div></a>
