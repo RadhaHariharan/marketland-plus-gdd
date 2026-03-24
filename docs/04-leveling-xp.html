@@ -194,6 +194,88 @@
     .nav-btn { max-width: 100%; }
     .page-nav { flex-direction: column; }
   }
+
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus { border-color: var(--accent); }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body>
@@ -317,6 +399,153 @@
 </tr>
 </tbody>
 </table>
+<hr />
+<h2>🧮 XP Formula &amp; Mathematical Calculations</h2>
+<h3>Master Formula — XP required to reach level <code>n</code> (cumulative from level 1)</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>XP_to_reach(n) = floor( 50 × n² + 150 × n − 200 )    for n ≥ 2
+XP_to_reach(1) = 0  (everyone starts at level 1 with 0 XP)
+</code></pre></div>
+
+<p><strong>Sample values:</strong><br />
+- XP to reach level 2 = floor(50×4 + 150×2 − 200) = floor(200 + 300 − 200) = <strong>300</strong><br />
+- XP to reach level 3 = floor(50×9 + 150×3 − 200) = floor(450 + 450 − 200) = <strong>700</strong><br />
+- XP to reach level 5 = floor(50×25 + 150×5 − 200) = floor(1250 + 750 − 200) = <strong>1,800</strong><br />
+- XP to reach level 10 = floor(50×100 + 150×10 − 200) = floor(5000 + 1500 − 200) = <strong>6,300</strong></p>
+<hr />
+<h3>Delta Formula — XP required to go from level <code>n</code> to level <code>n+1</code></h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>XP_delta(n<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">→</span><span style="color: #bbbbbb"> </span>n<span style="color: #666666">+1</span>)<span style="color: #bbbbbb"> </span>=<span style="color: #bbbbbb"> </span>XP_to_reach(n<span style="color: #666666">+1</span>)<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">−</span><span style="color: #bbbbbb"> </span>XP_to_reach(n)
+<span style="color: #bbbbbb">                  </span>=<span style="color: #bbbbbb"> </span>floor(<span style="color: #666666">50</span>(n<span style="color: #666666">+1</span>)²<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">150</span>(n<span style="color: #666666">+1</span>)<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">−</span><span style="color: #bbbbbb"> </span><span style="color: #666666">200</span>)<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">−</span><span style="color: #bbbbbb"> </span>floor(<span style="color: #666666">50</span>n²<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">150</span>n<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">−</span><span style="color: #bbbbbb"> </span><span style="color: #666666">200</span>)
+<span style="color: #bbbbbb">                  </span><span style="border: 1px solid #FF0000">≈</span><span style="color: #bbbbbb"> </span><span style="color: #666666">100</span>n<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">200</span><span style="color: #bbbbbb">   </span>(simplified<span style="color: #bbbbbb"> </span>linear<span style="color: #bbbbbb"> </span>approximation)
+</code></pre></div>
+
+<p>Each level costs approximately <strong>100 more XP</strong> than the one before it, giving the curve a steady ramp-up feel.</p>
+<hr />
+<h3>Reverse Formula — Given total XP, find current level</h3>
+<p>Starting from the master formula <code>XP = 50n² + 150n − 200</code>, rearranging as a quadratic in <code>n</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #666666">50</span>n²<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">150</span>n<span style="color: #bbbbbb"> </span><span style="border: 1px solid #FF0000">−</span><span style="color: #bbbbbb"> </span>(XP<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">200</span>)<span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>
+</code></pre></div>
+
+<p>Applying the quadratic formula (taking the positive root):</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>n = (−150 + sqrt(150² + 4 × 50 × (XP + 200))) / (2 × 50)
+  = (−150 + sqrt(22500 + 200 × (XP + 200))) / 100
+  = (−150 + sqrt(22500 + 200×XP + 40000)) / 100
+  = (sqrt(200×XP + 62500) − 150) / 100
+</code></pre></div>
+
+<p>Taking the floor gives the current level:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>level = floor( (sqrt(200 × XP + 62500) − 150) / 100 )
+</code></pre></div>
+
+<hr />
+<h3>📐 Worked Example — Player has 100 total XP</h3>
+<p><strong>Step 1 — Find current level:</strong></p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>level = floor( (sqrt(200 × 100 + 62500) − 150) / 100 )
+      = floor( (sqrt(20000 + 62500) − 150) / 100 )
+      = floor( (sqrt(82500) − 150) / 100 )
+      = floor( (287.23 − 150) / 100 )
+      = floor( 137.23 / 100 )
+      = floor( 1.3723 )
+      = 1
+</code></pre></div>
+
+<p>➡ <strong>Player is at Level 1</strong></p>
+<p><strong>Step 2 — XP required to reach Level 2:</strong></p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>XP_to_reach(2) = floor(50 × 2² + 150 × 2 − 200)
+               = floor(50 × 4 + 300 − 200)
+               = floor(200 + 300 − 200)
+               = floor(300)
+               = 300 XP
+</code></pre></div>
+
+<p><strong>Step 3 — XP already accumulated toward next level:</strong></p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>XP_in_current_level = 100 − XP_to_reach(1) = 100 − 0 = 100 XP
+</code></pre></div>
+
+<p><strong>Step 4 — XP still needed for next level:</strong></p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>XP_needed = XP_to_reach(2) − current_total_XP
+           = 300 − 100
+           = 200 XP
+</code></pre></div>
+
+<p>➡ <strong>Answer: Player is Level 1, needs 200 more XP to reach Level 2</strong> (has 100/300 XP = 33.3% of the way there).</p>
+<hr />
+<h3>📋 Reference Table — First 10 Levels</h3>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Cumulative XP to reach</th>
+<th>XP gap from previous level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>0</td>
+<td>—</td>
+</tr>
+<tr>
+<td>2</td>
+<td>300</td>
+<td>300</td>
+</tr>
+<tr>
+<td>3</td>
+<td>700</td>
+<td>400</td>
+</tr>
+<tr>
+<td>4</td>
+<td>1,200</td>
+<td>500</td>
+</tr>
+<tr>
+<td>5</td>
+<td>1,800</td>
+<td>600</td>
+</tr>
+<tr>
+<td>6</td>
+<td>2,500</td>
+<td>700</td>
+</tr>
+<tr>
+<td>7</td>
+<td>3,300</td>
+<td>800</td>
+</tr>
+<tr>
+<td>8</td>
+<td>4,200</td>
+<td>900</td>
+</tr>
+<tr>
+<td>9</td>
+<td>5,200</td>
+<td>1,000</td>
+</tr>
+<tr>
+<td>10</td>
+<td>6,300</td>
+<td>1,100</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>💻 Pseudocode Implementation</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">function</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">getCurrentLevel</span>(totalXP):
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #008000">floor</span>(<span style="color: #bbbbbb"> </span>(<span style="color: #008000">sqrt</span>(<span style="color: #666666">200</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>totalXP<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">62500</span>)<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span><span style="color: #666666">150</span>)<span style="color: #bbbbbb"> </span><span style="color: #666666">/</span><span style="color: #bbbbbb"> </span><span style="color: #666666">100</span><span style="color: #bbbbbb"> </span>)
+
+<span style="color: #008000; font-weight: bold">function</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">xpToReachLevel</span>(n):
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span>n<span style="color: #bbbbbb"> </span><span style="color: #666666">&lt;=</span><span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>:<span style="color: #bbbbbb"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #666666">0</span>
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span><span style="color: #008000">floor</span>(<span style="color: #666666">50</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>n<span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>n<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">150</span><span style="color: #bbbbbb"> </span><span style="color: #666666">*</span><span style="color: #bbbbbb"> </span>n<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span><span style="color: #666666">200</span>)
+
+<span style="color: #008000; font-weight: bold">function</span><span style="color: #bbbbbb"> </span><span style="color: #0000FF">xpNeededForNextLevel</span>(totalXP):
+<span style="color: #bbbbbb">    </span>currentLevel<span style="color: #bbbbbb"> </span>=<span style="color: #bbbbbb"> </span>getCurrentLevel(totalXP)
+<span style="color: #bbbbbb">    </span>nextLevelThreshold<span style="color: #bbbbbb"> </span>=<span style="color: #bbbbbb"> </span>xpToReachLevel(currentLevel<span style="color: #bbbbbb"> </span><span style="color: #666666">+</span><span style="color: #bbbbbb"> </span><span style="color: #666666">1</span>)
+<span style="color: #bbbbbb">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #bbbbbb"> </span>nextLevelThreshold<span style="color: #bbbbbb"> </span><span style="color: #666666">-</span><span style="color: #bbbbbb"> </span>totalXP
+</code></pre></div>
+
 <hr />
 <h2>🎁 Level-Up Rewards</h2>
 <p>Every level grants rewards from the following pool:</p>
