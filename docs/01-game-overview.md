@@ -51,7 +51,7 @@ The game uses layered progression: basic crops and simple displays are available
 ## 📱 Platform & Engine
 
 - **Primary Platform:** iOS & Android (mobile-first UI)
-- **Engine:** Unity (2D)
+- **Engine:** Unity (3D)
 - **Session Length:** 5–30 minutes (design supports both quick and long sessions)
 - **Play Style:** Active management + background processing
 
