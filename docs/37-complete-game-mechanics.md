@@ -169,35 +169,35 @@ XP_to_reach(1) = 0
 
 ### 🏭 Processing Buildings Master Table
 
-| Building | Unlock | Build Cost | Recipe | Inputs | Output Qty | Process Time | Output Sell Value | XP / Job | Queue (base) |
-|---------|--------|-----------|--------|--------|-----------|-------------|-----------------|---------|-------------|
-| 🏚️ Barn | Lv.1 | Free | Storage | — | 50 slots | — | — | — | 50 slots |
-| 🌿 Compost Shed | Lv.8 | 800 coins | Fertiliser | Animal Waste | 2 fertiliser | 30 min | Not sold directly | 5 XP | 2 slots |
-| 🍞 Bakery Oven | Lv.5 | 2,000 coins | Bread | 3 Wheat + 1 Egg | 2 Bread | 10 min | 45 coins/unit | 5 XP | 2 slots |
-| 🍞 Bakery Oven | Lv.5 | — | Muffins | 2 Wheat + 1 Egg + 1 Milk | 3 Muffins | 15 min | 60 coins/unit | 6 XP | — |
-| 🍞 Bakery Oven | Lv.5 | — | Croissants | 3 Wheat + 2 Milk + 1 Butter | 2 Croissants | 20 min | 85 coins/unit | 8 XP | — |
-| 🧀 Dairy Factory | Lv.12 | 3,500 coins | Cheese | 3 Milk | 1 Cheese | 20 min | 70 coins/unit | 6 XP | 2 slots |
-| 🧀 Dairy Factory | Lv.12 | — | Yoghurt | 2 Milk + 1 Sugar | 2 Yoghurt | 25 min | 55 coins/unit | 6 XP | — |
-| 🧀 Dairy Factory | Lv.12 | — | Butter | 4 Milk | 2 Butter | 15 min | 40 coins/unit | 5 XP | — |
-| 🍓 Jam Kitchen | Lv.14 | 3,000 coins | Jam | 3 Strawberry + 1 Sugar | 2 Jam | 15 min | 65 coins/unit | 6 XP | 2 slots |
-| 🍓 Jam Kitchen | Lv.14 | — | Jelly | 4 Grapes + 1 Sugar | 2 Jelly | 30 min | 80 coins/unit | 7 XP | — |
-| 🥤 Juice Press | Lv.16 | 3,000 coins | Tomato Juice | 4 Tomato | 3 Juice | 15 min | 35 coins/unit | 5 XP | 3 slots |
-| 🥤 Juice Press | Lv.16 | — | Grape Juice | 4 Grapes | 3 Juice | 15 min | 50 coins/unit | 6 XP | — |
-| 🥤 Juice Press | Lv.16 | — | Smoothie | 3 Strawberry + 2 Carrot | 2 Smoothie | 15 min | 65 coins/unit | 7 XP | — |
-| ☕ Roastery | Lv.18 | 4,000 coins | Roasted Coffee | 3 Coffee Beans | 2 Roasted Coffee | 25 min | 75 coins/unit | 8 XP | 2 slots |
-| 🍺 Brewery | Lv.32 | 10,000 coins | Craft Lager | 3 Hops + 2 Sugarcane + Yeast | 3 Bottles | 2 hr | 180 coins/bottle | 15 XP | 2 slots |
-| 🍺 Brewery | Lv.32 | — | Craft Stout | 4 Hops + 2 Sugarcane + Yeast | 2 Bottles | 2.5 hr | 220 coins/bottle | 18 XP | — |
-| 🍷 Winery | Lv.35 | 12,000 coins | Wine | 5 Grapes + 2 Sugar | 2 Bottles | 4 hr | 250 coins/bottle | 20 XP | 2 slots |
-| 🧴 Cosmetics Lab | Lv.40 | 15,000 coins | Skincare Cream | 2 Lavender + 2 Goat Milk + 1 Beeswax | 2 Cream | 1 hr | 130 coins/unit | 15 XP | 3 slots |
-| 🧵 Textile Mill | Lv.45 | 18,000 coins | Fabric | 4 Wool / 4 Cotton | 2 Fabric | 1.5 hr | 90 coins/fabric | 12 XP | 2 slots |
-| 🧵 Textile Mill | Lv.45 | — | Clothing | 3 Fabric | 1 Clothing | 2 hr | 180 coins/clothing | 15 XP | — |
-| 🍫 Chocolate Factory | Lv.50 | 20,000 coins | Artisan Chocolate | 2 Sugarcane + 1 Vanilla + 2 Milk | 3 Choc. | 45 min | 120 coins/unit | 15 XP | 3 slots |
-| 🍯 Honey Studio | Lv.62 | 12,000 coins | Luxury Honey | 3 Honey | 2 Luxury Honey | 30 min | 95 coins/unit | 10 XP | 3 slots |
-| 🍯 Honey Studio | Lv.62 | — | Candles | 2 Beeswax + 1 Honey | 3 Candles | 30 min | 80 coins/candle | 10 XP | — |
-| 🥃 Distillery | Lv.65 | 25,000 coins | Whiskey | 4 Grain + 2 Hops | 2 Bottles | 6 hr | 300 coins/bottle | 22 XP | 2 slots |
-| 🥃 Distillery | Lv.65 | — | Vodka | 4 Grapes | 2 Bottles | 6 hr | 280 coins/bottle | 20 XP | — |
-| 🌸 Perfume Atelier | Lv.70 | 30,000 coins | Luxury Perfume | 2 Lavender + 2 Orchid + 1 Vanilla | 1 Perfume | 3 hr | 400 coins/unit | 25 XP | 2 slots |
-| 🍽️ Gourmet Kitchen | Lv.80 | 40,000 coins | Luxury Meal | 1 Truffle + 1 Saffron + 1 Velvet | 2 Meals | 2 hr | 500 coins/meal | 25 XP | 2 slots |
+| Building | Unlock | Grid Size | Build Cost | Recipe | Inputs | Output Qty | Process Time | Output Sell Value | XP / Job | Queue (base) |
+|---------|--------|-----------|-----------|--------|--------|-----------|-------------|-----------------|---------|-------------|
+| 🏚️ Barn | Lv.1 | ⚠️ 3×3 | Free | Storage | — | 50 slots | — | — | — | 50 slots |
+| 🌿 Compost Shed | Lv.8 | ⚠️ 2×2 | 800 coins | Fertiliser | Animal Waste | 2 fertiliser | 30 min | Not sold directly | 5 XP | 2 slots |
+| 🍞 Bakery Oven | Lv.5 | ⚠️ 2×2 | 2,000 coins | Bread | 3 Wheat + 1 Egg | 2 Bread | 10 min | 45 coins/unit | 5 XP | 2 slots |
+| 🍞 Bakery Oven | Lv.5 | — | — | Muffins | 2 Wheat + 1 Egg + 1 Milk | 3 Muffins | 15 min | 60 coins/unit | 6 XP | — |
+| 🍞 Bakery Oven | Lv.5 | — | — | Croissants | 3 Wheat + 2 Milk + 1 Butter | 2 Croissants | 20 min | 85 coins/unit | 8 XP | — |
+| 🧀 Dairy Factory | Lv.12 | ⚠️ 3×2 | 3,500 coins | Cheese | 3 Milk | 1 Cheese | 20 min | 70 coins/unit | 6 XP | 2 slots |
+| 🧀 Dairy Factory | Lv.12 | — | — | Yoghurt | 2 Milk + 1 Sugar | 2 Yoghurt | 25 min | 55 coins/unit | 6 XP | — |
+| 🧀 Dairy Factory | Lv.12 | — | — | Butter | 4 Milk | 2 Butter | 15 min | 40 coins/unit | 5 XP | — |
+| 🍓 Jam Kitchen | Lv.14 | ⚠️ 2×2 | 3,000 coins | Jam | 3 Strawberry + 1 Sugar | 2 Jam | 15 min | 65 coins/unit | 6 XP | 2 slots |
+| 🍓 Jam Kitchen | Lv.14 | — | — | Jelly | 4 Grapes + 1 Sugar | 2 Jelly | 30 min | 80 coins/unit | 7 XP | — |
+| 🥤 Juice Press | Lv.16 | ⚠️ 2×2 | 3,000 coins | Tomato Juice | 4 Tomato | 3 Juice | 15 min | 35 coins/unit | 5 XP | 3 slots |
+| 🥤 Juice Press | Lv.16 | — | — | Grape Juice | 4 Grapes | 3 Juice | 15 min | 50 coins/unit | 6 XP | — |
+| 🥤 Juice Press | Lv.16 | — | — | Smoothie | 3 Strawberry + 2 Carrot | 2 Smoothie | 15 min | 65 coins/unit | 7 XP | — |
+| ☕ Roastery | Lv.18 | ⚠️ 2×2 | 4,000 coins | Roasted Coffee | 3 Coffee Beans | 2 Roasted Coffee | 25 min | 75 coins/unit | 8 XP | 2 slots |
+| 🍺 Brewery | Lv.32 | ⚠️ 3×3 | 10,000 coins | Craft Lager | 3 Hops + 2 Sugarcane + Yeast | 3 Bottles | 2 hr | 180 coins/bottle | 15 XP | 2 slots |
+| 🍺 Brewery | Lv.32 | — | — | Craft Stout | 4 Hops + 2 Sugarcane + Yeast | 2 Bottles | 2.5 hr | 220 coins/bottle | 18 XP | — |
+| 🍷 Winery | Lv.35 | ⚠️ 3×3 | 12,000 coins | Wine | 5 Grapes + 2 Sugar | 2 Bottles | 4 hr | 250 coins/bottle | 20 XP | 2 slots |
+| 🧴 Cosmetics Lab | Lv.40 | ⚠️ 3×2 | 15,000 coins | Skincare Cream | 2 Lavender + 2 Goat Milk + 1 Beeswax | 2 Cream | 1 hr | 130 coins/unit | 15 XP | 3 slots |
+| 🧵 Textile Mill | Lv.45 | ⚠️ 4×3 | 18,000 coins | Fabric | 4 Wool / 4 Cotton | 2 Fabric | 1.5 hr | 90 coins/fabric | 12 XP | 2 slots |
+| 🧵 Textile Mill | Lv.45 | — | — | Clothing | 3 Fabric | 1 Clothing | 2 hr | 180 coins/clothing | 15 XP | — |
+| 🍫 Chocolate Factory | Lv.50 | ⚠️ 3×3 | 20,000 coins | Artisan Chocolate | 2 Sugarcane + 1 Vanilla + 2 Milk | 3 Choc. | 45 min | 120 coins/unit | 15 XP | 3 slots |
+| 🍯 Honey Studio | Lv.62 | ⚠️ 2×2 | 12,000 coins | Luxury Honey | 3 Honey | 2 Luxury Honey | 30 min | 95 coins/unit | 10 XP | 3 slots |
+| 🍯 Honey Studio | Lv.62 | — | — | Candles | 2 Beeswax + 1 Honey | 3 Candles | 30 min | 80 coins/candle | 10 XP | — |
+| 🥃 Distillery | Lv.65 | ⚠️ 3×3 | 25,000 coins | Whiskey | 4 Grain + 2 Hops | 2 Bottles | 6 hr | 300 coins/bottle | 22 XP | 2 slots |
+| 🥃 Distillery | Lv.65 | — | — | Vodka | 4 Grapes | 2 Bottles | 6 hr | 280 coins/bottle | 20 XP | — |
+| 🌸 Perfume Atelier | Lv.70 | ⚠️ 3×2 | 30,000 coins | Luxury Perfume | 2 Lavender + 2 Orchid + 1 Vanilla | 1 Perfume | 3 hr | 400 coins/unit | 25 XP | 2 slots |
+| 🍽️ Gourmet Kitchen | Lv.80 | ⚠️ 4×3 | 40,000 coins | Luxury Meal | 1 Truffle + 1 Saffron + 1 Velvet | 2 Meals | 2 hr | 500 coins/meal | 25 XP | 2 slots |
 
 **Processing Building Upgrade Costs & Bonuses:**
 
