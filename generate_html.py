@@ -57,6 +57,7 @@ PAGES = [
     ("docs/systems/35-monetization.md",       "35 — Monetization",             "⚙️ Systems"),
     ("docs/systems/36-technical-systems.md",  "36 — Technical Systems",        "⚙️ Systems"),
     ("docs/37-complete-game-mechanics.md",     "37 — Complete Game Mechanics",  "📖 Reference"),
+    ("docs/38-postgresql-database.md",         "38 — PostgreSQL Database Design", "📖 Reference"),
 ]
 
 # ── Shared CSS ─────────────────────────────────────────────────────────────────
@@ -481,7 +482,7 @@ def build_index():
       <span class="badge">📱 Mobile-first</span>
       <span class="badge">⚡ No Energy System</span>
       <span class="badge">💎 No Paywall</span>
-      <span class="badge">📄 37 Sections</span>
+      <span class="badge">📄 38 Sections</span>
     </div>
   </header>
 
