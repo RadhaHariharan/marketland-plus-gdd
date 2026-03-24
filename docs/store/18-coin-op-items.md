@@ -55,6 +55,7 @@ Each coin-op item can be upgraded through **3 tiers**:
 ## 🎁 Special Coin-Op Events
 
 During seasonal events, limited coin-op items become available:
+
 | Event | Coin-Op Item | Earn Rate | Duration |
 |-------|-------------|---------|----------|
 | Winter Wonderland | ❄️ Gift Dispenser | 200–350 coins / 30 min | Winter season only |
