@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>38 — PostgreSQL Database Design — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus { border-color: var(--accent); }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">📖 Reference</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🗄️ 38 — PostgreSQL Database Design</h1>
+<blockquote>
+<p><em>Scalable to 10 Million Users</em></p>
+</blockquote>
+<p>This document covers the full backend/cloud database architecture for Marketland+, complementing the Unity-side technical design in <a href="systems/36-technical-systems.html">Technical Systems</a>. Every table maps directly to a game system described elsewhere in this GDD.</p>
+<hr />
+<h2>🐘 Why PostgreSQL</h2>
+<p>Marketland+ requires a relational database that can handle <strong>highly consistent wallet transactions</strong>, <strong>flexible per-player game state</strong>, and <strong>time-series analytics</strong> — all at mobile-game scale.</p>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>PostgreSQL Feature</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ACID wallet transactions (no duplicate rewards)</td>
+<td>Full ACID with row-level locking</td>
+</tr>
+<tr>
+<td>Flexible store/farm layout storage</td>
+<td>JSONB columns with GIN indexes</td>
+</tr>
+<tr>
+<td>Player data isolation for multi-tenant API</td>
+<td>Row-Level Security (RLS)</td>
+</tr>
+<tr>
+<td>10M player tables without full-table scans</td>
+<td>Table partitioning + BRIN indexes</td>
+</tr>
+<tr>
+<td>Time-series event analytics (crop harvests, purchases)</td>
+<td>TimescaleDB extension</td>
+</tr>
+<tr>
+<td>Proven game-backend scale</td>
+<td>Used by Discord, Twitch, and major live-service backends</td>
+</tr>
+</tbody>
+</table>
+<h3>Recommended Stack</h3>
+<ul>
+<li><strong>PostgreSQL 16+</strong> — primary database</li>
+<li><strong>PgBouncer</strong> — connection pooling (transaction mode, up to 10,000 logical connections)</li>
+<li><strong>Redis 7+</strong> — hot-state cache layer (wallets, active timers, leaderboards)</li>
+<li><strong>TimescaleDB</strong> — time-series extension for <code>player_events</code> analytics</li>
+<li><strong>pg_cron</strong> — scheduled jobs (partition creation, snapshot pruning, job archiving)</li>
+<li><strong>Flyway</strong> — versioned schema migrations</li>
+</ul>
+<hr />
+<h2>📐 Scaling Philosophy</h2>
+<h3>Design Principles for 10 Million Users</h3>
+<p>Marketland+'s write patterns are predictable and game-specific. At 10M active players:</p>
+<ul>
+<li><strong>Crop timers</strong> fire every 5–30 min per player → up to <strong>~2M timer completion events/hour</strong></li>
+<li><strong>Processing jobs</strong> complete every 10–60 min → up to <strong>~600K job events/hour</strong></li>
+<li><strong>Store purchases</strong> occur ~5 times per session → up to <strong>~500K purchase writes/hour</strong> at peak</li>
+<li><strong>Wallet updates</strong> accompany every meaningful action → highest-frequency write table</li>
+</ul>
+<p>These patterns demand a layered approach:</p>
+<h4>Horizontal Read Scaling</h4>
+<p>Streaming read replicas serve all read traffic. A single <strong>primary</strong> handles all writes; <strong>N read replicas</strong> handle reads. The game client reads from replicas for non-critical data (leaderboards, market listings) and always writes to primary.</p>
+<h4>Table Partitioning</h4>
+<p>All high-volume append-only tables (<code>player_events</code>, <code>save_snapshots</code>, <code>processing_jobs</code>) are partitioned:
+- <code>player_events</code> → <strong>range-partitioned by month</strong> (auto-created via pg_cron)
+- Large player-scoped tables → <strong>hash-partitioned by <code>player_id</code></strong> for even distribution</p>
+<h4>Connection Pooling</h4>
+<p>PgBouncer in <strong>transaction mode</strong> multiplexes thousands of short API requests over a small pool of real database connections. Recommended pool size: 200 real PG connections shared across 10,000 logical client connections.</p>
+<h4>Caching Layer (Redis)</h4>
+<p>Hot player state never hits PostgreSQL directly on read:
+- <code>player:{uuid}:wallet</code> — TTL 30 s, write-through on every wallet mutation
+- <code>player:{uuid}:timers</code> — sorted set keyed by expiry timestamp
+- Leaderboards — Redis sorted sets refreshed every 5 min from a read replica</p>
+<h4>Write Path</h4>
+<pre><code>API Server → validate → Redis write-through → PostgreSQL primary (async write-behind for non-critical; sync for wallet)
+</code></pre>
+<p>Wallet mutations are <strong>synchronous</strong> to PostgreSQL (ACID). Timer-state writes use <strong>async write-behind</strong> with a Redis journal to reduce primary load.</p>
+<h4>Sharding Strategy</h4>
+<p>Logical sharding by <code>player_id % N_shards</code> is prepared from day one via the <code>shard_key</code> generated column on the <code>players</code> table. This allows migration to <strong>Citus</strong> (distributed PostgreSQL) without an application-level rewrite.</p>
+<h4>JSONB for Flexible Data</h4>
+<ul>
+<li>Hot scalar fields (<code>level</code>, <code>coins</code>, <code>xp</code>) → <strong>proper columns</strong> with CHECK constraints and indexes</li>
+<li>Rarely-queried nested config (store layout tile metadata, settings) → <strong>JSONB columns</strong></li>
+<li>JSONB indexed with <strong>GIN</strong> for containment queries; BRIN on timestamps for range scans</li>
+</ul>
+<h3>Scale Milestones</h3>
+<table>
+<thead>
+<tr>
+<th>Players</th>
+<th>Infrastructure</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0 – 100 K</td>
+<td>1 primary, 1 replica, single PgBouncer, Redis single node</td>
+</tr>
+<tr>
+<td>100 K – 1 M</td>
+<td>1 primary, 2 replicas, Redis cluster, CDN for static assets</td>
+</tr>
+<tr>
+<td>1 M – 5 M</td>
+<td>Logical replication shards × 4, TimescaleDB for analytics, PgBouncer pool per shard</td>
+</tr>
+<tr>
+<td>5 M – 10 M</td>
+<td>Citus extension (distributed PG), 8 shards, multi-region read replicas, Redis Cluster × 3</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🏗️ Schema Design — Core Tables</h2>
+<p>All tables use <code>UUID</code> primary keys for <code>players</code> and <code>BIGSERIAL</code> for child rows. Foreign keys reference <code>players(player_id) ON DELETE CASCADE</code> so removing a player cleans up all data automatically.</p>
+<h3>players</h3>
+<pre><code class="language-sql">CREATE TABLE players (
+  player_id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  username         VARCHAR(32) NOT NULL UNIQUE,
+  email            VARCHAR(255) UNIQUE,
+  created_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_login_at    TIMESTAMPTZ,
+  level            SMALLINT NOT NULL DEFAULT 1 CHECK (level BETWEEN 1 AND 200),
+  xp               INTEGER NOT NULL DEFAULT 0,
+  -- Wallet (mirrors WalletData in Unity save)
+  coins            BIGINT NOT NULL DEFAULT 0 CHECK (coins &gt;= 0),
+  cash             INTEGER NOT NULL DEFAULT 0 CHECK (cash &gt;= 0),
+  farm_tokens      INTEGER NOT NULL DEFAULT 0 CHECK (farm_tokens &gt;= 0),
+  luxury_points    INTEGER NOT NULL DEFAULT 0 CHECK (luxury_points &gt;= 0),
+  -- Prestige
+  prestige_level   SMALLINT NOT NULL DEFAULT 0,
+  -- Meta
+  platform         VARCHAR(16),           -- 'ios' | 'android'
+  device_id        VARCHAR(128),
+  is_banned        BOOLEAN NOT NULL DEFAULT FALSE,
+  settings         JSONB NOT NULL DEFAULT '{}',
+  -- Shard routing hint (0-7) derived from first byte of UUID
+  shard_key        SMALLINT GENERATED ALWAYS AS (
+                     ('x' || substr(player_id::text, 1, 2))::bit(8)::int % 8
+                   ) STORED
+);
+
+CREATE INDEX idx_players_level      ON players(level);
+CREATE INDEX idx_players_last_login ON players(last_login_at);
+</code></pre>
+<blockquote>
+<p><strong>Wallet columns are kept as scalar integers</strong> (not JSONB) so they can be updated with atomic <code>UPDATE players SET coins = coins - $1 WHERE player_id = $2 AND coins &gt;= $1</code> patterns, preventing negative balances without application-level locking.</p>
+</blockquote>
+<hr />
+<h3>farm_state</h3>
+<p>One row per player. Mirrors <code>FarmData</code> from the Unity save system.</p>
+<pre><code class="language-sql">CREATE TABLE farm_state (
+  player_id        UUID PRIMARY KEY REFERENCES players(player_id) ON DELETE CASCADE,
+  unlocked_zones   SMALLINT[] NOT NULL DEFAULT '{0}',  -- zone indexes 0–9
+  active_season    VARCHAR(16) NOT NULL DEFAULT 'spring',  -- 'spring'|'summer'|'autumn'|'winter'
+  active_weather   VARCHAR(16),          -- 'rain'|'storm'|'heatwave'|'fog'|'rainbow'|NULL
+  weather_ends_at  TIMESTAMPTZ,
+  layout_snapshot  JSONB NOT NULL DEFAULT '{}',   -- lightweight tile metadata for quick load
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+</code></pre>
+<hr />
+<h3>crop_plots</h3>
+<p>One row per planted plot. Supports the 19 crops and 4 plot sizes (1×1 through 4×4) documented in <a href="farm/07-crop-system.html">Crop System</a>.</p>
+<pre><code class="language-sql">CREATE TABLE crop_plots (
+  plot_id          BIGSERIAL PRIMARY KEY,
+  player_id        UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  zone_index       SMALLINT NOT NULL,         -- 0–9 matching farm zones
+  grid_x           SMALLINT NOT NULL,
+  grid_y           SMALLINT NOT NULL,
+  plot_size        SMALLINT NOT NULL DEFAULT 1 CHECK (plot_size BETWEEN 1 AND 4),
+                                              -- 1=1x1, 2=2x2, 3=3x3, 4=4x4
+  crop_type        VARCHAR(32),               -- NULL = empty plot
+                                              -- e.g. 'wheat','tomato','exotic_orchid'
+  planted_at       TIMESTAMPTZ,
+  ready_at         TIMESTAMPTZ,               -- server-side completion timestamp
+  wilts_at         TIMESTAMPTZ,               -- NULL if crop cannot wilt
+  fertilised       BOOLEAN NOT NULL DEFAULT FALSE,
+  mastery_harvests INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (player_id, zone_index, grid_x, grid_y)
+);
+
+CREATE INDEX idx_crop_plots_player ON crop_plots(player_id);
+CREATE INDEX idx_crop_plots_ready  ON crop_plots(ready_at)
+  WHERE crop_type IS NOT NULL;               -- partial index: only planted plots
+</code></pre>
+<blockquote>
+<p>At 10M players with an average of 20 active plots each, this table holds ~200M rows. The partial index on <code>ready_at</code> keeps timer-completion queries fast — the server sweeps <code>WHERE ready_at &lt;= now() + interval '5 minutes'</code> per player to push notifications.</p>
+</blockquote>
+<hr />
+<h3>animal_pens</h3>
+<p>Supports the 9 animal types and 3 upgrade tiers documented in <a href="farm/08-animal-husbandry.html">Animal Husbandry</a>.</p>
+<pre><code class="language-sql">CREATE TABLE animal_pens (
+  pen_id              BIGSERIAL PRIMARY KEY,
+  player_id           UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  zone_index          SMALLINT NOT NULL,
+  animal_type         VARCHAR(32) NOT NULL,   -- 'chicken'|'cow'|'sheep'|'pig'|'bee'|
+                                              -- 'goat'|'duck'|'rabbit'|'deer'
+  capacity            SMALLINT NOT NULL DEFAULT 2,
+  current_count       SMALLINT NOT NULL DEFAULT 0,
+  upgrade_tier        SMALLINT NOT NULL DEFAULT 1 CHECK (upgrade_tier BETWEEN 1 AND 3),
+  happiness           SMALLINT NOT NULL DEFAULT 100 CHECK (happiness BETWEEN 0 AND 100),
+  next_collect_at     TIMESTAMPTZ,
+  mastery_collections INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX idx_animal_pens_player ON animal_pens(player_id);
+</code></pre>
+<hr />
+<h3>processing_jobs</h3>
+<p>Tracks active and completed jobs for all 16 processing buildings documented in <a href="farm/09-processing-buildings.html">Processing Buildings</a>.</p>
+<pre><code class="language-sql">CREATE TABLE processing_jobs (
+  job_id          BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  building_type   VARCHAR(32) NOT NULL,   -- 'barn'|'dairy'|'bakery'|'juicer'|
+                                          -- 'cannery'|'gourmet_kitchen' etc.
+  recipe          VARCHAR(64) NOT NULL,   -- e.g. 'wheat_flour', 'strawberry_jam'
+  queued_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  starts_at       TIMESTAMPTZ NOT NULL,
+  finishes_at     TIMESTAMPTZ NOT NULL,
+  is_complete     BOOLEAN NOT NULL DEFAULT FALSE,
+  output_qty      SMALLINT NOT NULL,
+  xp_reward       SMALLINT NOT NULL
+);
+
+CREATE INDEX idx_jobs_player_active ON processing_jobs(player_id, finishes_at)
+  WHERE NOT is_complete;
+CREATE INDEX idx_jobs_finishes      ON processing_jobs(finishes_at)
+  WHERE NOT is_complete;
+</code></pre>
+<hr />
+<h3>store_state</h3>
+<p>One row per player. Mirrors <code>StoreData</code> from the Unity save system.</p>
+<pre><code class="language-sql">CREATE TABLE store_state (
+  player_id        UUID PRIMARY KEY REFERENCES players(player_id) ON DELETE CASCADE,
+  unlocked_zones   SMALLINT[] NOT NULL DEFAULT '{1}',  -- zone indexes 1–8
+  active_campaign  VARCHAR(32),           -- 'flash_sale'|'double_points'|
+                                          -- 'fresh_market'|'luxury_event'|'vip_night'|NULL
+  campaign_ends_at TIMESTAMPTZ,
+  floor_type       VARCHAR(32) NOT NULL DEFAULT 'basic_tile',
+  wall_type        VARCHAR(32) NOT NULL DEFAULT 'basic_wall',
+  layout_snapshot  JSONB NOT NULL DEFAULT '{}',   -- display placement metadata
+  updated_at       TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+</code></pre>
+<hr />
+<h3>displays</h3>
+<p>One row per placed display. Supports 70+ display types across 8 categories documented in <a href="store/17-displays-all.html">Displays — All Categories</a>.</p>
+<pre><code class="language-sql">CREATE TABLE displays (
+  display_id      BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  display_type    VARCHAR(64) NOT NULL,   -- e.g. 'bread_shelf', 'premium_cheese_case'
+  zone_index      SMALLINT NOT NULL,
+  grid_x          SMALLINT NOT NULL,
+  grid_y          SMALLINT NOT NULL,
+  supply_mode     VARCHAR(16) NOT NULL DEFAULT 'supplier',
+                                          -- 'farm'|'supplier'|'hybrid'
+  stock_qty       SMALLINT NOT NULL DEFAULT 0,
+  max_capacity    SMALLINT NOT NULL,
+  upgrade_tier    SMALLINT NOT NULL DEFAULT 1,
+  mastery_stars   SMALLINT NOT NULL DEFAULT 0 CHECK (mastery_stars BETWEEN 0 AND 3),
+  UNIQUE (player_id, zone_index, grid_x, grid_y)
+);
+
+CREATE INDEX idx_displays_player ON displays(player_id);
+</code></pre>
+<hr />
+<h3>inventory</h3>
+<p>Unified barn + stockroom inventory. The <code>location</code> discriminator maps to the <code>ItemOrigin</code> flag in the Unity <code>ItemData</code> struct.</p>
+<pre><code class="language-sql">CREATE TABLE inventory (
+  inventory_id    BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  location        VARCHAR(16) NOT NULL CHECK (location IN ('barn', 'stockroom')),
+  item_type       VARCHAR(64) NOT NULL,   -- e.g. 'wheat', 'whole_milk', 'strawberry_jam'
+  quantity        INTEGER NOT NULL DEFAULT 0 CHECK (quantity &gt;= 0),
+  is_fresh        BOOLEAN NOT NULL DEFAULT FALSE,  -- 🌿 Fresh tag from farm origin
+  origin          VARCHAR(16) NOT NULL DEFAULT 'supplier'
+                    CHECK (origin IN ('farm', 'supplier')),
+  harvested_at    TIMESTAMPTZ,
+  UNIQUE (player_id, location, item_type, is_fresh)
+);
+
+CREATE INDEX idx_inventory_player ON inventory(player_id, location);
+</code></pre>
+<hr />
+<h3>quests</h3>
+<p>Tracks all three quest types — daily, story, and farm — documented in <a href="systems/27-quest-system.html">Quest System</a>.</p>
+<pre><code class="language-sql">CREATE TABLE quests (
+  quest_id        BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  quest_type      VARCHAR(16) NOT NULL CHECK (quest_type IN ('daily', 'story', 'farm')),
+  quest_key       VARCHAR(64) NOT NULL,   -- e.g. 'daily_harvest_wheat_10'
+  progress        INTEGER NOT NULL DEFAULT 0,
+  target          INTEGER NOT NULL,
+  is_complete     BOOLEAN NOT NULL DEFAULT FALSE,
+  completed_at    TIMESTAMPTZ,
+  expires_at      TIMESTAMPTZ,            -- non-NULL for daily quests (midnight reset)
+  xp_reward       SMALLINT NOT NULL,
+  UNIQUE (player_id, quest_key, expires_at)
+);
+
+CREATE INDEX idx_quests_player_active ON quests(player_id)
+  WHERE NOT is_complete;
+</code></pre>
+<hr />
+<h3>player_cards</h3>
+<p>Tracks all 4 card types — Shopper, Quick Delivery, Product, and Harvest — documented in <a href="systems/26-card-system.html">Card System</a>.</p>
+<pre><code class="language-sql">CREATE TABLE player_cards (
+  card_id         BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  card_type       VARCHAR(32) NOT NULL
+                    CHECK (card_type IN ('shopper', 'quick_delivery', 'product', 'harvest')),
+  card_key        VARCHAR(64) NOT NULL,   -- e.g. 'shopper_bulk_buyer_rare'
+  acquired_at     TIMESTAMPTZ NOT NULL DEFAULT now(),
+  used_at         TIMESTAMPTZ,
+  is_active       BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX idx_cards_player ON player_cards(player_id, card_type);
+</code></pre>
+<hr />
+<h3>achievements</h3>
+<p>Tracks progress against all achievements documented in <a href="systems/33-achievements.html">Achievements</a>.</p>
+<pre><code class="language-sql">CREATE TABLE achievements (
+  achievement_id  BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  achievement_key VARCHAR(64) NOT NULL,   -- e.g. 'harvest_1000_wheat'
+  progress        INTEGER NOT NULL DEFAULT 0,
+  is_unlocked     BOOLEAN NOT NULL DEFAULT FALSE,
+  unlocked_at     TIMESTAMPTZ,
+  UNIQUE (player_id, achievement_key)
+);
+</code></pre>
+<hr />
+<h3>mastery_records</h3>
+<p>Tracks 3-star mastery for crops, animals, processing buildings, and store displays as described in <a href="farm/13-farm-mastery.html">Farm Mastery</a> and <a href="systems/31-mastery-stars.html">Mastery Stars</a>.</p>
+<pre><code class="language-sql">CREATE TABLE mastery_records (
+  mastery_id      BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  subject_type    VARCHAR(16) NOT NULL
+                    CHECK (subject_type IN ('crop', 'animal', 'building', 'store_display')),
+  subject_key     VARCHAR(64) NOT NULL,   -- e.g. 'wheat', 'chicken', 'bakery'
+  star_level      SMALLINT NOT NULL DEFAULT 0 CHECK (star_level BETWEEN 0 AND 3),
+  action_count    INTEGER NOT NULL DEFAULT 0,
+  UNIQUE (player_id, subject_type, subject_key)
+);
+</code></pre>
+<hr />
+<h3>collection_progress</h3>
+<p>Tracks the 8 collection sets documented in <a href="systems/28-collections.html">Collections</a>.</p>
+<pre><code class="language-sql">CREATE TABLE collection_progress (
+  collection_id   BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  collection_key  VARCHAR(64) NOT NULL,   -- e.g. 'harvest_bounty', 'luxury_pantry'
+  items_collected JSONB NOT NULL DEFAULT '[]',  -- array of collected item keys
+  is_complete     BOOLEAN NOT NULL DEFAULT FALSE,
+  completed_at    TIMESTAMPTZ,
+  UNIQUE (player_id, collection_key)
+);
+</code></pre>
+<hr />
+<h3>shipments</h3>
+<p>Tracks external supplier orders documented in <a href="systems/23-suppliers-shipments.html">Suppliers &amp; Shipments</a>.</p>
+<pre><code class="language-sql">CREATE TABLE shipments (
+  shipment_id     BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  supplier_key    VARCHAR(64) NOT NULL,   -- e.g. 'regional_dairy', 'fresh_imports'
+  items           JSONB NOT NULL,         -- [{item_type, qty, cost_coins}]
+  ordered_at      TIMESTAMPTZ NOT NULL DEFAULT now(),
+  arrives_at      TIMESTAMPTZ NOT NULL,
+  is_received     BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX idx_shipments_arrives ON shipments(arrives_at)
+  WHERE NOT is_received;
+</code></pre>
+<hr />
+<h3>supply_lane_queue</h3>
+<p>Tracks in-transit farm-to-store transfers via the Supply Lane documented in <a href="systems/22-supply-chain.html">Supply Chain</a>.</p>
+<pre><code class="language-sql">CREATE TABLE supply_lane_queue (
+  lane_id         BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  item_type       VARCHAR(64) NOT NULL,
+  quantity        SMALLINT NOT NULL,
+  is_fresh        BOOLEAN NOT NULL DEFAULT TRUE,   -- always TRUE for farm-origin transfers
+  dispatched_at   TIMESTAMPTZ NOT NULL DEFAULT now(),
+  arrives_at      TIMESTAMPTZ NOT NULL,
+  is_delivered    BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+CREATE INDEX idx_supply_lane_arrives ON supply_lane_queue(arrives_at)
+  WHERE NOT is_delivered;
+</code></pre>
+<hr />
+<h3>social_neighbours</h3>
+<p>Tracks the neighbour/friend graph for social gifting documented across the social systems.</p>
+<pre><code class="language-sql">CREATE TABLE social_neighbours (
+  id              BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  neighbour_id    UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  added_at        TIMESTAMPTZ NOT NULL DEFAULT now(),
+  last_gift_sent  TIMESTAMPTZ,
+  UNIQUE (player_id, neighbour_id),
+  CHECK (player_id &lt;&gt; neighbour_id)   -- prevent self-friendship
+);
+
+CREATE INDEX idx_neighbours_player    ON social_neighbours(player_id);
+CREATE INDEX idx_neighbours_neighbour ON social_neighbours(neighbour_id);
+</code></pre>
+<hr />
+<h3>farm_market_listings</h3>
+<p>Tracks player-to-player farm market stand listings.</p>
+<pre><code class="language-sql">CREATE TABLE farm_market_listings (
+  listing_id      BIGSERIAL PRIMARY KEY,
+  seller_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  item_type       VARCHAR(64) NOT NULL,
+  quantity        SMALLINT NOT NULL CHECK (quantity &gt; 0),
+  price_coins     INTEGER NOT NULL CHECK (price_coins &gt; 0),
+  listed_at       TIMESTAMPTZ NOT NULL DEFAULT now(),
+  expires_at      TIMESTAMPTZ NOT NULL,
+  is_sold         BOOLEAN NOT NULL DEFAULT FALSE
+);
+
+-- Compound partial index: only unsold listings, sorted by cheapest first per item
+CREATE INDEX idx_market_active ON farm_market_listings(item_type, price_coins)
+  WHERE NOT is_sold;
+</code></pre>
+<hr />
+<h3>player_events (time-series, partitioned by month)</h3>
+<p>Append-only audit/analytics table for every meaningful player action. At 10M players with ~50 events/day each, this generates <strong>~500M rows/day</strong> — managed entirely through monthly range partitions and TimescaleDB compression.</p>
+<pre><code class="language-sql">CREATE TABLE player_events (
+  event_id        BIGSERIAL,
+  player_id       UUID NOT NULL,
+  event_type      VARCHAR(64) NOT NULL,   -- 'crop_harvested'|'purchase'|'quest_complete' etc.
+  event_data      JSONB,                  -- flexible payload per event type
+  occurred_at     TIMESTAMPTZ NOT NULL DEFAULT now()
+) PARTITION BY RANGE (occurred_at);
+
+-- Initial monthly partition (pg_cron creates future partitions automatically)
+CREATE TABLE player_events_2026_03 PARTITION OF player_events
+  FOR VALUES FROM ('2026-03-01') TO ('2026-04-01');
+
+CREATE INDEX idx_events_player_time ON player_events(player_id, occurred_at DESC);
+CREATE INDEX idx_events_type_time   ON player_events(event_type, occurred_at DESC);
+</code></pre>
+<hr />
+<h3>save_snapshots</h3>
+<p>Cloud save snapshots. A trigger enforces the <strong>last-5-per-player</strong> retention policy described in the <a href="systems/36-technical-systems.html">Technical Systems</a> save section.</p>
+<pre><code class="language-sql">CREATE TABLE save_snapshots (
+  snapshot_id     BIGSERIAL PRIMARY KEY,
+  player_id       UUID NOT NULL REFERENCES players(player_id) ON DELETE CASCADE,
+  version         VARCHAR(16) NOT NULL,          -- Unity client version e.g. '3.0.1'
+  snapshot_data   JSONB NOT NULL,                -- full SaveData JSON blob
+  checksum        VARCHAR(64) NOT NULL,          -- SHA-256 of snapshot_data
+  created_at      TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_snapshots_player ON save_snapshots(player_id, created_at DESC);
+</code></pre>
+<h4>Retention Trigger (keep last 5 per player)</h4>
+<pre><code class="language-sql">CREATE OR REPLACE FUNCTION prune_old_snapshots()
+RETURNS TRIGGER LANGUAGE plpgsql AS $$
+BEGIN
+  DELETE FROM save_snapshots
+  WHERE player_id = NEW.player_id
+    AND snapshot_id NOT IN (
+      SELECT snapshot_id
+      FROM save_snapshots
+      WHERE player_id = NEW.player_id
+      ORDER BY created_at DESC
+      LIMIT 5
+    );
+  RETURN NEW;
+END;
+$$;
+
+CREATE TRIGGER trg_prune_snapshots
+  AFTER INSERT ON save_snapshots
+  FOR EACH ROW EXECUTE FUNCTION prune_old_snapshots();
+</code></pre>
+<hr />
+<h2>🔗 Relationships Diagram</h2>
+<pre><code class="language-mermaid">erDiagram
+    players ||--|| farm_state : &quot;has&quot;
+    players ||--|| store_state : &quot;has&quot;
+    players ||--o{ crop_plots : &quot;owns&quot;
+    players ||--o{ animal_pens : &quot;owns&quot;
+    players ||--o{ processing_jobs : &quot;queues&quot;
+    players ||--o{ displays : &quot;places&quot;
+    players ||--o{ inventory : &quot;holds&quot;
+    players ||--o{ quests : &quot;tracks&quot;
+    players ||--o{ player_cards : &quot;collects&quot;
+    players ||--o{ achievements : &quot;earns&quot;
+    players ||--o{ mastery_records : &quot;builds&quot;
+    players ||--o{ collection_progress : &quot;completes&quot;
+    players ||--o{ shipments : &quot;orders&quot;
+    players ||--o{ supply_lane_queue : &quot;transfers&quot;
+    players ||--o{ social_neighbours : &quot;friends&quot;
+    players ||--o{ farm_market_listings : &quot;lists&quot;
+    players ||--o{ player_events : &quot;generates&quot;
+    players ||--o{ save_snapshots : &quot;saves&quot;
+</code></pre>
+<hr />
+<h2>🔍 Common Query Patterns</h2>
+<h3>1 — Load Player Dashboard</h3>
+<p>Fetches everything needed for the initial game load screen in a single round-trip.</p>
+<pre><code class="language-sql">SELECT
+  p.player_id, p.username, p.level, p.xp,
+  p.coins, p.cash, p.farm_tokens, p.luxury_points,
+  p.prestige_level, p.settings,
+  fs.unlocked_zones  AS farm_zones,
+  fs.active_season,
+  fs.active_weather,
+  fs.weather_ends_at,
+  ss.unlocked_zones  AS store_zones,
+  ss.active_campaign,
+  ss.campaign_ends_at,
+  ss.floor_type,
+  ss.wall_type
+FROM   players    p
+JOIN   farm_state fs USING (player_id)
+JOIN   store_state ss USING (player_id)
+WHERE  p.player_id = $1;
+</code></pre>
+<p>The hot-path result is cached in Redis at <code>player:{uuid}:dashboard</code> with TTL 30 s.</p>
+<hr />
+<h3>2 — Get Crop Timers Due Soon</h3>
+<p>Used by the server-side notification job and the Unity client to refresh the timer HUD.</p>
+<pre><code class="language-sql">SELECT
+  plot_id, zone_index, grid_x, grid_y, crop_type,
+  ready_at, wilts_at, fertilised
+FROM   crop_plots
+WHERE  player_id = $1
+  AND  crop_type IS NOT NULL
+  AND  ready_at  &lt;= now() + INTERVAL '5 minutes'
+ORDER BY ready_at ASC;
+</code></pre>
+<p>Hits the partial index <code>idx_crop_plots_ready</code> (only rows with <code>crop_type IS NOT NULL</code>).</p>
+<hr />
+<h3>3 — Check Completed Processing Jobs</h3>
+<p>Polled by the API when a player opens the farm view; also runs server-side on a 1-minute cron.</p>
+<pre><code class="language-sql">SELECT
+  job_id, building_type, recipe, finishes_at, output_qty, xp_reward
+FROM   processing_jobs
+WHERE  player_id  = $1
+  AND  finishes_at &lt;= now()
+  AND  NOT is_complete
+ORDER BY finishes_at ASC;
+</code></pre>
+<p>Hits the partial index <code>idx_jobs_player_active</code>.</p>
+<hr />
+<h3>4 — Get Active Daily Quests</h3>
+<p>Returns current day's uncompleted daily quests for the Quest panel.</p>
+<pre><code class="language-sql">SELECT
+  quest_id, quest_key, progress, target,
+  expires_at, xp_reward
+FROM   quests
+WHERE  player_id  = $1
+  AND  quest_type = 'daily'
+  AND  expires_at  &gt; now()
+  AND  NOT is_complete
+ORDER BY xp_reward DESC;
+</code></pre>
+<hr />
+<h3>5 — Global Leaderboard Top 100 by Level</h3>
+<p><strong>Never runs against PostgreSQL on a hot path.</strong> The result is pre-computed into a Redis sorted set and refreshed every 5 minutes from a read replica.</p>
+<pre><code class="language-sql">-- Runs on read replica every 5 minutes, result pushed to Redis
+SELECT player_id, username, level, xp, prestige_level
+FROM   players
+WHERE  NOT is_banned
+ORDER BY level DESC, xp DESC, prestige_level DESC
+LIMIT  100;
+</code></pre>
+<p>Redis key: <code>leaderboard:level:top100</code> — a sorted set with <code>level * 1e9 + xp</code> as the score.</p>
+<hr />
+<h3>6 — Farm Market Listings for an Item</h3>
+<p>Returns the cheapest unsold, unexpired listings for a given item type.</p>
+<pre><code class="language-sql">SELECT
+  listing_id, seller_id, quantity, price_coins, listed_at, expires_at
+FROM   farm_market_listings
+WHERE  item_type   = $1
+  AND  NOT is_sold
+  AND  expires_at  &gt; now()
+ORDER BY price_coins ASC
+LIMIT  20;
+</code></pre>
+<p>Hits the compound partial index <code>idx_market_active</code>.</p>
+<hr />
+<h2>⚡ Caching Strategy with Redis</h2>
+<pre><code>Game Client ──► API Server ──► Redis (cache hit?) ──► Response
+                                     │
+                                  cache miss
+                                     │
+                                     ▼
+                            PostgreSQL replica
+                                     │
+                             fill Redis cache
+                                     │
+                                     ▼
+                                  Response
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>Cache Key Pattern</th>
+<th>Structure</th>
+<th>TTL</th>
+<th>Write Policy</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>player:{uuid}:wallet</code></td>
+<td>Hash — coins/cash/tokens/lp</td>
+<td>30 s</td>
+<td>Write-through (sync)</td>
+</tr>
+<tr>
+<td><code>player:{uuid}:level</code></td>
+<td>String</td>
+<td>60 s</td>
+<td>Write-through</td>
+</tr>
+<tr>
+<td><code>player:{uuid}:timers</code></td>
+<td>Sorted set (score = UNIX expiry)</td>
+<td>5 min</td>
+<td>Write-through on plant/start</td>
+</tr>
+<tr>
+<td><code>player:{uuid}:dashboard</code></td>
+<td>JSON string</td>
+<td>30 s</td>
+<td>Write-through on login</td>
+</tr>
+<tr>
+<td><code>leaderboard:level:top100</code></td>
+<td>Sorted set</td>
+<td>5 min</td>
+<td>Async refresh from replica</td>
+</tr>
+<tr>
+<td><code>market:{item_type}:listings</code></td>
+<td>JSON string</td>
+<td>60 s</td>
+<td>Invalidate on new listing/sale</td>
+</tr>
+<tr>
+<td><code>session:{token}</code></td>
+<td>Hash — player_id/platform/exp</td>
+<td>Session TTL</td>
+<td>Write on auth, delete on logout</td>
+</tr>
+</tbody>
+</table>
+<h3>Redis Write-Through Pattern for Wallet</h3>
+<pre><code>POST /v1/wallet/spend
+  → Acquire Redis lock:  SET lock:wallet:{uuid} 1 NX EX 5
+  → Read current wallet: HGETALL player:{uuid}:wallet
+  → Validate balance
+  → BEGIN TRANSACTION (PostgreSQL)
+      UPDATE players SET coins = coins - $amount WHERE player_id = $uuid AND coins &gt;= $amount
+      INSERT INTO player_events (player_id, event_type, event_data) VALUES (...)
+    COMMIT
+  → HSET player:{uuid}:wallet coins {new_value}
+  → Release lock: DEL lock:wallet:{uuid}
+</code></pre>
+<p>This ensures the database is the source of truth for all wallet mutations, with Redis serving as the read cache.</p>
+<hr />
+<h2>🗂️ Partitioning &amp; Maintenance</h2>
+<h3>player_events — Monthly Range Partitions</h3>
+<pre><code class="language-sql">-- pg_cron job: runs on the 25th of each month to pre-create next month's partition
+SELECT cron.schedule(
+  'create_events_partition',
+  '0 0 25 * *',
+  $$
+    DO $$
+    DECLARE
+      next_month DATE := date_trunc('month', now() + INTERVAL '1 month');
+      tbl_name   TEXT := 'player_events_' || to_char(next_month, 'YYYY_MM');
+    BEGIN
+      EXECUTE format(
+        'CREATE TABLE IF NOT EXISTS %I PARTITION OF player_events
+         FOR VALUES FROM (%L) TO (%L)',
+        tbl_name,
+        next_month,
+        next_month + INTERVAL '1 month'
+      );
+    END
+    $$
+  $$
+);
+</code></pre>
+<p>Partitions older than <strong>6 months</strong> are detached and archived to cold storage (e.g., AWS S3 via <code>pg_dump --table</code>) then dropped:</p>
+<pre><code class="language-sql">-- Detach and archive: run manually or via pg_cron after cold export
+ALTER TABLE player_events DETACH PARTITION player_events_2025_09;
+-- After S3 backup confirmed:
+DROP TABLE player_events_2025_09;
+</code></pre>
+<h3>processing_jobs — 30-Day Archive</h3>
+<pre><code class="language-sql">-- pg_cron: archive completed jobs older than 30 days
+INSERT INTO processing_jobs_archive
+  SELECT * FROM processing_jobs
+  WHERE  is_complete = TRUE
+    AND  finishes_at &lt; now() - INTERVAL '30 days';
+
+DELETE FROM processing_jobs
+  WHERE is_complete = TRUE
+    AND finishes_at &lt; now() - INTERVAL '30 days';
+</code></pre>
+<h3>VACUUM Strategy</h3>
+<p>High-write tables accumulate dead tuples quickly and need aggressive autovacuum settings:</p>
+<pre><code class="language-sql">ALTER TABLE crop_plots SET (
+  autovacuum_vacuum_scale_factor  = 0.01,  -- vacuum after 1% dead tuples
+  autovacuum_analyze_scale_factor = 0.005
+);
+
+ALTER TABLE processing_jobs SET (
+  autovacuum_vacuum_scale_factor  = 0.01,
+  autovacuum_analyze_scale_factor = 0.005
+);
+
+ALTER TABLE inventory SET (
+  autovacuum_vacuum_scale_factor  = 0.02,
+  autovacuum_analyze_scale_factor = 0.01
+);
+</code></pre>
+<h3>Index Maintenance</h3>
+<pre><code class="language-sql">-- Monthly: rebuild large indexes concurrently (zero downtime)
+REINDEX INDEX CONCURRENTLY idx_crop_plots_ready;
+REINDEX INDEX CONCURRENTLY idx_jobs_player_active;
+REINDEX INDEX CONCURRENTLY idx_market_active;
+</code></pre>
+<hr />
+<h2>🔒 Row-Level Security (RLS)</h2>
+<p>RLS ensures that a compromised API server instance can only read and write the authenticated player's own data. The <code>player_id</code> claim is extracted from the JWT and set as a session variable before every query.</p>
+<pre><code class="language-sql">-- Set at the start of every API request:
+SET LOCAL app.current_player_id = '&lt;player_uuid_from_jwt&gt;';
+</code></pre>
+<p>Apply to every player-scoped table:</p>
+<pre><code class="language-sql">-- crop_plots
+ALTER TABLE crop_plots ENABLE ROW LEVEL SECURITY;
+CREATE POLICY crop_plots_isolation ON crop_plots
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- animal_pens
+ALTER TABLE animal_pens ENABLE ROW LEVEL SECURITY;
+CREATE POLICY animal_pens_isolation ON animal_pens
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- processing_jobs
+ALTER TABLE processing_jobs ENABLE ROW LEVEL SECURITY;
+CREATE POLICY processing_jobs_isolation ON processing_jobs
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- displays
+ALTER TABLE displays ENABLE ROW LEVEL SECURITY;
+CREATE POLICY displays_isolation ON displays
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- inventory
+ALTER TABLE inventory ENABLE ROW LEVEL SECURITY;
+CREATE POLICY inventory_isolation ON inventory
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- quests
+ALTER TABLE quests ENABLE ROW LEVEL SECURITY;
+CREATE POLICY quests_isolation ON quests
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- player_cards
+ALTER TABLE player_cards ENABLE ROW LEVEL SECURITY;
+CREATE POLICY player_cards_isolation ON player_cards
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- achievements
+ALTER TABLE achievements ENABLE ROW LEVEL SECURITY;
+CREATE POLICY achievements_isolation ON achievements
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- mastery_records
+ALTER TABLE mastery_records ENABLE ROW LEVEL SECURITY;
+CREATE POLICY mastery_records_isolation ON mastery_records
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- collection_progress
+ALTER TABLE collection_progress ENABLE ROW LEVEL SECURITY;
+CREATE POLICY collection_progress_isolation ON collection_progress
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- shipments
+ALTER TABLE shipments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY shipments_isolation ON shipments
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- supply_lane_queue
+ALTER TABLE supply_lane_queue ENABLE ROW LEVEL SECURITY;
+CREATE POLICY supply_lane_queue_isolation ON supply_lane_queue
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+
+-- save_snapshots
+ALTER TABLE save_snapshots ENABLE ROW LEVEL SECURITY;
+CREATE POLICY save_snapshots_isolation ON save_snapshots
+  USING (player_id = current_setting('app.current_player_id')::uuid);
+</code></pre>
+<blockquote>
+<p><strong>Admin roles</strong> are granted <code>BYPASSRLS</code> so internal tooling and data migrations work without changing session variables. All player-facing API roles use dedicated restricted roles with RLS active.</p>
+</blockquote>
+<hr />
+<h2>🚀 Migration Strategy</h2>
+<p>All schema changes are managed with <strong>Flyway</strong> versioned migrations stored in <code>db/migrations/</code>.</p>
+<h3>File Naming Convention</h3>
+<pre><code>V38__add_postgresql_core_schema.sql
+V39__add_mastery_records.sql
+V40__add_supply_lane_queue.sql
+</code></pre>
+<h3>Zero-Downtime Approach</h3>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Add new column with a <code>DEFAULT</code> value (instantly non-blocking in PG 11+)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Backfill in batches: <code>UPDATE ... WHERE id BETWEEN $start AND $end</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Add <code>NOT NULL</code> constraint once backfill is complete</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Drop old column in a separate migration after confirming no reads</td>
+</tr>
+</tbody>
+</table>
+<h3>Blue/Green Deployment</h3>
+<p>For major schema changes (e.g., adding a new table or changing a partition scheme):
+1. Deploy new schema to <strong>green</strong> environment
+2. Run migration on green with production data snapshot
+3. Validate via automated integration tests
+4. Switch load balancer to green; keep blue warm for 30-minute rollback window</p>
+<h3>Example Migration File</h3>
+<pre><code class="language-sql">-- V38__add_postgresql_core_schema.sql
+-- Creates base tables for Marketland+ PostgreSQL backend
+
+BEGIN;
+
+CREATE TABLE IF NOT EXISTS players ( ... );
+CREATE TABLE IF NOT EXISTS farm_state ( ... );
+-- ... all tables from this document
+
+COMMIT;
+</code></pre>
+<hr />
+<h2>📊 Monitoring &amp; Health</h2>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Tool</th>
+<th>Alert Threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Query p99 latency</td>
+<td><code>pg_stat_statements</code> + Grafana</td>
+<td>&gt; 100 ms</td>
+</tr>
+<tr>
+<td>Connection pool saturation</td>
+<td>PgBouncer metrics (<code>pgbouncer.stats</code>)</td>
+<td>&gt; 80 %</td>
+</tr>
+<tr>
+<td>Replication lag</td>
+<td><code>pg_stat_replication.replay_lag</code></td>
+<td>&gt; 5 s</td>
+</tr>
+<tr>
+<td>Table bloat (dead tuples)</td>
+<td><code>pgstattuple</code></td>
+<td>&gt; 30 % dead tuples</td>
+</tr>
+<tr>
+<td>Slow queries</td>
+<td><code>auto_explain</code> (log_min_duration = 500 ms)</td>
+<td>&gt; 500 ms</td>
+</tr>
+<tr>
+<td>Disk usage</td>
+<td><code>node_exporter</code> → Grafana</td>
+<td>&gt; 75 %</td>
+</tr>
+<tr>
+<td>Cache hit ratio</td>
+<td><code>pg_stat_bgwriter</code></td>
+<td>&lt; 95 %</td>
+</tr>
+<tr>
+<td>Active locks</td>
+<td><code>pg_locks</code></td>
+<td>Any lock wait &gt; 1 s</td>
+</tr>
+</tbody>
+</table>
+<h3>Key pg_stat_statements Queries to Watch</h3>
+<pre><code class="language-sql">-- Top 10 slowest average queries
+SELECT
+  round(mean_exec_time::numeric, 2) AS mean_ms,
+  calls,
+  query
+FROM   pg_stat_statements
+ORDER BY mean_exec_time DESC
+LIMIT  10;
+</code></pre>
+<h3>PgBouncer Health Check</h3>
+<pre><code class="language-sql">-- Connect to PgBouncer admin console
+SHOW POOLS;   -- sv_active, sv_idle, cl_waiting
+SHOW STATS;   -- avg_query_time, avg_wait_time
+</code></pre>
+<hr />
+    </article>
+    <nav class="page-nav">
+      <a class="nav-btn prev" href="37-complete-game-mechanics.html"><span>◀</span><span><span class="nav-label">Previous</span>37 — Complete Game Mechanics</span></a>
+      <a class="nav-btn next" href="../index.html"><span><span class="nav-label">Next</span>🏠 Back to Index</span></a>
+    </nav>
+  </main>
+</body>
+</html>
