@@ -71,6 +71,7 @@
 | 34 | [Level Unlock Table](docs/systems/34-level-unlock-table.md) | Complete unlock timeline |
 | 35 | [Monetization](docs/systems/35-monetization.md) | Fair monetization principles |
 | 36 | [Technical Systems](docs/systems/36-technical-systems.md) | Architecture, data layers |
+| 38 | [PostgreSQL Database Design](docs/38-postgresql-database.md) | Schemas, scaling to 10M users, caching |
 
 ---
 
@@ -119,7 +120,8 @@ marketland-plus-gdd/
 │   ├── 01–05 Core systems   (*.md + *.html per section)
 │   ├── farm/   06–14        (*.md + *.html per section)
 │   ├── store/  15–21        (*.md + *.html per section)
-│   └── systems/ 22–36       (*.md + *.html per section)
+│   ├── systems/ 22–36       (*.md + *.html per section)
+│   └── 38-postgresql-database.md  ← PostgreSQL schema & scaling design
 └── .github/workflows/pages.yml
 ```
 
