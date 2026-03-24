@@ -194,6 +194,88 @@
     .nav-btn { max-width: 100%; }
     .page-nav { flex-direction: column; }
   }
+
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus { border-color: var(--accent); }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
 </style>
 </head>
 <body>
@@ -560,7 +642,7 @@
 </table>
 <hr />
     </article>
-    <div class="page-nav"><a class="nav-btn prev" href="35-monetization.html"><span>◀</span><span><span class="nav-label">Previous</span>35 — Monetization</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a></div>
+    <div class="page-nav"><a class="nav-btn prev" href="35-monetization.html"><span>◀</span><span><span class="nav-label">Previous</span>35 — Monetization</span></a><a class="nav-btn" href="../../index.html">🏠 Index</a><a class="nav-btn next" href="../37-complete-game-mechanics.html"><span><span class="nav-label">Next</span>37 — Complete Game Mechanics</span><span>▶</span></a></div>
   </main>
 </body>
 </html>
