@@ -1,6 +1,8 @@
 # 💰 03 — Currency System
 
-Marketland+ uses **four distinct currencies**, each with a clear role in the economy. This layered approach keeps the economy balanced, prevents inflation, and ensures that each type of progression feels distinct and rewarding.
+Marketland+ uses **three distinct currencies**, each with a clear role in the economy. This layered approach keeps the economy balanced, prevents inflation, and ensures that each type of progression feels distinct and rewarding.
+
+> 💡 **Design Change:** Farm Tokens have been removed. Players now use **Coins and Cash** for all farm and store operations, keeping the economy unified and simple.
 
 ---
 
@@ -8,7 +10,7 @@ Marketland+ uses **four distinct currencies**, each with a clear role in the eco
 
 **Symbol:** 🪙 | **Type:** Soft (earnable through play) | **Starting Amount:** 500
 
-Coins are the primary currency and the backbone of all store operations.
+Coins are the primary currency and the backbone of all farm and store operations.
 
 ### Earn Coins By:
 - Customers purchasing from displays (main source)
@@ -18,17 +20,50 @@ Coins are the primary currency and the backbone of all store operations.
 - Selling overstock from stockroom
 - Completing collections
 - Neighbour visits
+- Harvesting crops (bonus coin yield on harvest)
+- Collecting animal products
 
 ### Spend Coins On:
+**Store:**
 - Buying new display units
 - Upgrading displays to higher tiers
 - Purchasing supplier shipments
-- Hiring farm workers
 - Unlocking store zones
 - Buying decorations and attractions
 - Replenishing display stock (in Supplier mode)
 
-> 💡 **Design Note:** Coins should always feel abundant but never surplus — there should always be a meaningful upgrade to spend them on.
+**Farm:**
+- Buying seeds (all crops)
+- Hiring and paying farm workers
+- Upgrading processing buildings
+- Unlocking farm zones
+- Purchasing animal food upgrades
+- Unlocking greenhouse slots
+
+### Farm Coin Costs:
+| Item | Coin Cost |
+|------|-----------|
+| Wheat seeds (×10) | 50 coins |
+| Exotic Orchid seeds (×5) | 600 coins |
+| Animal food upgrade | 200–1,000 coins |
+| Processing building upgrade | 500–5,000 coins |
+| Farm zone unlock | 1,000–10,000 coins |
+| Worker hire | 200–800 coins |
+| Greenhouse slot unlock | 2,000 coins |
+
+### Crop Coin Yield (on harvest):
+| Crop | Coins per Harvest |
+|------|------------------|
+| Wheat, Tomato, Carrot, Corn, Potato, Cucumber | 5–10 coins |
+| Strawberry, Sunflower, Sugarcane, Chilli | 10–20 coins |
+| Coffee Beans, Cotton | 20–30 coins |
+| Grapes, Lavender, Hops | 30–40 coins |
+| Vanilla | 50–70 coins |
+| Exotic Orchid | 100–130 coins |
+| Saffron | 90–110 coins |
+| Truffle | 120–160 coins |
+
+> 💡 **Design Note:** Coins should always feel abundant but never surplus — there should always be a meaningful upgrade to spend them on, both in the farm and the store.
 
 ---
 
@@ -53,54 +88,16 @@ Cash is the premium currency but is intentionally earnable through regular play 
 | Repair storm-damaged crops | 1 Cash |
 | Premium decoration items | 5–20 Cash |
 | Extra delivery truck slot | 10 Cash |
-| Unlock zone immediately | 10–30 Cash |
+| Unlock farm/store zone immediately | 10–30 Cash |
 | Skip quest | 3 Cash |
 | Rare animal direct purchase | 15–50 Cash |
+| Instant processing building upgrade | 5–20 Cash |
 
 > 💡 **Design Note:** Cash **never** gates core content. It only speeds up timers or provides cosmetic/convenience options. All content is reachable without spending Cash.
 
 ---
 
-## 🌿 Currency 3: Farm Tokens (Farm-Only Currency)
-
-**Symbol:** 🌿 | **Type:** Farm-only (NEVER sold for real money) | **Starting Amount:** 50
-
-Farm Tokens are the dedicated currency for all farm operations. They cannot be purchased with real money — ever. This ensures the farm economy stays fair and meaningful.
-
-### Earn Farm Tokens By:
-- Harvesting crops (1–15 per harvest, based on crop rarity)
-- Collecting animal products
-- Completing farm quests
-- Rainbow weather bonus harvest (2× tokens)
-- Completing farm collections
-- Daily farm login bonus (after Lv.10)
-
-### Farm Token Costs:
-| Item | FT Cost |
-|------|---------|
-| Wheat seeds (×10) | 5 FT |
-| Exotic Orchid seeds (×5) | 60 FT |
-| Animal food upgrade | 20–100 FT |
-| Processing building upgrade | 50–500 FT |
-| Farm zone unlock | 100–1,000 FT |
-| Worker hire | 0 FT (paid in Coins) |
-| Greenhouse slot unlock | 200 FT |
-
-### Crop Farm Token Yield (on harvest):
-| Crop | FT per Harvest |
-|------|---------------|
-| Wheat, Tomato, Carrot, Corn, Potato, Cucumber | 1 FT |
-| Strawberry, Sunflower, Sugarcane, Chilli | 2 FT |
-| Coffee Beans, Cotton | 3 FT |
-| Grapes, Lavender, Hops | 4 FT |
-| Vanilla | 6 FT |
-| Exotic Orchid | 12 FT |
-| Saffron | 10 FT |
-| Truffle | 15 FT |
-
----
-
-## 💎 Currency 4: Luxury Points (LP Score)
+## 💎 Currency 3: Luxury Points (LP Score)
 
 **Symbol:** 💎 | **Type:** Score (accumulated, never spent) | **Starting Amount:** 0
 
