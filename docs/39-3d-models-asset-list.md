@@ -11,7 +11,7 @@ This document is the complete reference for every 3D model required in Marketlan
 
 | Stat | Value |
 |------|-------|
-| **Total unique 3D models** | 136 |
+| **Total unique 3D models** | 137 |
 | **Largest model** | Stage (6×4) |
 | **Most common grid size** | 2×2 |
 
@@ -30,6 +30,15 @@ This document is the complete reference for every 3D model required in Marketlan
 | Beehives (Apiary) | 1×2 | Lv.60 |
 | Rabbit Pen | 2×2 | Lv.65 |
 | Deer Range | 4×4 | Lv.80 |
+
+## 🌱 Farm — Crop Plots
+
+| Model | Grid Size | Unlock Level | Notes |
+|-------|-----------|--------------|-------|
+| Farming Plot (Tilled Soil) | 1×1 | Lv.1 | Base modular plot piece |
+| Farming Plot (Tilled Soil) | 2×2 | Lv.1 | Uses 1×1 piece tiled 4× |
+| Farming Plot (Tilled Soil) | 3×3 | Lv.1 | Uses 1×1 piece tiled 9× |
+| Farming Plot (Tilled Soil) | 4×4 | Lv.1 | Uses 1×1 piece tiled 16× |
 
 ---
 
