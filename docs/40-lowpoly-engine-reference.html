@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>40 — LowPolyEngine Reference — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus { border-color: var(--accent); }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🔧 Engine Dev</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>LowPolyEngine — Complete In-Depth Reference</h1>
+<blockquote>
+<p><strong>13 top-level domains · Every class, interface, and design pattern documented</strong><br />
+Package root: <code>thinmatrix.lowPolyEngine</code></p>
+</blockquote>
+<hr />
+<h2>Package Directory</h2>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>lowPolyEngine<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>audio<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>core<span style="color: #666">/</span><span style="color: #BBB">                    </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>OpenAL<span style="color: #BBB"> </span>context,<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">master</span>,<span style="color: #BBB"> </span>sound<span style="color: #BBB"> </span>loading,<span style="color: #BBB"> </span>source<span style="color: #BBB"> </span>pools
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>emptyShells<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>No<span style="color: #666">-</span>op<span style="color: #BBB"> </span>fallbacks<span style="color: #BBB"> </span>when<span style="color: #BBB"> </span>OpenAL<span style="color: #BBB"> </span>fails
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>globalVolume<span style="color: #666">/</span><span style="color: #BBB">        </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Volume<span style="color: #BBB"> </span>modifier<span style="color: #BBB"> </span>system
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>loading<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>OGG<span style="color: #666">/</span>PCM<span style="color: #BBB"> </span>loading,<span style="color: #BBB"> </span>streaming<span style="color: #BBB"> </span>factory
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>openAlObjects<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Direct<span style="color: #BBB"> </span>OpenAL<span style="color: #BBB"> </span>wrappers<span style="color: #BBB"> </span>(buffers,<span style="color: #BBB"> </span>sources,<span style="color: #BBB"> </span>listener)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>soundPlaying<span style="color: #666">/</span><span style="color: #BBB">        </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Playthrough<span style="color: #BBB"> </span>objects,<span style="color: #BBB"> </span>play<span style="color: #BBB"> </span>parameters
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>sourcePools<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>AL<span style="color: #BBB"> </span>source<span style="color: #BBB"> </span>pooling<span style="color: #BBB"> </span>per<span style="color: #BBB"> </span>AudioType
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>streaming<span style="color: #666">/</span><span style="color: #BBB">           </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Background<span style="color: #BBB"> </span>streaming<span style="color: #BBB"> </span>service
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>gameConcepts<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>High<span style="color: #666">-</span>level<span style="color: #BBB"> </span>gameplay<span style="color: #BBB"> </span>audio
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>ambient<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Ambient<span style="color: #BBB"> </span>sound<span style="color: #BBB"> </span>player
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>compoundSounds<span style="color: #666">/</span><span style="color: #BBB">      </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Multi<span style="color: #666">-</span>track<span style="color: #BBB"> </span>compound<span style="color: #BBB"> </span>sounds<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>prefabs
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>misc<span style="color: #666">/</span><span style="color: #BBB">                </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>AudioFader
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>music<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Sequential<span style="color: #BBB"> </span>music<span style="color: #BBB"> </span>player
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>sound2d<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span><span style="color: #666">2</span>D<span style="color: #BBB"> </span>non<span style="color: #666">-</span>positional<span style="color: #BBB"> </span>sounds
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>sound3d<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span><span style="color: #666">3</span>D<span style="color: #BBB"> </span>positional<span style="color: #BBB"> </span>sounds<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>emitter
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>soundBuilding<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Builder<span style="color: #666">/</span>provider<span style="color: #BBB"> </span>pattern<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>sounds
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>engineMain<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>gameObjects<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Camera,<span style="color: #BBB"> </span>GameCamera,<span style="color: #BBB"> </span>Light,<span style="color: #BBB"> </span>Environment,<span style="color: #BBB"> </span>MouseRay
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">master</span><span style="color: #666">/</span><span style="color: #BBB">                  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Engine,<span style="color: #BBB"> </span>EngineCreator,<span style="color: #BBB"> </span>EngineConfigs,<span style="color: #BBB"> </span>EngineFiles,<span style="color: #BBB"> </span>EngineMod
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>splashScreen<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Splash<span style="color: #BBB"> </span>screen<span style="color: #BBB"> </span>UI<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">and</span><span style="color: #BBB"> </span>minimal<span style="color: #BBB"> </span>boot<span style="color: #BBB"> </span>engine
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>features<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>behaviours<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Behaviour<span style="color: #666">-</span>tree<span style="color: #BBB"> </span>action<span style="color: #BBB"> </span>system
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>standardNodes<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Composite,<span style="color: #BBB"> </span>sequence,<span style="color: #BBB"> </span>selector,<span style="color: #BBB"> </span>wait,<span style="color: #BBB"> </span>loop<span style="color: #BBB"> </span>nodes
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>newComposites<span style="color: #666">/</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Newer<span style="color: #BBB"> </span>condition<span style="color: #666">/</span>selector<span style="color: #666">/</span>sequence<span style="color: #BBB"> </span>nodes
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>debugSystem<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Typed<span style="color: #BBB"> </span>debug<span style="color: #BBB"> </span>data<span style="color: #BBB"> </span>(<span style="color: #008000">float</span>,<span style="color: #BBB"> </span>count,<span style="color: #BBB"> </span>count<span style="color: #666">-</span>total)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>debugger<span style="color: #666">/</span><span style="color: #BBB">                </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Global<span style="color: #BBB"> </span>Debugger<span style="color: #BBB"> </span>singleton<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>DebugFormat
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>frustumCulling<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Frustum<span style="color: #BBB"> </span>planes,<span style="color: #BBB"> </span>sphere<span style="color: #666">/</span>AABB<span style="color: #BBB"> </span>tests
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>movement<span style="color: #666">/</span><span style="color: #BBB">                </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Steering,<span style="color: #BBB"> </span>path<span style="color: #666">-</span>following,<span style="color: #BBB"> </span>move<span style="color: #BBB"> </span>animations
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>guis<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>components<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Clickable,<span style="color: #BBB"> </span>checkbox,<span style="color: #BBB"> </span>toggle,<span style="color: #BBB"> </span>tooltip,<span style="color: #BBB"> </span>drag<span style="color: #BBB"> </span>detection
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>constraints<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span><span style="color: #666">38</span><span style="color: #BBB"> </span>constraint<span style="color: #BBB"> </span>types<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>layout
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>customCursor<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Cursor<span style="color: #BBB"> </span>loading<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">and</span><span style="color: #BBB"> </span>manager
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>gardenUiPrefabs<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Ready<span style="color: #666">-</span>made<span style="color: #BBB"> </span>UI<span style="color: #BBB"> </span>widgets<span style="color: #BBB"> </span>(buttons,<span style="color: #BBB"> </span>sliders,<span style="color: #BBB"> </span>scroll<span style="color: #BBB"> </span>panels<span style="border: 1px solid #F00">…</span>)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>grids<span style="color: #666">/</span><span style="color: #BBB">                   </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Grid<span style="color: #BBB"> </span>layout<span style="color: #BBB"> </span>helpers
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>layout<span style="color: #666">/</span><span style="color: #BBB">                  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>BaseLayout,<span style="color: #BBB"> </span>ValueSheet
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>scalingAlgorithms<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>UI<span style="color: #BBB"> </span>scaling<span style="color: #BBB"> </span>strategies
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>text<span style="color: #666">/</span><span style="color: #BBB">                    </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Bitmap<span style="color: #666">-</span>font<span style="color: #BBB"> </span>pipeline<span style="color: #BBB"> </span>(<span style="color: #008000">load</span><span style="color: #BBB"> </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>generate<span style="color: #BBB"> </span>mesh<span style="color: #BBB"> </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>render)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>transitions<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Animator,<span style="color: #BBB"> </span>Animation,<span style="color: #BBB"> </span>Effect,<span style="color: #BBB"> </span>Transition<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>blueprints
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>uiComponent<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>UiComponent<span style="color: #BBB"> </span>base<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span>,<span style="color: #BBB"> </span>positioning,<span style="color: #BBB"> </span>alpha,<span style="color: #BBB"> </span>displayer
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>uiMain<span style="color: #666">/</span><span style="color: #BBB">                  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Ui<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span>facade,<span style="color: #BBB"> </span>UiContainer,<span style="color: #BBB"> </span>UiConfigs
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>uiRendering<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>OpenGL<span style="color: #BBB"> </span>UI<span style="color: #BBB"> </span>shader<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>renderer
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>uiResources<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>UiStyle,<span style="color: #BBB"> </span>resource<span style="color: #BBB"> </span>manager,<span style="color: #BBB"> </span>hot<span style="color: #666">-</span>loader
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>utils<span style="color: #666">/</span><span style="color: #BBB">                   </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Effects,<span style="color: #BBB"> </span>Padding,<span style="color: #BBB"> </span>Transitions<span style="color: #BBB"> </span>helpers
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>inputsOutputs<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>stateControl<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>State<span style="color: #BBB"> </span>interface,<span style="color: #BBB"> </span>StateManager,<span style="color: #BBB"> </span>InputUser,<span style="color: #BBB"> </span>priority<span style="color: #BBB"> </span>queue
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>timing<span style="color: #666">/</span><span style="color: #BBB">                  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>FrameTimer<span style="color: #BBB"> </span>(delta<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>current<span style="color: #BBB"> </span>time)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>userInputs<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Keyboard,<span style="color: #BBB"> </span>Mouse,<span style="color: #BBB"> </span>MouseButton,<span style="color: #BBB"> </span>click<span style="color: #BBB"> </span>checkers
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>windowing<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>GLFW<span style="color: #BBB"> </span>Window,<span style="color: #BBB"> </span>WindowBuilder,<span style="color: #BBB"> </span>Sync,<span style="color: #BBB"> </span>IconLoader
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>openglWrapper<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>fbos<span style="color: #666">/</span><span style="color: #BBB">                    </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>FBO,<span style="color: #BBB"> </span>FboBuilder,<span style="color: #BBB"> </span>attachments
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>openglObjects<span style="color: #666">/</span><span style="color: #BBB">           </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Vao,<span style="color: #BBB"> </span>Vbo,<span style="color: #BBB"> </span>Attribute<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>standard<span style="color: #BBB"> </span>attribute<span style="color: #BBB"> </span>types
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>openglUtils<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>OpenglUtils,<span style="color: #BBB"> </span>GlRenderConfigs,<span style="color: #BBB"> </span>FullScreenQuad,<span style="color: #BBB"> </span>VaoUtils
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>shaders<span style="color: #666">/</span><span style="color: #BBB">                 </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>ShaderProgram<span style="color: #BBB"> </span>base<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>Uniform<span style="color: #666">*</span><span style="color: #BBB"> </span>types
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>textures<span style="color: #666">/</span><span style="color: #BBB">                </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Texture,<span style="color: #BBB"> </span>TextureBuilder,<span style="color: #BBB"> </span>ArrayTexture,<span style="color: #BBB"> </span>TexData
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>particles<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>batches<span style="color: #666">/</span><span style="color: #BBB">                 </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Insertion<span style="color: #666">-</span>sort<span style="color: #BBB"> </span>batching<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>mesh<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">and</span><span style="color: #BBB"> </span>quad<span style="color: #BBB"> </span>particles
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>loading<span style="color: #666">/</span><span style="color: #BBB">                 </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span><span style="color: #666">.</span>cba<span style="color: #BBB"> </span>particle<span style="color: #BBB"> </span>effect<span style="color: #BBB"> </span>file<span style="color: #BBB"> </span>loader<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>hot<span style="color: #666">-</span>loader
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>particleEffects<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Emitter,<span style="color: #BBB"> </span>component<span style="color: #BBB"> </span>system,<span style="color: #BBB"> </span><span style="color: #666">20+</span><span style="color: #BBB"> </span>components,<span style="color: #BBB"> </span>params
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>rendering<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Instanced<span style="color: #BBB"> </span>mesh<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>quad<span style="color: #BBB"> </span>particle<span style="color: #BBB"> </span>renderers
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>postProcessing<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>PostProcessingFilter<span style="color: #BBB"> </span>base<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>common<span style="color: #BBB"> </span>GLSL<span style="color: #BBB"> </span>vertices
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>renderData<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>byteExtracting<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>ByteFormat,<span style="color: #BBB"> </span>multi<span style="color: #666">-</span>model<span style="color: #BBB"> </span>byte<span style="color: #BBB"> </span>extractors
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>instancing<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>InstancedDataVao,<span style="color: #BBB"> </span>RenderInstance
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>meshAtlas<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>SmoothPolyMeshAtlas,<span style="color: #BBB"> </span>updater
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>vboMemoryMapping<span style="color: #666">/</span><span style="color: #BBB">        </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>VboMemoryManager,<span style="color: #BBB"> </span>ResizingArrayVbo,<span style="color: #BBB"> </span>DataBundle
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>rendering<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>boxRenderer<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Wire<span style="color: #666">-</span>box<span style="color: #BBB"> </span>debug<span style="color: #BBB"> </span>renderer
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>entityRenderer<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Per<span style="color: #666">-</span>entity<span style="color: #BBB"> </span>transform<span style="color: #BBB"> </span>renderer
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>simpleMeshRenderer<span style="color: #666">/</span><span style="color: #BBB">      </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Simple<span style="color: #BBB"> </span>unlit<span style="color: #BBB"> </span>mesh<span style="color: #BBB"> </span>renderer
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>smoothPolyRenderer<span style="color: #666">/</span><span style="color: #BBB">      </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Main<span style="color: #BBB"> </span>dynamic<span style="color: #BBB"> </span>smooth<span style="color: #666">-</span>poly<span style="color: #BBB"> </span>renderer<span style="color: #BBB"> </span>(shadow<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>fog<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>wind)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>smoothPolyUvRenderer<span style="color: #666">/</span><span style="color: #BBB">    </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>UV<span style="color: #666">-</span>mapped<span style="color: #BBB"> </span>variant<span style="color: #BBB"> </span>of<span style="color: #BBB"> </span>smooth<span style="color: #BBB"> </span>poly<span style="color: #BBB"> </span>renderer
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>resourceManagement<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>certificates<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Encrypted<span style="color: #BBB"> </span>unlock<span style="color: #666">/</span>achievement<span style="color: #BBB"> </span>certificate<span style="color: #BBB"> </span>files
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>languageSystem<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>CSV<span style="color: #666">-</span>based<span style="color: #BBB"> </span>localisation<span style="color: #BBB"> </span>(GameText,<span style="color: #BBB"> </span>LangRepository)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>requestProcessing<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>BackgroundLoader,<span style="color: #BBB"> </span>GL<span style="color: #666">-</span>thread<span style="color: #BBB"> </span>request<span style="color: #BBB"> </span>queue
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>saveSystem<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>SaveSystem,<span style="color: #BBB"> </span>SaveGame,<span style="color: #BBB"> </span>SavingProcess,<span style="color: #BBB"> </span>metadata
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>shadows<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>rendering<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Shadow<span style="color: #BBB"> </span>map<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">master</span><span style="color: #BBB"> </span>renderer<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>dynamic<span style="color: #BBB"> </span>shadow<span style="color: #BBB"> </span>renderer
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>shadowBox<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Frustum<span style="color: #666">-</span>fitting<span style="color: #BBB"> </span>shadow<span style="color: #BBB"> </span>box,<span style="color: #BBB"> </span>terrain<span style="color: #BBB"> </span>clamping
+<span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>utils<span style="color: #666">/</span><span style="color: #BBB">                       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>EngineUtils,<span style="color: #BBB"> </span>TextureExporter,<span style="color: #BBB"> </span>container<span style="color: #BBB"> </span>types
+</code></pre></div>
+
+<hr />
+<h2>1 · <code>engineMain</code> — The Engine Core</h2>
+<h3>1.1 <code>master</code> — Engine Lifecycle</h3>
+<h4><code>Engine</code></h4>
+<p>The central singleton that owns every subsystem. Constructed exclusively by <code>EngineCreator</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>window</code></td>
+<td><code>Window</code></td>
+<td>GLFW window handle</td>
+</tr>
+<tr>
+<td><code>keyboard</code></td>
+<td><code>Keyboard</code></td>
+<td>Frame-buffered key state</td>
+</tr>
+<tr>
+<td><code>mouse</code></td>
+<td><code>Mouse</code></td>
+<td>Normalised mouse position + buttons</td>
+</tr>
+<tr>
+<td><code>audioMaster</code></td>
+<td><code>AudioMaster</code></td>
+<td>OpenAL audio manager</td>
+</tr>
+<tr>
+<td><code>stateManager</code></td>
+<td><code>StateManager</code></td>
+<td>Priority-queued game state machine</td>
+</tr>
+<tr>
+<td><code>debug</code></td>
+<td><code>EngineDebug</code></td>
+<td>Per-frame debug data (fps, tri count, …)</td>
+</tr>
+<tr>
+<td><code>timer</code></td>
+<td><code>FrameTimer</code></td>
+<td>Delta time + absolute game time</td>
+</tr>
+<tr>
+<td><code>mods</code></td>
+<td><code>EngineMod[]</code></td>
+<td>Active mod list</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key methods:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Engine.init()</code></td>
+<td>One-call bootstrap with default configs</td>
+</tr>
+<tr>
+<td><code>Engine.init(mods, configs)</code></td>
+<td>Parameterised bootstrap</td>
+</tr>
+<tr>
+<td><code>update()</code></td>
+<td>Per-frame tick — updates UI, audio, input, window, state, debug, clears frame buffer</td>
+</tr>
+<tr>
+<td><code>getDelta()</code></td>
+<td>Returns <code>timer.getDelta()</code> (with SPACE = 0.1× and ALT+SPACE = 10× cheat multipliers)</td>
+</tr>
+<tr>
+<td><code>completeSetUpAfterLoading(LoadingProcess)</code></td>
+<td>Loops <code>update()</code> while loading completes then closes splash</td>
+</tr>
+<tr>
+<td><code>completeSetUp()</code></td>
+<td>Closes splash immediately with no loading wait</td>
+</tr>
+<tr>
+<td><code>requestClose()</code> / <code>isCloseRequested()</code></td>
+<td>Soft close flag</td>
+</tr>
+<tr>
+<td><code>closeEngine()</code></td>
+<td>Cleans up particles, BackgroundLoader, UI, audio, window</td>
+</tr>
+<tr>
+<td><code>Engine.instance()</code></td>
+<td>Static access to the running singleton</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4><code>EngineCreator</code></h4>
+<p>Internal factory that orchestrates the two-phase startup:</p>
+<ol>
+<li><strong><code>initEssentialSystems</code></strong> — Creates <code>ErrorManager</code>, <code>BackgroundLoader</code>, <code>Window</code>, OpenGL context, <code>FrameTimer</code>, <code>Keyboard</code>, <code>Mouse</code>, <code>Ui</code>.</li>
+<li><strong>Shows splash screen</strong> via <code>SplashScreenEngine.init()</code>.</li>
+<li><strong><code>initEngineSystems</code></strong> — Loads <code>GameText</code>, UI resources, <code>StateManager</code>, <code>AudioMaster</code>, <code>ParticleMaster</code>.</li>
+<li>Waits for <code>BackgroundLoader.isDoneProcessing()</code> (all background tasks done).</li>
+<li>Returns the fully-initialised <code>Engine</code>.</li>
+</ol>
+<hr />
+<h4><code>EngineConfigs</code></h4>
+<p>POJO configuration object. All fields are public and mutable before <code>init()</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>windowWidth/Height</code></td>
+<td>1280 × 720</td>
+<td>Initial window size</td>
+</tr>
+<tr>
+<td><code>backgroundColour</code></td>
+<td><code>#c8dfdc</code></td>
+<td>Clear colour</td>
+</tr>
+<tr>
+<td><code>fullscreen</code></td>
+<td>false</td>
+<td></td>
+</tr>
+<tr>
+<td><code>vsync</code></td>
+<td>true</td>
+<td></td>
+</tr>
+<tr>
+<td><code>msaa</code></td>
+<td>true</td>
+<td>Multisampled anti-aliasing</td>
+</tr>
+<tr>
+<td><code>fps</code></td>
+<td>100</td>
+<td>Target frame rate</td>
+</tr>
+<tr>
+<td><code>hotloading</code></td>
+<td>false</td>
+<td>Live-reload of particles, UI value sheets</td>
+</tr>
+<tr>
+<td><code>locale</code></td>
+<td><code>en</code></td>
+<td>Language locale</td>
+</tr>
+<tr>
+<td><code>splashScreenCreator</code></td>
+<td><code>DefaultSplashScreenUi::new</code></td>
+<td>Factory for the splash screen</td>
+</tr>
+<tr>
+<td><code>initialState</code> / <code>defaultState</code></td>
+<td><code>EmptyState</code></td>
+<td>First and fallback game states</td>
+</tr>
+<tr>
+<td><code>debug</code></td>
+<td><code>new EngineDebug()</code></td>
+<td>Debug data container</td>
+</tr>
+<tr>
+<td><code>volumeModifierTypes</code></td>
+<td><code>EngineVolumeControls.values()</code></td>
+<td>Volume mod types</td>
+</tr>
+<tr>
+<td><code>uiConfigs</code></td>
+<td><code>new UiConfigs()</code></td>
+<td>UI scale, style, hot-loading</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4><code>EngineFiles</code></h4>
+<p>Static file-path registry. All paths are derived from <code>FileUtils.getRootFolder("res")</code>.</p>
+<p>Notable paths: <code>RES_FOLDER</code>, <code>GUI_FOLDER</code>, <code>VALUE_SHEETS_FOLDER</code>, <code>SOUND_FOLDER</code>, <code>FONT_FOLDER</code>, <code>ICON_FOLDER</code>, <code>LANG_FILE</code>, <code>MODS_FOLDER</code>, <code>SPLASH_SCREEN_FOLDER</code>.</p>
+<hr />
+<h4><code>EngineMod</code></h4>
+<p>Interface a game implements to define a content mod:<br />
+- <code>getRootFolder()</code> — disk location of this mod's assets<br />
+- <code>getNamespace()</code> — unique string prefix for all IDs in this mod</p>
+<p>The engine itself registers a default mod using <code>EngineFiles.ROOT_FOLDER</code> and <code>Id.DEFAULT_NAMESPACE</code>.</p>
+<hr />
+<h4><code>EngineVolumeControls</code></h4>
+<p>Default enum implementing <code>VolumeModType</code>. Single value <code>GLOBAL</code> that applies to all <code>AudioType</code> values. Games can define their own enum (e.g. <code>MASTER</code>, <code>SFX</code>, <code>MUSIC</code>) by implementing <code>VolumeModType</code>.</p>
+<hr />
+<h4><code>LoadingProcess</code></h4>
+<p>Functional interface with one method: <code>boolean updateLoading()</code>. Returns <code>true</code> when done. Used to drive the splash screen while assets load.</p>
+<hr />
+<h3>1.2 <code>gameObjects</code> — Scene Objects</h3>
+<h4><code>Camera</code></h4>
+<p>Core projection + view matrix calculator with dirty-flag caching.</p>
+<ul>
+<li>Stores <code>position</code>, <code>pitch</code>, <code>yaw</code>, <code>nearPlane</code>, <code>farPlane</code>, <code>aspectRatio</code>, <code>wideAspectThreshold</code>.</li>
+<li><strong>Wide aspect handling</strong>: below <code>wideAspectThreshold</code> (default 2:1), the vertical FOV is fixed. Above it, the horizontal FOV is fixed instead (prevents extreme horizontal stretching on ultra-wide screens).</li>
+<li>Matrices are lazily recomputed only when <code>dirtyView</code>/<code>dirtyProjection</code> are set.</li>
+<li><code>getProjectionViewMatrix()</code> multiplies both matrices every call (noted as a TODO optimisation).</li>
+</ul>
+<hr />
+<h4><code>GameCamera</code> (abstract)</h4>
+<p>Extends <code>Camera</code> and adds game-level concerns:</p>
+<ul>
+<li><strong><code>MouseRay mouseRay</code></strong> — automatically kept in sync after every <code>move()</code> call.</li>
+<li><strong><code>CameraFrustum frustumCuller</code></strong> — updated each frame for frustum culling.</li>
+<li><strong>Orientation vectors</strong> (<code>forward</code>, <code>right</code>, <code>up</code>) — recalculated from pitch/yaw each frame.</li>
+<li>Implements <code>AudioListener</code> — provides forward/up vectors to OpenAL listener.</li>
+<li>Implements <code>Exportable</code> — state can be serialised/deserialised.</li>
+<li><code>convertToWorldPosition(screenX, screenY, dis)</code> — unprojects screen-space coordinates to world-space at a given camera distance.</li>
+<li>Abstract methods: <code>move()</code> (per-frame input) and <code>cancelSmoothTargets()</code> (stable resting state for scene transitions).</li>
+</ul>
+<hr />
+<h4><code>Light</code></h4>
+<p>Directional light with normalised direction, colour, and a settings vector:<br />
+- <code>lightSettings.x</code> = ambient strength<br />
+- <code>lightSettings.y</code> = diffuse strength<br />
+- <code>lightSettings.z</code> = shade (reserved)</p>
+<hr />
+<h4><code>Environment</code></h4>
+<p>Immutable value object combining a <code>Light sun</code> and a <code>float fogDensity</code>. Passed to renderers.</p>
+<hr />
+<h4><code>MouseRay</code></h4>
+<p>Performs unprojection of the mouse cursor into a world-space ray every frame.<br />
+Pipeline: screen → NDC → clip → eye (inverse projection) → world (inverse view).<br />
+Key methods: <code>getRay()</code>, <code>getPointOnRay(float)</code>, <code>getIntersectionWithYPlane(float)</code>.</p>
+<hr />
+<h3>1.3 <code>splashScreen</code> — Boot Screen</h3>
+<h4><code>SplashScreen</code> (abstract)</h4>
+<p>Extends <code>UiComponent</code>. Rendered at render level 100 (on top of everything). The subclass must implement <code>isReadyForLoading()</code> — controls when engine loading begins.</p>
+<h4><code>SplashScreenEngine</code></h4>
+<p>A minimal render loop (no audio, no particles) that runs until the splash screen signals readiness. Drives <code>Ui.update()</code>, <code>BackgroundLoader.doTopGlRequests()</code>, and <code>Window.update()</code> in a tight loop.</p>
+<h4><code>SplashScreenCreator</code></h4>
+<p>Functional interface: <code>SplashScreen createSplashScreen()</code>. Default is <code>DefaultSplashScreenUi::new</code>.</p>
+<h4><code>DefaultSplashScreenUi</code></h4>
+<p>Built-in animated splash that shows the engine logo. Overrides <code>isReadyForLoading()</code> to return true after the intro animation completes.</p>
+<hr />
+<h2>2 · <code>inputsOutputs</code> — Input, Window, State</h2>
+<h3>2.1 <code>windowing</code></h3>
+<h4><code>Window</code></h4>
+<p>GLFW window wrapper. Created via <code>Window.newWindow(w, h, title).setVsync(...).fullscreen(...).withIcon(...).create()</code>.</p>
+<ul>
+<li>Tracks both <strong>screen-coordinate</strong> size and <strong>pixel/framebuffer</strong> size (differ on HiDPI displays).</li>
+<li><code>update()</code> — <code>glfwSwapBuffers</code> + <code>glfwPollEvents</code> + <code>frameSync.sync()</code>.</li>
+<li><code>addSizeChangeListener(WindowSizeListener)</code> — fires on framebuffer resize.</li>
+<li><code>goFullScreen(boolean)</code> — runtime toggle using <code>glfwSetWindowMonitor</code>.</li>
+<li><code>destroy()</code> — full GLFW teardown.</li>
+</ul>
+<h4><code>WindowBuilder</code></h4>
+<p>Builder returned by <code>Window.newWindow(...)</code>. Chainable setters: <code>setVsync</code>, <code>fullscreen</code>, <code>withIcon</code>, <code>setMSAA</code>, <code>setFps</code>.</p>
+<h4><code>Sync</code></h4>
+<p>Busy-waits to enforce a target FPS when VSync is off.</p>
+<h4><code>IconLoader</code></h4>
+<p>Loads a set of PNG icon files into a <code>GLFWImage.Buffer</code> for the window icon.</p>
+<hr />
+<h3>2.2 <code>userInputs</code></h3>
+<h4><code>Keyboard</code></h4>
+<p>GLFW key callback → four <code>HashSet&lt;Integer&gt;</code> collections (down, pressed-this-frame, released-this-frame, repeated-this-frame) + char list.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isKeyDown(key)</code></td>
+<td>True while held</td>
+</tr>
+<tr>
+<td><code>keyPressEvent(key)</code></td>
+<td>True only on the first frame</td>
+</tr>
+<tr>
+<td><code>keyPressEvent(key, checkRepeats)</code></td>
+<td>Also fires on OS key-repeat</td>
+</tr>
+<tr>
+<td><code>keyReleaseEvent(key)</code></td>
+<td>True on release frame</td>
+</tr>
+<tr>
+<td><code>getChars()</code></td>
+<td>Unicode chars typed this frame (text input)</td>
+</tr>
+<tr>
+<td><code>isAnyKeyPressed()</code></td>
+<td>Quick check</td>
+</tr>
+<tr>
+<td><code>update()</code></td>
+<td>Clears per-frame sets each tick</td>
+</tr>
+</tbody>
+</table>
+<h4><code>Mouse</code></h4>
+<p>GLFW callbacks → normalised <code>x</code>,<code>y</code> (0–1 in screen coords), <code>dx</code>,<code>dy</code>, <code>scroll</code>, button sets.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>isButtonDown(button)</code></td>
+<td>True while held</td>
+</tr>
+<tr>
+<td><code>isClickEvent(button)</code></td>
+<td>True on press frame</td>
+</tr>
+<tr>
+<td><code>isReleaseEvent(button)</code></td>
+<td>True on release frame</td>
+</tr>
+<tr>
+<td><code>isShortClick(button)</code></td>
+<td>True if released quickly (not a drag/hold)</td>
+</tr>
+<tr>
+<td><code>isButtonHeld(button)</code></td>
+<td>True if held longer than short-click threshold</td>
+</tr>
+<tr>
+<td><code>isDoubleClick()</code></td>
+<td>Detected by <code>DoubleClickChecker</code></td>
+</tr>
+<tr>
+<td><code>getX() / getY()</code></td>
+<td>0–1 normalised position</td>
+</tr>
+<tr>
+<td><code>getDx() / getDy()</code></td>
+<td>Per-frame delta</td>
+</tr>
+<tr>
+<td><code>getScroll()</code></td>
+<td>Scroll wheel delta this frame (reset to 0 each tick)</td>
+</tr>
+</tbody>
+</table>
+<h4><code>MouseButton</code></h4>
+<p>Enum wrapping GLFW button constants. Used to index <code>ShortClickChecker[]</code>.</p>
+<h4><code>ShortClickChecker</code></h4>
+<p>Tracks press time per button. Classifies as short-click or long-hold.</p>
+<h4><code>DoubleClickChecker</code></h4>
+<p>Detects two quick clicks within a time window.</p>
+<hr />
+<h3>2.3 <code>stateControl</code></h3>
+<h4><code>State</code> (interface)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #B00040">int</span><span style="color: #BBB"> </span><span style="color: #00F">getPriority</span>();
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">init</span>();
+</code></pre></div>
+
+<p>States are identity-compared (<code>==</code>), not by value. <code>init()</code> is called on every transition into the state.</p>
+<h4><code>StateManager</code></h4>
+<p>Priority-queued state machine:<br />
+- <code>suggestState(state, waitForEndRequest)</code> — inserts into sorted queue by priority.<br />
+- <code>endState(state)</code> — removes a specific queued state.<br />
+- <code>updateState()</code> — processes queue head each frame; auto-removes non-persistent states.<br />
+- <code>registerUser(InputUser, State...)</code> — registers a keyboard/mouse input consumer for specific states; automatically enabled/disabled on transitions.<br />
+- <code>registerKeyboardUser</code> / <code>registerMouseUser</code> — finer-grained registration.</p>
+<h4><code>InputUser</code></h4>
+<p>Interface for objects that need keyboard/mouse access in specific states. <code>StateManager</code> calls <code>initState()</code> / <code>endState()</code> on the <code>RegisteredUsers</code> tracker on each transition.</p>
+<h4><code>KeyboardAccess</code> / <code>MouseAccess</code></h4>
+<p>Thin wrappers that give an <code>InputUser</code> access to the relevant input objects only when the correct state is active.</p>
+<h4><code>EmptyState</code></h4>
+<p>Default no-op <code>State</code> implementation.</p>
+<hr />
+<h3>2.4 <code>timing</code></h3>
+<h4><code>FrameTimer</code></h4>
+<ul>
+<li><code>update()</code> — measures elapsed time since last call, caps delta at a maximum to prevent physics explosions.</li>
+<li><code>getDelta()</code> — elapsed seconds since last frame.</li>
+<li><code>getTime()</code> — total elapsed time in seconds.</li>
+<li>Configured at construction with the target frame cap.</li>
+</ul>
+<hr />
+<h2>3 · <code>openglWrapper</code> — OpenGL Abstraction</h2>
+<h3>3.1 <code>openglObjects</code></h3>
+<h4><code>Vao</code></h4>
+<p>Thin wrapper around an OpenGL Vertex Array Object. Created with <code>Vao.create()</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>createDataFeed(maxVertexCount, usage, Attribute...)</code></td>
+<td>Allocates a VBO with interleaved attributes, links pointers</td>
+</tr>
+<tr>
+<td><code>createInstanceDataFeed(maxInstances, Attribute...)</code></td>
+<td>Same but sets <code>glVertexAttribDivisor(1)</code> for instancing</td>
+</tr>
+<tr>
+<td><code>initDataFeed(FloatBuffer, usage, Attribute...)</code></td>
+<td>Uploads initial data immediately</td>
+</tr>
+<tr>
+<td><code>linkInstancingVbo(Vbo, Attribute...)</code></td>
+<td>Links an external VBO for instanced data</td>
+</tr>
+<tr>
+<td><code>createIndexBuffer(IntBuffer)</code></td>
+<td>Creates element array buffer</td>
+</tr>
+<tr>
+<td><code>createIndexBufferFeed(maxIndexCount)</code></td>
+<td>Allocates but doesn't upload</td>
+</tr>
+<tr>
+<td><code>enableAttributes()</code></td>
+<td>Enables all tracked attributes</td>
+</tr>
+<tr>
+<td><code>delete(deleteVbos)</code></td>
+<td>Deletes VAO (and optionally all child VBOs)</td>
+</tr>
+</tbody>
+</table>
+<p>Attribute layout is <strong>interleaved</strong> — stride is the sum of all attribute sizes.</p>
+<h4><code>Vbo</code></h4>
+<p>Wrapper around <code>GL_ARRAY_BUFFER</code> or <code>GL_ELEMENT_ARRAY_BUFFER</code>. <code>storeData(offset, buffer)</code> uses <code>glBufferSubData</code> for partial updates.</p>
+<h4><code>Attribute</code> (abstract)</h4>
+<p>Describes one vertex attribute: <code>attributeNumber</code>, <code>bytesPerVertex</code>. Subclasses call <code>GL20.glVertexAttribPointer</code> with appropriate type and count.</p>
+<p><strong>Standard attribute subclasses:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Data</th>
+<th>GL type</th>
+<th>Bytes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Vec3Attribute</code></td>
+<td>xyz</td>
+<td>float</td>
+<td>12</td>
+</tr>
+<tr>
+<td><code>Vec2Attribute</code></td>
+<td>uv</td>
+<td>float</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>NormalAttribute</code></td>
+<td>normal xyz</td>
+<td>float</td>
+<td>12</td>
+</tr>
+<tr>
+<td><code>ColourAttribute</code></td>
+<td>rgba</td>
+<td>float</td>
+<td>16</td>
+</tr>
+<tr>
+<td><code>UvAttribute</code></td>
+<td>u,v</td>
+<td>float</td>
+<td>8</td>
+</tr>
+<tr>
+<td><code>IntAttribute</code></td>
+<td>single int</td>
+<td>int</td>
+<td>4</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>3.2 <code>shaders</code></h3>
+<h4><code>ShaderProgram</code> (abstract)</h4>
+<p>Full GLSL compile, link, and validate pipeline.</p>
+<ul>
+<li>Constructor compiles vertex + fragment shaders, links, binds attribute locations, deletes shader objects.</li>
+<li><code>completeSetup()</code> — validates program; calls <code>initVariables()</code> if <code>indicateVariablesInitNeeded()</code> was called.</li>
+<li><code>linkTextureSamplers(UniformSampler...)</code> — binds samplers to texture units 0, 1, 2, … in order.</li>
+<li><code>start()</code> / <code>stop()</code> — <code>glUseProgram</code>.</li>
+<li><code>cleanUp()</code> — <code>glDeleteProgram</code>.</li>
+</ul>
+<p><strong>Uniform types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>GL call</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>UniformFloat</code></td>
+<td><code>glUniform1f</code></td>
+</tr>
+<tr>
+<td><code>UniformVec2/3/4</code></td>
+<td><code>glUniform2/3/4fv</code></td>
+</tr>
+<tr>
+<td><code>UniformMatrix</code> / <code>UniformMatrix2</code></td>
+<td><code>glUniformMatrix4fv</code></td>
+</tr>
+<tr>
+<td><code>UniformBoolean</code></td>
+<td><code>glUniform1i</code> (0 or 1)</td>
+</tr>
+<tr>
+<td><code>UniformSampler</code></td>
+<td><code>glUniform1i</code> (texture unit index)</td>
+</tr>
+</tbody>
+</table>
+<h4><code>Uniforms</code></h4>
+<p>Helper that manages a map of uniform name → <code>Uniform</code> object, auto-queries locations via <code>glGetUniformLocation</code>.</p>
+<hr />
+<h3>3.3 <code>fbos</code></h3>
+<h4><code>Fbo</code></h4>
+<p>Full FBO manager with multi-attachment and multisampling support. Built via <code>Fbo.newFbo(window, w, h)</code> or <code>Fbo.newMultisampledFbo(...)</code> builder pattern.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bindForRender(colourIndex)</code></td>
+<td>Binds as draw target, sets draw buffer, sets viewport</td>
+</tr>
+<tr>
+<td><code>bindForRender()</code></td>
+<td>Binds without changing draw buffer</td>
+</tr>
+<tr>
+<td><code>unbindAfterRender()</code></td>
+<td>Restores default FBO and window viewport</td>
+</tr>
+<tr>
+<td><code>blitToScreen(colourIndex, w, h)</code></td>
+<td>GPU blit to default framebuffer</td>
+</tr>
+<tr>
+<td><code>blitToFbo(srcIdx, targetFbo, targetIdx)</code></td>
+<td>Resolve multisampled FBO</td>
+</tr>
+<tr>
+<td><code>reInitColourAttachment(index)</code></td>
+<td>Re-creates a colour attachment (used on window resize)</td>
+</tr>
+<tr>
+<td><code>getFboTexture(attachmentId)</code></td>
+<td>Returns <code>Texture</code> for a <code>TextureAttachment</code></td>
+</tr>
+<tr>
+<td><code>getDepthBuffer()</code></td>
+<td>ID of depth attachment</td>
+</tr>
+<tr>
+<td><code>isComplete()</code></td>
+<td>Checks <code>GL_FRAMEBUFFER_COMPLETE</code></td>
+</tr>
+<tr>
+<td><code>delete()</code></td>
+<td>Deletes all attachments</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Attachment types:</strong> <code>TextureAttachment</code> (readable depth/colour) and <code>RenderBufferAttachment</code> (non-readable, faster for MSAA).</p>
+<hr />
+<h3>3.4 <code>textures</code></h3>
+<h4><code>Texture</code></h4>
+<p>Lazy-initialized OpenGL texture. Supports <code>GL_TEXTURE_2D</code> and array textures.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Texture.init2d()</code></td>
+<td>Creates and binds a 2D texture immediately (GL thread)</td>
+</tr>
+<tr>
+<td><code>Texture.loadFromFile(File)</code></td>
+<td>Returns a <code>TextureBuilder</code> (decode now, GL upload via BackgroundLoader)</td>
+</tr>
+<tr>
+<td><code>storeDataRgba(TexData)</code></td>
+<td>Uploads RGBA pixel data</td>
+</tr>
+<tr>
+<td><code>initRgbaStorage(w, h, format)</code></td>
+<td>Allocates empty RGBA storage</td>
+</tr>
+<tr>
+<td><code>initDepthStorage(w, h, precision)</code></td>
+<td>Allocates depth storage</td>
+</tr>
+<tr>
+<td><code>bindToBank(n)</code></td>
+<td><code>glActiveTexture(GL_TEXTURE0+n)</code> + <code>glBindTexture</code></td>
+</tr>
+<tr>
+<td><code>setNearestFiltering()</code> / <code>setLinearFiltering()</code></td>
+<td>Min/mag filter shortcuts</td>
+</tr>
+<tr>
+<td><code>setMipmapParams(generateMipmap, anisotropic, bias)</code></td>
+<td>Full mipmap config</td>
+</tr>
+<tr>
+<td><code>setClampedEdges(clamp)</code></td>
+<td>Repeat or clamp-to-edge wrap</td>
+</tr>
+<tr>
+<td><code>setClampToBorder(colour)</code></td>
+<td>Border colour wrap mode</td>
+</tr>
+</tbody>
+</table>
+<h4><code>TextureBuilder</code></h4>
+<p>Decodes PNG on calling thread; posts an OpenGL upload request via <code>BackgroundLoader.addOpenGlRequest()</code>.</p>
+<h4><code>ArrayTexture</code> / <code>ArrayTextureLoaderGl</code></h4>
+<p>2D texture array for sprite sheets or particle texture atlases.</p>
+<hr />
+<h3>3.5 <code>openglUtils</code></h3>
+<h4><code>OpenglUtils</code></h4>
+<p>Static utilities: <code>clearFrameBuffer</code>, <code>prepareFrameBuffer</code>, <code>enableAlphaBlending</code>, <code>enableDepthTesting</code>, <code>bindTextureToBank</code>.</p>
+<h4><code>GlRenderConfigs</code></h4>
+<p>Holds boolean flags (<code>depthTesting</code>, <code>antialiasing</code>, <code>backfaceCulling</code>, <code>alphaBlending</code>). Call <code>apply()</code> before a draw call to synchronise GL state.</p>
+<h4><code>FullScreenQuad</code></h4>
+<p>Singleton VAO for a screen-aligned quad — used by post-processing filters.</p>
+<h4><code>VaoUtils</code></h4>
+<p>Low-level interleaved data packing helpers.</p>
+<hr />
+<h2>4 · <code>rendering</code> — Renderers</h2>
+<h3>4.1 <code>smoothPolyRenderer</code> — Main World Renderer</h3>
+<h4><code>SmoothPolyDynamicRenderer</code></h4>
+<p>The primary scene renderer for all smooth-polygon 3D geometry.</p>
+<p><strong>Per-frame pipeline:</strong><br />
+1. Apply <code>GlRenderConfigs</code> (depth, AA, backface cull).<br />
+2. Bind shadow map texture.<br />
+3. Load camera (proj-view matrix), sun (colour, direction), fog, wind time, camera position, lighting settings.<br />
+4. Iterate <code>SmoothPolyDynamicBatch.getIterator(camera)</code> — frustum-culled iterator.<br />
+5. For each visible entity: load model matrix, alpha, tint colour, custom material colours.<br />
+6. Draw with <code>glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, startOffset)</code>.</p>
+<p><strong>Shader uniforms loaded:</strong><br />
+- <code>projectionViewMatrix</code>, <code>modelMatrix</code>, <code>lightColour</code>, <code>lightDirection</code><br />
+- <code>fogDensity</code>, <code>time</code> (wind animation), <code>cameraPosition</code>, <code>shadowMapSpace</code><br />
+- Full lighting: <code>sunDiffuseStrength</code>, <code>ambientStrength</code>, <code>ambientDirectionalBias</code>, <code>skyReflectionStrength</code>, <code>rimLightStrength</code>, <code>sunSpecularStrength</code>, <code>specularShinyness</code><br />
+- Tone-mapping: <code>brightness</code>, <code>contrast</code>, <code>saturation</code>, <code>filmicValue</code>, <code>rrtValue</code>, <code>basicValue</code><br />
+- Material: <code>materialFactor</code>, <code>materialColours[N]</code>, <code>tintColour</code>, <code>alpha</code>, <code>useAlphaIndicator</code></p>
+<h4><code>SmoothPolyDynamicBatch&lt;T&gt;</code> (interface)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Vao<span style="color: #BBB"> </span><span style="color: #00F">getVao</span>();
+<span style="color: #B00040">boolean</span><span style="color: #BBB"> </span><span style="color: #00F">isEmpty</span>();
+Iterator<span style="color: #666">&lt;</span>T<span style="color: #666">&gt;</span><span style="color: #BBB"> </span><span style="color: #00F">getIterator</span>(Camera<span style="color: #BBB"> </span>camera);<span style="color: #BBB">  </span><span style="color: #3D7B7B; font-style: italic">// Camera passed for frustum cull</span>
+</code></pre></div>
+
+<h4><code>SmoothPolyRenderData</code> (interface)</h4>
+<p>Contract for renderable entities: <code>getTransform()</code>, <code>getCurrentMesh()</code>, <code>isVisible()</code>, <code>getAlpha()</code>, <code>hasTint()</code>, <code>getTintColour()</code>, <code>getMaterialFactor()</code>, <code>getMaterialColours()</code>, <code>hasMultipleCustomCols()</code>.</p>
+<hr />
+<h3>4.2 Other Renderers</h3>
+<table>
+<thead>
+<tr>
+<th>Renderer</th>
+<th>Shader</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmoothPolyUvRenderer</code></td>
+<td><code>smoothPolyUvVertex/Fragment.glsl</code></td>
+<td>UV-textured variant of smooth-poly</td>
+</tr>
+<tr>
+<td><code>EntityRenderer</code></td>
+<td><code>entityVertex/FragmentShader.glsl</code></td>
+<td>Per-entity transform rendering</td>
+</tr>
+<tr>
+<td><code>SimpleMeshRenderer</code></td>
+<td><code>simpleVertex/FragmentShader.glsl</code></td>
+<td>Unlit flat mesh</td>
+</tr>
+<tr>
+<td><code>BoxRenderer</code></td>
+<td><code>boxVertex/Fragment.glsl</code></td>
+<td>Debug AABB/OBB wire boxes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>4.3 <code>RenderConfigs</code></h3>
+<p>Global render constants, e.g. <code>WIND_SPEED</code> used by the shader's wind animation <code>time</code> uniform.</p>
+<h3>4.4 <code>LightingSettings</code></h3>
+<p>Value object with all lighting parameters. <code>TEMP_GLOBAL_LIGHT</code> is a static instance used until a proper per-scene system is implemented.</p>
+<hr />
+<h2>5 · <code>renderData</code> — GPU Data Management</h2>
+<h3>5.1 <code>vboMemoryMapping</code></h3>
+<h4><code>VboMemoryManager</code></h4>
+<p>Manages a <code>ResizingArrayVbo</code> that grows on demand, allocating/freeing byte ranges for dynamic geometry.</p>
+<h4><code>ResizingArrayVbo</code></h4>
+<p>A <code>GL_ARRAY_BUFFER</code> that doubles its capacity when full (similar to an <code>ArrayList</code>). Tracks used regions.</p>
+<h4><code>DataBundle</code></h4>
+<p>Holds the raw byte slice for one object's GPU data. Written by a <code>ByteFormat</code> and committed to the VBO.</p>
+<h4><code>MemoryMapper</code> / <code>MemoryManagerCreator</code></h4>
+<p>Factory + utility for initialising memory managers with the correct format.</p>
+<hr />
+<h3>5.2 <code>byteExtracting</code></h3>
+<h4><code>ByteFormat</code> (interface)</h4>
+<p>Defines how a <code>SmoothPolyMesh</code> (or similar) is serialised into bytes for upload.</p>
+<p><strong>Standard formats:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Content</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmoothPolyBaseFormat</code></td>
+<td>Positions + normals + material indices</td>
+</tr>
+<tr>
+<td><code>SmoothPolyMatFormat</code></td>
+<td>Positions + normals + per-vertex material colours</td>
+</tr>
+<tr>
+<td><code>SmoothPolyUvFormat</code></td>
+<td>Positions + normals + UVs</td>
+</tr>
+</tbody>
+</table>
+<h4><code>MultiModelByteExtractor</code></h4>
+<p>Extracts bytes from multiple mesh models and packs them into a single contiguous buffer.</p>
+<hr />
+<h3>5.3 <code>instancing</code></h3>
+<h4><code>InstancedDataVao</code></h4>
+<p>VAO that holds per-instance transform data in a separate VBO. Updated with <code>glBufferSubData</code> each frame.</p>
+<h4><code>RenderInstance</code></h4>
+<p>Lightweight value object containing a model matrix and any per-instance shader data.</p>
+<hr />
+<h3>5.4 <code>meshAtlas</code></h3>
+<h4><code>SmoothPolyMeshAtlas</code></h4>
+<p>A single shared VAO containing all mesh data for a batch. Objects index into it using byte offsets.</p>
+<h4><code>MeshDataAtlasUpdater</code></h4>
+<p>Updates the atlas when meshes are added or removed. Re-packs the VBO.</p>
+<hr />
+<h3>5.5 <code>MeshData</code></h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #B00040">int</span><span style="color: #BBB"> </span><span style="color: #00F">getStartIndex</span>();<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// byte offset into the index buffer</span>
+<span style="color: #B00040">int</span><span style="color: #BBB"> </span><span style="color: #00F">getIndexCount</span>();<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// triangle count × 3</span>
+</code></pre></div>
+
+<p>Used in <code>renderEntity()</code> calls: <code>glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, startIndex * BYTES_IN_INT)</code>.</p>
+<hr />
+<h2>6 · <code>shadows</code> — Shadow Mapping</h2>
+<h3><code>ShadowMaster</code></h3>
+<p>High-level controller. Created with <code>ShadowMaster.init(ShadowConfigs)</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Member</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>shadowMap</code> (Fbo)</td>
+<td>Depth-only FBO for the shadow map</td>
+</tr>
+<tr>
+<td><code>getShadowMapSpace()</code></td>
+<td>Combined light proj-view matrix used in main shader</td>
+</tr>
+<tr>
+<td><code>setShadowDistance(float)</code></td>
+<td>Adjusts shadow frustum extent at runtime</td>
+</tr>
+<tr>
+<td><code>updateShadowMap(batches, camera, sun)</code></td>
+<td>Binds FBO → renders shadow pass → unbinds</td>
+</tr>
+</tbody>
+</table>
+<h3><code>ShadowConfigs</code></h3>
+<p>Configuration: <code>shadowMapSize</code>, <code>shadowDistance</code>, <code>depthBufferFormat</code>, <code>shadowBoxClampHeight</code>, <code>shadowBoxZOffset</code>.</p>
+<h3><code>ShadowBox</code></h3>
+<p>Calculates the light-space AABB that tightly fits the camera's view frustum:<br />
+- <code>update(camera, sun)</code> — recomputes fit each frame.<br />
+- <code>getShadowMapSpace()</code> — orthographic light proj × light view matrix.<br />
+- <code>getShadowBoxSpace()</code> — light-space matrix used for the shadow pass.</p>
+<h3><code>FrustumFittingBox</code></h3>
+<p>Math helper that projects all 8 frustum corners into light space and computes the tight AABB.</p>
+<h3><code>FrustumTerrainClamper</code></h3>
+<p>Extends the shadow box downward to always include the terrain, preventing shadows from being cut off.</p>
+<h3><code>SnappingBox</code></h3>
+<p>Snaps the shadow box to texel boundaries to eliminate shadow shimmer on movement.</p>
+<h3><code>ShadowMapMasterRenderer</code> / <code>ShadowDynamicRenderer</code></h3>
+<p>Renders all dynamic geometry into the depth FBO using a simplified shader (<code>shadowDynamicVertex/Fragment.glsl</code>) — only transforms, no lighting or colour.</p>
+<hr />
+<h2>7 · <code>particles</code> — Particle System</h2>
+<h3>7.1 Core Types</h3>
+<h4><code>Particle</code></h4>
+<p>Base class for all particles. Public fields: <code>position (Vector3f)</code>, <code>velocity (Vector3f)</code>, <code>baseScale</code>, <code>elapsedTime</code>, plus abstract <code>getSize()</code>, <code>isAlive()</code>.</p>
+<h4><code>MeshParticle</code> / <code>QuadParticle</code></h4>
+<p>Concrete particle types. <code>MeshParticle</code> stores a mesh reference; <code>QuadParticle</code> stores texture atlas row/column.</p>
+<h3>7.2 <code>particleEffects</code></h3>
+<h4><code>ParticleEffect</code> (interface)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">pulse</span>(Transform);<span style="color: #BBB">                    </span><span style="color: #3D7B7B; font-style: italic">// emit a fixed burst</span>
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>(Transform);<span style="color: #BBB">                   </span><span style="color: #3D7B7B; font-style: italic">// emit PPS × delta particles</span>
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">pulse</span>(Transform,<span style="color: #BBB"> </span>ParticleEffectParams);
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>(Transform,<span style="color: #BBB"> </span>ParticleEffectParams);
+ParticleEffect<span style="color: #BBB"> </span><span style="color: #00F">createVariant</span>(ParticleEffectParams);
+ParticleEffect<span style="color: #BBB"> </span><span style="color: #00F">createVariant</span>(ParticleEffectParam...);
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">copySettings</span>(ParticleEffect);
+</code></pre></div>
+
+<h4><code>ParticleEmitter</code> (abstract)</h4>
+<p>Implements <code>ParticleEffect</code>. Calculates particles-to-create this frame = <code>pps × delta</code> + probabilistic rounding. Delegates to <code>ParticleEffectComponent[]</code> for initialisation and update.<br />
+Applies <code>Transform</code> to particle position and velocity using model matrix multiplication.</p>
+<h4><code>ParticleEffectComponent</code> (interface)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">initParticle</span>(Particle,<span style="color: #BBB"> </span>ParticleEffectParams);<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// called on spawn</span>
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">updateParticle</span>(Particle);<span style="color: #BBB">                       </span><span style="color: #3D7B7B; font-style: italic">// called each frame</span>
+</code></pre></div>
+
+<p><strong>Built-in components (20+):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BounceParticleComp</code></td>
+<td>Reverses y-velocity (with damping) when particle hits <code>bounceHeight</code>, also damps horizontal velocity</td>
+</tr>
+<tr>
+<td><code>GravityParticleComp</code></td>
+<td>Applies downward acceleration</td>
+</tr>
+<tr>
+<td><code>MovementParticleComp</code></td>
+<td>Integrates velocity into position</td>
+</tr>
+<tr>
+<td><code>DragParticleComp</code></td>
+<td>Velocity × drag factor</td>
+</tr>
+<tr>
+<td><code>SpeedParticleComp</code></td>
+<td>Randomised initial speed</td>
+</tr>
+<tr>
+<td><code>FadeParticleComp</code></td>
+<td>Alpha fade over lifetime</td>
+</tr>
+<tr>
+<td><code>ScaleUpParticleComp</code></td>
+<td>Size grows over lifetime</td>
+</tr>
+<tr>
+<td><code>SizeParticleComp</code></td>
+<td>Randomised initial size</td>
+</tr>
+<tr>
+<td><code>LifeLengthParticleComp</code></td>
+<td>Sets random lifetime within range</td>
+</tr>
+<tr>
+<td><code>ColourParticleComp</code></td>
+<td>Sets initial colour (random from range)</td>
+</tr>
+<tr>
+<td><code>FanOutParticleComp</code></td>
+<td>Spreads velocity in a cone</td>
+</tr>
+<tr>
+<td><code>Rotate3dParticleComp</code></td>
+<td>Rotates particle in 3D</td>
+</tr>
+<tr>
+<td><code>OffsetParticleComp</code></td>
+<td>Random position offset from emitter</td>
+</tr>
+<tr>
+<td><code>HeightFadeParticleComp</code></td>
+<td>Fades based on world-space Y height</td>
+</tr>
+<tr>
+<td><code>TextureAnimateParticleComp</code></td>
+<td>Advances sprite sheet frame</td>
+</tr>
+<tr>
+<td><code>SquareSpawnParticleComp</code></td>
+<td>Spawns in a square area</td>
+</tr>
+<tr>
+<td><code>CircleSpawnParticleComp</code></td>
+<td>Spawns on a circle</td>
+</tr>
+<tr>
+<td><code>LineSpawnParticleComp</code></td>
+<td>Spawns along a line</td>
+</tr>
+<tr>
+<td><code>SphereParticleSpawn</code></td>
+<td>Spawns on a sphere surface</td>
+</tr>
+<tr>
+<td><code>ChimneyParticleSpawn</code></td>
+<td>Spawns in an upward cone (chimney shape)</td>
+</tr>
+<tr>
+<td><code>CuboidChimneySpawn</code></td>
+<td>Spawns in a box with upward bias</td>
+</tr>
+</tbody>
+</table>
+<h4><code>ParticleEffectVariant</code></h4>
+<p>Wraps a base <code>ParticleEmitter</code> + overrides specific parameters via <code>ParticleEffectParams</code>. Delegates all calls to the base emitter, injecting the variant params.</p>
+<h4><code>CompoundParticleEffect</code></h4>
+<p>Combines multiple <code>ParticleEffect</code> instances into one call — useful for complex multi-layered effects.</p>
+<hr />
+<h3>7.3 <code>params</code></h3>
+<h4><code>ParticleEffectParams</code></h4>
+<p>Map from <code>ParticleEffectParam</code> type → value. Supports <code>FloatParam</code>, <code>Vec3Param</code>, <code>ColourParam</code>. Components read from this map to override defaults.</p>
+<h4><code>FloatVar</code> / <code>Vec3Var</code> / <code>ColourVar</code></h4>
+<p>Randomisable value types used inside components — hold a base value + optional random range.</p>
+<h4><code>CustomVariable</code></h4>
+<p>Extension point: arbitrary custom data keyed per-component.</p>
+<hr />
+<h3>7.4 <code>batches</code></h3>
+<h4><code>MeshParticleBundle</code></h4>
+<p>Holds all live <code>MeshParticle</code> instances + the shared <code>InstancedParticleMeshVao</code>. Each frame: insertion-sort by camera distance for correct transparency ordering, then upload instance data.</p>
+<h4><code>QuadParticleBundle</code> / <code>QuadVaoCreator</code></h4>
+<p>Same concept for textured quad particles. Maintains the instanced quad VAO.</p>
+<h4><code>InsertionSort</code></h4>
+<p>Custom insertion sort for the particle list — efficient because particles are nearly sorted frame-to-frame.</p>
+<hr />
+<h3>7.5 <code>loading</code></h3>
+<h4><code>ParticleEffectLoader</code></h4>
+<p>Deserialises <code>.cba</code> particle effect files using the toolbox tag-format reader.</p>
+<h4><code>ParticleFxHotLoader</code></h4>
+<p>Wraps <code>ParticleEffectLoader</code> for hot-loading: watches the particle effect folder and reloads changed files at runtime.</p>
+<h4><code>EffectLoaderCreator</code></h4>
+<p>Factory: creates the loader + optionally the hot-loader depending on <code>hotloading</code> flag.</p>
+<hr />
+<h3>7.6 <code>ParticleMaster</code></h3>
+<p>Singleton coordinator.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>renderParticles(camera, light)</code></td>
+<td>Update + render in one call</td>
+</tr>
+<tr>
+<td><code>updateParticles(camera)</code></td>
+<td>Advance simulation + upload instance data</td>
+</tr>
+<tr>
+<td><code>clearAllParticles()</code></td>
+<td>Remove all live particles</td>
+</tr>
+<tr>
+<td><code>getGlobalEffect(id)</code></td>
+<td>Look up a pre-loaded effect by filename</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>7.7 <code>rendering</code></h3>
+<p>Both renderers use instanced rendering (one draw call per particle type):<br />
+- <strong><code>MeshParticleRenderer</code></strong> — renders mesh-based particles. Shader: <code>meshParticleVertex/Fragment.glsl</code>.<br />
+- <strong><code>QuadParticleRenderer</code></strong> — renders textured billboarded quads. Shader: <code>quadParticleVertex/Fragment.glsl</code>.</p>
+<hr />
+<h2>8 · <code>audio</code> — Audio System</h2>
+<h3>8.1 <code>core</code></h3>
+<h4><code>AudioMaster</code></h4>
+<p>Singleton audio coordinator.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AudioMaster.init(volumeModTypes, soundFolders)</code></td>
+<td>Initialises OpenAL, loads sounds, creates source pools</td>
+</tr>
+<tr>
+<td><code>playSound(Sound, PlayParams)</code></td>
+<td>Acquires a source, applies params, starts playback (or streams)</td>
+</tr>
+<tr>
+<td><code>update(delta)</code></td>
+<td>Updates listener, ticks all active playthroughs</td>
+</tr>
+<tr>
+<td><code>cleanUp()</code></td>
+<td>Stops all sounds, destroys streaming thread, destroys AL context</td>
+</tr>
+<tr>
+<td><code>instance()</code></td>
+<td>Static singleton access</td>
+</tr>
+<tr>
+<td><code>setCurrentScene(Object)</code></td>
+<td>Scene tag for scene-local sound stopping</td>
+</tr>
+</tbody>
+</table>
+<p>If <code>AlContext.init()</code> fails, <code>EmptyAudioMaster</code> is substituted — all methods become no-ops.</p>
+<h4><code>Sound</code></h4>
+<p>Data object: <code>AlBuffer</code> ID (or -1 if not fully loaded), <code>fullyLoaded</code> flag, sample rate, channel count.</p>
+<h4><code>SoundRepository</code></h4>
+<p>Registry of all loaded sounds, keyed by <code>HashId</code>.</p>
+<h4><code>AudioConfigs</code></h4>
+<p>Per-sound config: <code>AudioType</code>, base volume, loop flag, etc.</p>
+<hr />
+<h3>8.2 <code>openAlObjects</code></h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Wraps</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AlContext</code></td>
+<td>OpenAL device + context creation/destruction</td>
+</tr>
+<tr>
+<td><code>AlBuffer</code></td>
+<td><code>alGenBuffers</code> — holds PCM data</td>
+</tr>
+<tr>
+<td><code>AlSource</code></td>
+<td><code>alGenSources</code> — plays from a buffer or stream</td>
+</tr>
+<tr>
+<td><code>AlListenerManager</code></td>
+<td>Sets 3D listener position/orientation/velocity each frame</td>
+</tr>
+<tr>
+<td><code>AudioListener</code> (interface)</td>
+<td>Implemented by <code>GameCamera</code> — provides forward/up vectors</td>
+</tr>
+<tr>
+<td><code>AlError</code></td>
+<td><code>alGetError</code> wrapper with descriptive messages</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>8.3 <code>soundPlaying</code></h3>
+<h4><code>SoundPlaythrough</code></h4>
+<p>Represents one active play of a sound. Manages:<br />
+- Volume (global × type × local), pitch, loop flag<br />
+- 3D position if applicable<br />
+- <code>update(delta)</code> — checks for <code>AL_STOPPED</code>, handles looping, streaming, scene checks<br />
+- <code>end()</code> / <code>hasEnded()</code> / <code>fadeOut(seconds)</code></p>
+<h4><code>PlayParams</code></h4>
+<p>Builder for sound parameters:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>setVolume(float)</code></td>
+<td>0–1</td>
+</tr>
+<tr>
+<td><code>setPitch(float)</code></td>
+<td>1 = normal</td>
+</tr>
+<tr>
+<td><code>setLoop(boolean)</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>set3dPosition(Vector3f)</code></td>
+<td>World-space position</td>
+</tr>
+<tr>
+<td><code>setScene(Object)</code></td>
+<td>Scene tag — sound auto-stops on scene change</td>
+</tr>
+</tbody>
+</table>
+<h4><code>AudioType</code></h4>
+<p>Enum: <code>MUSIC</code>, <code>SFX</code>, <code>AMBIENT</code> (used to route to different source pools and volume channels).</p>
+<h4><code>VolumeControl</code></h4>
+<p>Tracks a source's runtime volume factors.</p>
+<hr />
+<h3>8.4 <code>globalVolume</code></h3>
+<h4><code>VolumeLevels</code></h4>
+<p>Maintains one <code>float</code> level per <code>VolumeModType</code>. <code>getGlobalVolume(AudioType)</code> multiplies all modifier levels that affect this type.</p>
+<h4><code>GlobalVolume</code></h4>
+<p>Singleton holding a reference to <code>VolumeLevels</code>.</p>
+<h4><code>VolumeModType</code> (interface)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>AudioType<span style="color: #666">[]</span><span style="color: #BBB"> </span><span style="color: #00F">getAffectedTypes</span>();
+</code></pre></div>
+
+<p>Implemented as an enum by the game. Example: <code>GLOBAL</code> affects all types; <code>MUSIC</code> affects only <code>AudioType.MUSIC</code>.</p>
+<h4><code>VolumeMod</code></h4>
+<p>Value object pairing a <code>VolumeModType</code> with a current level (0–1 float).</p>
+<hr />
+<h3>8.5 <code>loading</code></h3>
+<h4><code>SoundLoader</code></h4>
+<p>Decodes <code>.ogg</code> and PCM sound files using the <code>OggStream</code> decoder. Uploads to <code>AlBuffer</code> on the main thread.</p>
+<h4><code>AudioStream</code> / <code>OggStream</code></h4>
+<p>Streaming decoder for large files — reads in small page-sized chunks without loading the whole file.</p>
+<h4><code>AudioStreamFactory</code> / <code>SoundRepositoryLoader</code></h4>
+<p>Scans the sound folder tree and loads all sound files into the <code>SoundRepository</code>.</p>
+<hr />
+<h3>8.6 <code>sourcePools</code></h3>
+<h4><code>SourcePool</code></h4>
+<p>Manages a fixed-size pool of <code>AlSource</code> objects for a given <code>AudioType</code>. If all sources are in use, the quietest/oldest source is evicted.</p>
+<h4><code>SourcePoolCreator</code></h4>
+<p>Creates a <code>Map&lt;AudioType, SourcePool&gt;</code> with configurable pool sizes per type.</p>
+<hr />
+<h3>8.7 <code>streaming</code></h3>
+<h4><code>StreamingService</code></h4>
+<p>Runs a background thread that buffers audio data from <code>AudioStream</code> into <code>AlSource</code> buffer queues. Uses a producer-consumer pattern — sources are added to the queue and the thread continuously refills their buffers.</p>
+<h4><code>ActiveStream</code></h4>
+<p>Represents one actively streaming sound: tracks the <code>AlSource</code>, the decoder, and the refill state.</p>
+<hr />
+<h3>8.8 <code>gameConcepts</code></h3>
+<h4><code>Sound2d</code> / <code>Sound2dBuilder</code></h4>
+<p>Non-positional sound. Builder sets volume, pitch, type, loop. <code>play()</code> returns a <code>SoundPlaythrough</code>.</p>
+<h4><code>Sound3d</code> / <code>Sound3dBuilder</code></h4>
+<p>Positional sound. Additional: <code>setMaxDistance</code>, <code>setRolloff</code>. <code>play(Vector3f)</code> calls <code>PlayParams.set3dPosition</code>.</p>
+<h4><code>Sound3dEmitter</code></h4>
+<p>Attaches a <code>Sound3d</code> to a moving game entity — updates the position of the playthrough each frame.</p>
+<h4><code>AmbientSound</code> / <code>AmbientSoundPlayer</code></h4>
+<p>Crossfades between ambient sound layers based on game state (e.g. weather, indoors/outdoors).</p>
+<h4><code>MusicPlayer</code></h4>
+<p>Sequential playlist: plays tracks in order, advancing <code>nextTrackIndex</code> when the current <code>SoundPlaythrough.hasEnded()</code>. <code>start()</code> must be called to begin.</p>
+<h4><code>MusicTrack</code></h4>
+<p>Pairs a <code>Sound</code> with a volume level.</p>
+<h4><code>CompoundSound</code> / <code>CompoundSoundPlaying</code></h4>
+<p>A group of <code>Track</code> objects with <code>TrackPlaying</code> instances. Suitable for complex multi-layer sounds.</p>
+<p><strong>Track prefabs:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LoopTrack</code></td>
+<td>Loops indefinitely until stopped</td>
+</tr>
+<tr>
+<td><code>EndingTrack</code></td>
+<td>Plays once, then the compound sound ends</td>
+</tr>
+<tr>
+<td><code>RandomTrack</code></td>
+<td>Picks randomly from a list each play</td>
+</tr>
+<tr>
+<td><code>TriggerTrack</code></td>
+<td>Waits for an external trigger to play</td>
+</tr>
+</tbody>
+</table>
+<h4><code>AudioFader</code></h4>
+<p>Smoothly fades the volume of a <code>SoundPlaythrough</code> from one level to another over a given duration.</p>
+<h4><code>SoundBuilder</code> / <code>SoundProvider</code> / <code>SoundUtil</code></h4>
+<p>Builder pattern for constructing sounds with pitch/volume randomisation:<br />
+- <code>SingleSoundProvider</code> — always returns the same sound<br />
+- <code>RandSoundProvider</code> — randomly picks from a list<br />
+- <code>SimplePitchProvider</code> — fixed pitch<br />
+- <code>VaryingPitchProvider</code> — random pitch within a range<br />
+- <code>PitchProvider</code> (interface) — can be lambda</p>
+<hr />
+<h2>9 · <code>guis</code> — User Interface</h2>
+<h3>9.1 <code>uiComponent</code> — Core Component</h3>
+<h4><code>UiComponent</code> (abstract)</h4>
+<p>The base of every UI element. Owns:<br />
+- <strong><code>UiPositioner positioning</code></strong> — screen-space bounds, constraint system.<br />
+- <strong><code>AlphaControl alpha</code></strong> — inherited + local alpha management.<br />
+- <strong><code>UiDisplayer displayer</code></strong> — display/undisplay transitions.<br />
+- <strong><code>Animator animator</code></strong> — lazy-initialised animation engine.</p>
+<p><strong>Lifecycle:</strong><br />
+1. <code>add(component, constraints)</code> → sets parent, stores constraints, calls <code>doSetUp()</code>.<br />
+2. <code>doSetUp()</code> → resolves level, inherits clipping bounds, positions itself, calls <code>init()</code>, inits children.<br />
+3. <code>update(delta, parentsDisplayed)</code> → calls <code>updateSelf()</code>, <code>updateAnimation()</code>, <code>displayer.update()</code>, recurses.<br />
+4. <code>remove()</code> → schedules for removal; <code>delete()</code> → recursively frees resources.</p>
+<p><strong>Key methods:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>add(component, constraints)</code></td>
+<td>Adds a child</td>
+</tr>
+<tr>
+<td><code>addInStyle(component, constraints)</code></td>
+<td>Adds with display transition</td>
+</tr>
+<tr>
+<td><code>addText(text, x, y, width)</code></td>
+<td>Convenience for text children</td>
+</tr>
+<tr>
+<td><code>show(boolean)</code></td>
+<td>Toggle visibility (propagates to children)</td>
+</tr>
+<tr>
+<td><code>display(boolean)</code></td>
+<td>Show/hide with transition</td>
+</tr>
+<tr>
+<td><code>setDisplayed(boolean)</code></td>
+<td>Instant show/hide without transition</td>
+</tr>
+<tr>
+<td><code>close()</code></td>
+<td>Graceful animated removal</td>
+</tr>
+<tr>
+<td><code>remove()</code></td>
+<td>Instant removal</td>
+</tr>
+<tr>
+<td><code>replaceInStyle(newComponent, removeOld)</code></td>
+<td>Cross-fade swap</td>
+</tr>
+<tr>
+<td><code>clipChildrenToBounds()</code></td>
+<td>Scissor-clip children to this component</td>
+</tr>
+<tr>
+<td><code>clipToGuideBounds(guide)</code></td>
+<td>Scissor-clip to another component</td>
+</tr>
+<tr>
+<td><code>setLevel(int)</code></td>
+<td>Render layer (100 = on top)</td>
+</tr>
+<tr>
+<td><code>notifyDimensionChange(scaleChange)</code></td>
+<td>Propagates resize event through tree</td>
+</tr>
+<tr>
+<td><code>isMouseOver()</code></td>
+<td>Checks mouse position + clipping bounds</td>
+</tr>
+<tr>
+<td><code>isClickedOn(MouseButton)</code></td>
+<td><code>isMouseOver() &amp;&amp; isClickEvent(button)</code></td>
+</tr>
+<tr>
+<td><code>reload()</code></td>
+<td>Clear + re-<code>init()</code></td>
+</tr>
+<tr>
+<td><code>setReloadOnSizeChange()</code></td>
+<td>Auto-reload on window resize</td>
+</tr>
+<tr>
+<td><code>testMouseoverOnChildren()</code></td>
+<td>Use children's bounds for mouseover</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4><code>UiPositioner</code></h4>
+<p>Resolves <code>UiConstraints</code> (4 constraints: x, y, width, height) relative to the parent's <code>Dimensions</code> to compute absolute screen-space <code>Dimensions</code>.</p>
+<h4><code>AlphaControl</code></h4>
+<p>Calculates total alpha as <code>selfAlpha × parentTotalAlpha</code>. Animators can modify this multiplicatively.</p>
+<h4><code>UiDisplayer</code></h4>
+<p>Manages display states with optional transition animations. Supports <code>display()</code>, <code>undisplay()</code>, <code>undisplayThenDisplay()</code> (for swapping components).</p>
+<h4><code>Dimensions</code></h4>
+<p>Holds <code>x, y, width, height</code> in UI units. <code>contains(mouseX, mouseY)</code> for hit testing.</p>
+<hr />
+<h3>9.2 <code>uiMain</code></h3>
+<h4><code>Ui</code></h4>
+<p>Static facade for the entire UI system.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ui.init(window, mouse, keyboard, configs)</code></td>
+<td>Initialise renderers, cursor manager, scaling</td>
+</tr>
+<tr>
+<td><code>Ui.loadResources()</code></td>
+<td>Load style and texture repositories</td>
+</tr>
+<tr>
+<td><code>Ui.update(delta)</code></td>
+<td>Update resource manager, layout tree, render all UI + text</td>
+</tr>
+<tr>
+<td><code>Ui.cleanUp()</code></td>
+<td>Destroy renderers and cursors</td>
+</tr>
+<tr>
+<td><code>Ui.getContainer()</code></td>
+<td>Root <code>UiContainer</code></td>
+</tr>
+<tr>
+<td><code>Ui.getMouse()</code> / <code>getKeyboard()</code></td>
+<td>Shared input access</td>
+</tr>
+<tr>
+<td><code>Ui.getDisplayWidth/Height()</code></td>
+<td>Width/height in UI units (pixels ÷ uiSizeFactor)</td>
+</tr>
+<tr>
+<td><code>Ui.getActualDisplayWidthPixels()</code></td>
+<td>Raw pixel width</td>
+</tr>
+<tr>
+<td><code>Ui.setManualUiSize(float)</code></td>
+<td>Runtime UI scale override</td>
+</tr>
+<tr>
+<td><code>Ui.isMouseInUi()</code></td>
+<td>True if mouse is over any UI component</td>
+</tr>
+<tr>
+<td><code>Ui.enableMouseInteraction(boolean)</code></td>
+<td>Toggle mouse interaction globally</td>
+</tr>
+</tbody>
+</table>
+<h4><code>UiContainer</code></h4>
+<p>Root component; always full-screen. Not added to a parent — uses <code>forceInitialization()</code>.</p>
+<h4><code>UiConfigs</code></h4>
+<p>UI configuration: <code>style</code>, <code>uiScalingAlgorithm</code>, <code>manualUiSize</code>, <code>enableHotloading</code>.</p>
+<h4><code>UiScalingAlgorithm</code> (interface)</h4>
+<p><code>float getScaleFactor(displayWidth, displayHeight)</code>. Two implementations:<br />
+- <strong><code>HomegrownScaling</code></strong> — scales proportionally to a reference resolution.<br />
+- <strong><code>DefaultUiScaling</code></strong> — fixed scale of 1.</p>
+<hr />
+<h3>9.3 <code>constraints</code> — Layout System</h3>
+<p>Constraints implement <code>UiConstraint</code> — a single method <code>float getSize(UiPositioner)</code> or <code>float getPosition(UiPositioner)</code>. The <code>UiPositioner</code> provides access to parent and self dimensions.</p>
+<p><strong>38 constraint types grouped by purpose:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Constraints</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Absolute</strong></td>
+<td><code>PixelConstraint</code>, <code>PixelOtherConstraint</code>, <code>CappedPixelConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Relative</strong></td>
+<td><code>RelativeConstraint</code>, <code>RelativeSelfConstraint</code>, <code>RelativeOtherConstraint</code>, <code>RelativeOtherAxisConstraint</code>, <code>FillRelativeConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Centering</strong></td>
+<td><code>CenterConstraint</code>, <code>CenterOffsetConstraint</code>, <code>CenterOffsetSelfRel</code>, <code>CenterListConstraint</code>, <code>CenteredArrayConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Matching</strong></td>
+<td><code>MatchSizeConstraint</code>, <code>FollowConstraint</code>, <code>RelativeFollowConstraint</code>, <code>FollowTextXConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Fill</strong></td>
+<td><code>FillConstraint</code>, <code>FillToTextX</code></td>
+</tr>
+<tr>
+<td><strong>Ratio</strong></td>
+<td><code>RatioConstraint</code>, <code>RatioOtherConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Text-driven</strong></td>
+<td><code>TextHeightConstraint</code>, <code>PreTextConstraint</code>, <code>FollowTextXConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Array/list</strong></td>
+<td><code>ScalingArrayConstraint</code>, <code>RelScalingArrayConstraint</code>, <code>CenterListConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Special</strong></td>
+<td><code>BestFitConstraint</code> (aspect-fit), <code>AspectFitConstraint</code>, <code>MouseFollowConstraint</code>, <code>WrapConstraint</code>, <code>CustomConstraint</code>, <code>DefaultScale</code></td>
+</tr>
+<tr>
+<td><strong>Other</strong></td>
+<td><code>BetweenConstraint</code>, <code>PrecedeConstraint</code>, <code>CenterOnPxConstraint</code>, <code>CenterOnRelConstraint</code>, <code>CenterOnOtherPxConstraint</code>, <code>RelOtherMaxConstraint</code></td>
+</tr>
+<tr>
+<td><strong>Abstract base</strong></td>
+<td><code>AbstractRelativeConstraint</code></td>
+</tr>
+</tbody>
+</table>
+<h4><code>ConstraintUtils</code></h4>
+<p>Factory methods: <code>fill()</code>, <code>fill(padding)</code>, <code>getRelative(x,y,w,h)</code>, <code>getPixel(...)</code>, <code>centered(w,h)</code>, <code>scaleToFit(aspect)</code>, <code>scaleToFitWithLimitedAspect(maxW2H, maxH2W)</code>, <code>getCenteredPos()</code>, <code>centeredRelSquare(relWidth)</code>.</p>
+<hr />
+<h3>9.4 <code>transitions</code> — Animation System</h3>
+<h4><code>Animator</code></h4>
+<p>Per-component animator that manages multiple concurrent <code>Animation</code> instances (one per <code>AnimationBlueprint</code>). Accumulates offset values (x, y, width, height, alpha) from all active animations, then calls <code>notifyDimensionChange()</code> or <code>notifyTotalAlphaChange()</code> if any changed.</p>
+<h4><code>AnimationBlueprint</code> (abstract)</h4>
+<p>Factory for <code>Animation</code> instances. <code>createInstance(oldAnim, reverse, delay)</code>.</p>
+<h4><code>Animation</code> (abstract)</h4>
+<p>One running animation instance. <code>update(delta, Animator)</code> — calls <code>applyX/Y/Width/Height/Alpha</code> on the <code>Animator</code>. <code>shouldBeRemoved()</code> when finished.</p>
+<h4><code>Transition</code> / <code>TransitionBlueprint</code></h4>
+<p>An animation that runs once (display or undisplay). Created by <code>UiDisplayer</code>.</p>
+<h4><code>Effect</code> / <code>EffectBlueprint</code></h4>
+<p>A looping or triggered animation effect (e.g. pulse, wave). <code>stop()</code> cancels the effect.</p>
+<p><strong>Blueprint prefabs:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EaseDriverBlueprint</code> / <code>EaseDriver</code></td>
+<td>Smooth ease-in/out based on <code>EasingFunction</code></td>
+</tr>
+<tr>
+<td><code>SlideDriverBlueprint</code></td>
+<td>Slides a component in/out from an edge</td>
+</tr>
+<tr>
+<td><code>BounceDriverBlueprint</code></td>
+<td>Spring-bounce animation</td>
+</tr>
+<tr>
+<td><code>SinDriverBlueprint</code></td>
+<td>Continuous sine-wave oscillation</td>
+</tr>
+<tr>
+<td><code>WaveDriverBlueprint</code></td>
+<td>Wave-based oscillation</td>
+</tr>
+<tr>
+<td><code>ValueDriverBlueprint</code></td>
+<td>Drives from toolbox <code>ValueDriver</code></td>
+</tr>
+</tbody>
+</table>
+<h4><code>EasingFunction</code></h4>
+<p>Enum of easing types: <code>LINEAR</code>, <code>EASE_IN</code>, <code>EASE_OUT</code>, <code>EASE_IN_OUT</code>, <code>BACK_OUT</code>, etc.</p>
+<hr />
+<h3>9.5 <code>text</code> — Font Rendering</h3>
+<h4><code>Font</code></h4>
+<p>Loaded font metadata + texture atlas reference.</p>
+<h4><code>Text</code> / <code>TextBuilder</code></h4>
+<p>A <code>UiComponent</code> wrapping rendered text. <code>TextBuilder</code> sets content, font, size, colour, alignment, line wrapping.</p>
+<h4><code>Align</code></h4>
+<p>Enum: <code>LEFT</code>, <code>CENTER</code>, <code>RIGHT</code>.</p>
+<h4>Font loading pipeline:</h4>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FontLoader</code></td>
+<td>Reads <code>.png</code> atlas + <code>.fnt</code> meta file</td>
+</tr>
+<tr>
+<td><code>MetaDataLoader</code></td>
+<td>Parses AngelCode bitmap font <code>.fnt</code> format</td>
+</tr>
+<tr>
+<td><code>Character</code></td>
+<td>Per-glyph bounds: x, y, w, h in atlas coords + advance</td>
+</tr>
+<tr>
+<td><code>Word</code></td>
+<td>A sequence of <code>Character</code>s</td>
+</tr>
+<tr>
+<td><code>Line</code></td>
+<td>A sequence of <code>Word</code>s with max-width wrapping</td>
+</tr>
+<tr>
+<td><code>TextStructureGenerator</code></td>
+<td>Breaks raw string into <code>Line</code>s respecting wrap width</td>
+</tr>
+<tr>
+<td><code>TextMeshGenerator</code></td>
+<td>Converts <code>Line</code>s into vertex positions + UVs</td>
+</tr>
+<tr>
+<td><code>TextGenerator</code></td>
+<td>Orchestrates generation and uploads to a <code>TextMesh</code></td>
+</tr>
+</tbody>
+</table>
+<h4><code>TextMesh</code></h4>
+<p>A VAO containing position and UV data for one rendered string. Updated when text changes.</p>
+<h4><code>FontRenderer</code> / <code>FontShader</code></h4>
+<p>Renders all <code>TextMesh</code> objects in one pass. Shader: <code>fontVertex/Fragment.glsl</code>. Uses SDF or bitmap rendering depending on font format.</p>
+<hr />
+<h3>9.6 <code>uiRendering</code></h3>
+<h4><code>UiRenderer</code> / <code>UiShader</code></h4>
+<p>Renders all <code>UiBlock</code> objects (coloured rectangles with corner radius and outline). Batches by render level. Shader: <code>uiVertex/Fragment.glsl</code>.</p>
+<hr />
+<h3>9.7 <code>uiResources</code></h3>
+<h4><code>UiStyle</code></h4>
+<p>A complete visual style definition with 30+ <code>Colour</code> fields and several dimension fields (<code>fontSize</code>, <code>cornerRadius</code>, <code>bigCornerRadius</code>, etc.). All values stored in a <code>DataObject</code> for hot-loading.</p>
+<h4><code>UiStyleConfigs</code></h4>
+<p>Mutable POJO — set values before <code>Ui.loadResources()</code>.</p>
+<h4><code>UiResources</code></h4>
+<p>Holds the loaded <code>UiStyle</code>, font repository, and texture repository.</p>
+<h4><code>UiResourceManager</code></h4>
+<p>Loads repositories from disk; optionally starts a <code>ValueSheetHotLoader</code>.</p>
+<h4><code>ValueSheet</code> / <code>ValueSheetRepositoryLoader</code> / <code>ValueSheetHotLoader</code></h4>
+<p>Hot-loadable JSON/tag-format sheets of named float/colour values. Components can subscribe to <code>ValueSheet</code> values so they update at runtime without restarting.</p>
+<h4><code>FontRepositoryLoader</code> / <code>UiTextureRepositoryLoader</code></h4>
+<p>Scan the <code>fonts/</code> and <code>GUIs/</code> folders and populate <code>HashRegistry&lt;Font&gt;</code> and <code>HashRegistry&lt;Texture&gt;</code>.</p>
+<hr />
+<h3>9.8 <code>gardenUiPrefabs</code> — Pre-built Widgets</h3>
+<p><strong>Buttons:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BasicButtonUi</code></td>
+<td>Base button with hover/press states</td>
+</tr>
+<tr>
+<td><code>BasicTextButtonUi</code></td>
+<td>Button with centred text label</td>
+</tr>
+<tr>
+<td><code>RectangleButtonUi</code></td>
+<td>Rectangular background</td>
+</tr>
+<tr>
+<td><code>CircleButtonUi</code></td>
+<td>Circular background</td>
+</tr>
+<tr>
+<td><code>IconRectangleButtonUi</code></td>
+<td>Icon + rectangle</td>
+</tr>
+<tr>
+<td><code>RoundIconButtonUi</code></td>
+<td>Circular icon button</td>
+</tr>
+<tr>
+<td><code>TextColourButtonUi</code></td>
+<td>Button that colours text on hover</td>
+</tr>
+<tr>
+<td><code>ColourButtonUi</code></td>
+<td>Solid colour-fill button</td>
+</tr>
+<tr>
+<td><code>LayerTextureButtonUi</code></td>
+<td>Multi-layer texture button (idle/hover/press)</td>
+</tr>
+<tr>
+<td><code>TextRectangleButtonUi</code></td>
+<td>Text + outline rectangle</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sliders:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SliderUi</code></td>
+<td>Float slider with draggable marker</td>
+</tr>
+<tr>
+<td><code>IntSliderUi</code></td>
+<td>Integer-valued slider</td>
+</tr>
+<tr>
+<td><code>SliderMarkerUi</code></td>
+<td>The draggable thumb</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Stat Bars:</strong> <code>StatBarUi</code>, <code>PercentStatBarUi</code>, <code>CountStatBarUi</code>, <code>TextStatBarUi</code>, <code>IconStatBarUi</code> — all display a fill ratio with optional icon, text, or count. <code>StatBarUpdater</code> / <code>CountStatBarUpdater</code> drive them from game data.</p>
+<p><strong>Text Input:</strong> <code>TextFieldUi</code> (single-line text), <code>NumberFieldUi</code>, <code>TextEditor</code> (multi-line). <code>CharFilter</code> / <code>NumberFilter</code> / <code>TextFilter</code> validate input.</p>
+<p><strong>Scroll Panel:</strong> <code>ScrollPanelUi</code> with <code>ScrollBarUi</code> + <code>BarUi</code> for the thumb. Clips children to the panel bounds.</p>
+<p><strong>Spinner:</strong> <code>SpinnerUi</code> (left/right cycle through values) + <code>NamedSpinnerUi</code>.</p>
+<p><strong>Named Panel:</strong> <code>NamedPanelUi</code> with <code>NameBannerUi</code> for a titled container.</p>
+<p><strong>Pop-up:</strong> <code>PopUp3dUi</code> — a world-space anchored pop-up with a 3D anchor point. <code>NamedPopUpUi</code> adds a title banner.</p>
+<p><strong>Tooltips:</strong> <code>ToolTipUi</code> + <code>ToolTipUpdater</code> base. Prefabs: <code>PlainToolTipUi</code>, <code>SingleLineToolTipUi</code>, <code>TextToolTipUi</code>.</p>
+<p><strong>Utils:</strong> <code>BorderPanelUi</code> (panel with an inset content area), <code>LayerTextureUi</code> (stacked texture layers), <code>EngineUiSounds</code> (hover/click sounds).</p>
+<hr />
+<h3>9.9 <code>components</code> — Interaction Components</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ClickableUi</code></td>
+<td>Adds click/hover callbacks to any component</td>
+</tr>
+<tr>
+<td><code>MouseListener</code></td>
+<td>More granular: <code>onEnter</code>, <code>onExit</code>, <code>onClick</code>, <code>onRelease</code>, <code>onHold</code></td>
+</tr>
+<tr>
+<td><code>CheckBoxUi</code></td>
+<td>Boolean toggle with checked/unchecked textures</td>
+</tr>
+<tr>
+<td><code>CheckOptionUi</code></td>
+<td>Radio-button style option</td>
+</tr>
+<tr>
+<td><code>TogglableUi</code></td>
+<td>Two-state toggle</td>
+</tr>
+<tr>
+<td><code>ToggleGroup</code></td>
+<td>Ensures only one <code>TogglableUi</code> active at a time</td>
+</tr>
+<tr>
+<td><code>EmptyUi</code></td>
+<td>Invisible spacer component</td>
+</tr>
+<tr>
+<td><code>DebugUi</code> / <code>DebugDataUi</code> / <code>DebugSizeUi</code></td>
+<td>Debug overlays</td>
+</tr>
+<tr>
+<td><code>ToolTipUi</code> / <code>ToolTipUpdater</code></td>
+<td>Tooltip display with hover delay</td>
+</tr>
+<tr>
+<td><code>DragClickChecker</code> / <code>DragClickDetector</code></td>
+<td>Distinguishes drag from click</td>
+</tr>
+<tr>
+<td><code>ElementGridUi</code></td>
+<td>Grid of equal-sized elements</td>
+</tr>
+<tr>
+<td><code>EventData</code></td>
+<td>Value object for mouse event data</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>9.10 <code>grids</code> — Grid Layouts</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GridLayout</code></td>
+<td>Fixed columns, auto-calculated rows</td>
+</tr>
+<tr>
+<td><code>SimpleGridLayout</code></td>
+<td>Minimal implementation</td>
+</tr>
+<tr>
+<td><code>CenteredGridLayout</code></td>
+<td>Centres the grid horizontally</td>
+</tr>
+<tr>
+<td><code>CentralGridLayout</code></td>
+<td>Centres in both axes</td>
+</tr>
+<tr>
+<td><code>LeftGridLayout</code></td>
+<td>Left-aligned</td>
+</tr>
+<tr>
+<td><code>ScalingGridLayout</code></td>
+<td>Items scale to fill available space</td>
+</tr>
+<tr>
+<td><code>IGridLayout</code></td>
+<td>Interface</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>9.11 <code>customCursor</code></h3>
+<h4><code>CursorManager</code></h4>
+<p>Created at <code>Ui.init()</code>. Allows registering custom cursors and switching between them. Uses GLFW standard and custom cursor shapes.</p>
+<h4><code>Cursor</code> / <code>CursorLoader</code></h4>
+<p>Loads a cursor from a PNG file at a specified hot-spot.</p>
+<hr />
+<h3>9.12 <code>layout</code></h3>
+<h4><code>BaseLayout</code></h4>
+<p>Manages dynamic positioning of children within a parent. Registered with <code>UiComponent.registerLayout()</code>. Responds to child add/remove via <code>initializeLayout()</code>. Subclasses implement their own positioning logic.</p>
+<h4><code>ValueSheet</code></h4>
+<p>A shareable sheet of named values (<code>float</code>, <code>Colour</code>) loaded from disk and optionally hot-reloaded. Components query values by <code>HashId</code>.</p>
+<hr />
+<h2>10 · <code>features</code> — Gameplay Systems</h2>
+<h3>10.1 <code>behaviours</code> — Action / Behaviour Tree</h3>
+<h4><code>Action</code> (abstract)</h4>
+<p>Base node with <code>Status</code> state machine (<code>UNSTARTED → RUNNING → PASSED / FAILED</code>). Implements <code>Exportable</code> for save/load.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">abstract</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>(<span style="color: #B00040">float</span><span style="color: #BBB"> </span>delta);
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">init</span>();<span style="color: #BBB">       </span><span style="color: #3D7B7B; font-style: italic">// transitions to RUNNING</span>
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">resume</span>();<span style="color: #BBB">     </span><span style="color: #3D7B7B; font-style: italic">// transitions to PASSED (for interrupted actions)</span>
+<span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">markPaused</span>(<span style="color: #B00040">boolean</span>);
+</code></pre></div>
+
+<h4><code>Status</code></h4>
+<p>Enum: <code>UNSTARTED</code>, <code>RUNNING</code>, <code>PASSED</code>, <code>FAILED</code>. <code>isComplete()</code> = <code>PASSED || FAILED</code>.</p>
+<h4><code>ActionManager</code></h4>
+<p>An <code>ArrayDeque&lt;Action&gt;</code> stack for one entity. Supports:<br />
+- <code>setAction(action)</code> — replaces everything<br />
+- <code>interrupt(action, startRotation)</code> — pushes a <code>TransitionAction</code> to smooth the turn, then the interrupting action, then pauses the current action<br />
+- <code>update(delta)</code> — pops completed actions, inits new top, calls <code>update()</code></p>
+<p><strong>Standard node types:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SequenceAction</code></td>
+<td>Runs children in order; fails if any child fails</td>
+</tr>
+<tr>
+<td><code>SelectorAction</code></td>
+<td>Tries children until one passes</td>
+</tr>
+<tr>
+<td><code>RandomSequenceAction</code></td>
+<td>Runs children in random order</td>
+</tr>
+<tr>
+<td><code>LoopAction</code></td>
+<td>Repeats a sequence N times</td>
+</tr>
+<tr>
+<td><code>EndlessLoopAction</code></td>
+<td>Repeats forever</td>
+</tr>
+<tr>
+<td><code>TimedAction</code></td>
+<td>Marks passed after N seconds</td>
+</tr>
+<tr>
+<td><code>MultiTimedAction</code></td>
+<td>Multiple phases with different durations</td>
+</tr>
+<tr>
+<td><code>WaitAction</code></td>
+<td>Pause for a fixed duration</td>
+</tr>
+<tr>
+<td><code>WaitRandom</code></td>
+<td>Pause for a random duration within a range</td>
+</tr>
+<tr>
+<td><code>TransitionAction</code></td>
+<td>Smoothly rotates entity to a target bearing (used by <code>ActionManager.interrupt()</code>)</td>
+</tr>
+<tr>
+<td><code>FailCondition</code></td>
+<td>Wraps an action; inverts failure/pass</td>
+</tr>
+<tr>
+<td><code>CompositeAction</code></td>
+<td>Base composite; manages a child list</td>
+</tr>
+</tbody>
+</table>
+<p><strong>New composites (newer API):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NewCompositeAction</code></td>
+<td>Cleaner base for composites</td>
+</tr>
+<tr>
+<td><code>NewSequenceAction</code></td>
+<td>Sequence with proper <code>RUNNING</code> propagation</td>
+</tr>
+<tr>
+<td><code>NewSelectorAction</code></td>
+<td>Selector with proper <code>RUNNING</code> propagation</td>
+</tr>
+<tr>
+<td><code>ConditionNode</code></td>
+<td>Wraps a <code>BooleanSupplier</code>; passes if true</td>
+</tr>
+<tr>
+<td><code>RandomChoiceNode</code></td>
+<td>Randomly selects and runs one child</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3>10.2 <code>debugSystem</code></h3>
+<h4><code>EngineDebug</code></h4>
+<p>Container for engine debug data fields (populated in <code>Engine.update()</code>):<br />
+- <code>fps</code> (<code>FloatData</code>) — rolling average FPS<br />
+- <code>dynamicEntities</code> (<code>CountData</code>) — visible vs total<br />
+- <code>entityTris</code> (<code>CountTotalData</code>) — total tris rendered</p>
+<h4>Data types:</h4>
+<ul>
+<li><code>FloatData</code> — smoothed float value</li>
+<li><code>CountData</code> — visible count + total count per frame</li>
+<li><code>CountDisplayData</code> — text formatter for count data</li>
+<li><code>CountTotalData</code> — accumulated total</li>
+</ul>
+<hr />
+<h3>10.3 <code>debugger</code></h3>
+<h4><code>Debugger</code></h4>
+<p>Global static debug facility (enabled by passing a <code>DebugFormat</code> to <code>Debugger.init()</code>):<br />
+- Frame counters + per-second counters via <code>RollingAverageCounter</code><br />
+- <code>report(key)</code> — increments a named counter<br />
+- <code>toggleState(scene, stateId)</code> / <code>checkState(scene, stateId)</code> — per-scene boolean flags<br />
+- <code>addListener(scene, stateId, DebugListener)</code> — triggered on toggle</p>
+<h4><code>DebugFormat</code> (interface)</h4>
+<p><code>void initializeDebugger()</code> — registers all counters. <code>Map&lt;String,String&gt; getInfo()</code> — formatted debug output for display.</p>
+<hr />
+<h3>10.4 <code>frustumCulling</code></h3>
+<h4><code>CameraFrustum</code></h4>
+<p>Updated each frame by <code>GameCamera.update()</code>. Wraps a <code>Frustum</code> (6 <code>Plane</code>s) and exposes:<br />
+- <code>containsSphere(center, radius)</code> — quick reject (all-or-nothing)<br />
+- <code>testSphere(center, radius)</code> → <code>FrustumResult</code> (IN / PARTIAL / OUT)<br />
+- <code>testAabb(mins, maxs)</code> → <code>FrustumResult</code> — uses closest/furthest-point algorithm per plane</p>
+<h4><code>FrustumCreator</code></h4>
+<p>Extracts the 6 planes from the camera's projection-view matrix.</p>
+<h4><code>Plane</code></h4>
+<p><code>normal (Vector3f)</code> + <code>d (float)</code>. <code>getSignedDistance(point)</code> = dot(normal, point) + d.</p>
+<hr />
+<h3>10.5 <code>movement</code></h3>
+<h4><code>Steerer3d</code></h4>
+<p>Controls a 3D entity's rotation towards a target bearing using configurable angular speed and momentum.</p>
+<h4><code>Steering</code></h4>
+<p>Stateless helper calculating the required angular delta towards a target.</p>
+<h4><code>PathFollower3d</code></h4>
+<p>Follows a list of waypoints using <code>Steerer3d</code>. Advances to the next waypoint when within arrival radius.</p>
+<h4><code>MoveAnimation</code> (interface)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>(<span style="color: #B00040">float</span><span style="color: #BBB"> </span>delta,<span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>speed,<span style="color: #BBB"> </span>Vector3f<span style="color: #BBB"> </span>position,<span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>rotation);
+<span style="color: #B00040">boolean</span><span style="color: #BBB"> </span><span style="color: #00F">isActive</span>();
+</code></pre></div>
+
+<p>Applied by the movement system for visual movement enhancement.</p>
+<h4><code>BouncyWalkAnimation</code></h4>
+<p>Implements <code>MoveAnimation</code> — adds a vertical bounce proportional to speed.</p>
+<hr />
+<h2>11 · <code>resourceManagement</code> — Resources, Save, Lang</h2>
+<h3>11.1 <code>requestProcessing</code></h3>
+<h4><code>BackgroundLoader</code></h4>
+<p>Thread-safe two-queue system for non-GL and GL work:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Thread</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>addGeneralRequest(Request)</code></td>
+<td>Any</td>
+<td>Queued to background thread (or immediate if on main thread)</td>
+</tr>
+<tr>
+<td><code>addOpenGlRequest(Request)</code></td>
+<td>Any</td>
+<td>Queued to main thread (or immediate if already on GL thread)</td>
+</tr>
+<tr>
+<td><code>doTopGlRequests()</code></td>
+<td>Main</td>
+<td>Process a few GL requests per frame</td>
+</tr>
+<tr>
+<td><code>completeAllRequests()</code></td>
+<td>Main</td>
+<td>Block until all requests done</td>
+</tr>
+<tr>
+<td><code>isDoneProcessing()</code></td>
+<td>Any</td>
+<td>True when both queues empty</td>
+</tr>
+<tr>
+<td><code>cleanUp()</code></td>
+<td>Main</td>
+<td>Drain + kill background thread</td>
+</tr>
+</tbody>
+</table>
+<h4><code>Request</code> (interface)</h4>
+<p><code>void execute()</code> — the unit of deferred work.</p>
+<h4><code>GeneralRequestProcessor</code> / <code>GlRequestProcessor</code></h4>
+<p>Internal queue processors. <code>GeneralRequestProcessor</code> runs on a daemon thread; <code>GlRequestProcessor</code> is drained by the main loop.</p>
+<hr />
+<h3>11.2 <code>saveSystem</code></h3>
+<h4><code>SaveSystem</code></h4>
+<p>Manages a folder of <code>.dat</code> save files.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init(savesFolder, version, gameVersion)</code></td>
+<td>Scans folder, loads existing saves</td>
+</tr>
+<tr>
+<td><code>createNewSave(name)</code></td>
+<td>Creates a new <code>SaveGame</code> with a random ID</td>
+</tr>
+<tr>
+<td><code>getListOfSaves()</code></td>
+<td>Returns saves sorted by last-played date</td>
+</tr>
+<tr>
+<td><code>getMostRecentSave()</code></td>
+<td>Convenience for quick-load</td>
+</tr>
+<tr>
+<td><code>deleteSave(save)</code></td>
+<td>Deletes file + removes from list</td>
+</tr>
+<tr>
+<td><code>hasSavesAvailable()</code></td>
+<td><code>!saves.isEmpty()</code></td>
+</tr>
+</tbody>
+</table>
+<p>Save file naming convention: <code>{id}_SAVE_{date}_{time}_{name}.dat</code><br />
+Temp files: <code>{id}_TEMP_...dat</code> — written during saving to avoid corruption.</p>
+<h4><code>SaveGame</code></h4>
+<p>Wraps one save file. <code>load(file, saveSystem)</code> reads metadata. <code>createSavingProcess()</code> starts a <code>SavingProcess</code> which writes data atomically via a temp file.</p>
+<h4><code>SavingProcess</code></h4>
+<p>Writes game state to a temp <code>.dat</code> file using the toolbox <code>Writer</code>. On completion, renames the temp file to the real save file name (atomic swap).</p>
+<h4><code>MetaData</code></h4>
+<p>Read from the file header: save name, date, game version. Used to show the save list without reading the full file.</p>
+<h4><code>SaveFileFinder</code></h4>
+<p>Scans the saves folder, ignoring temp files and corrupt entries.</p>
+<hr />
+<h3>11.3 <code>languageSystem</code></h3>
+<h4><code>GameText</code></h4>
+<p>Static localisation facade. <code>init(locale, mods)</code> loads CSV files from <code>res/lang/{locale}.csv</code> for each mod. Falls back to <code>en.csv</code>.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>GameText.<span style="color: #687822">get</span>(<span style="color: #BA2121">&quot;item.carrot.name&quot;</span>)<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// → &quot;Carrot&quot;</span>
+GameText.<span style="color: #687822">getComplex</span>(<span style="color: #BA2121">&quot;ui.tooltip&quot;</span>)<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// → ComplexString (supports formatting)</span>
+</code></pre></div>
+
+<h4><code>LangRepository</code></h4>
+<p><code>HashRegistry&lt;String&gt;</code> for simple strings + <code>HashRegistry&lt;ComplexString&gt;</code> for formatted ones.</p>
+<h4><code>LangRepositoryLoader</code></h4>
+<p>Reads CSV (key, value) rows. Supports multiple mods and locale fallback.</p>
+<h4><code>ComplexString</code></h4>
+<p>A string with placeholder slots (e.g. <code>"You have {0} carrots"</code>) that can be filled at runtime.</p>
+<hr />
+<h3>11.4 <code>certificates</code></h3>
+<h4><code>Certificate</code></h4>
+<p>An encrypted file recording a set of unlocked <code>Id</code>s (achievements, found items, etc.).</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>unlockId(id)</code></td>
+<td>Returns <code>true</code> if newly unlocked (not already in set)</td>
+</tr>
+<tr>
+<td><code>getIds()</code></td>
+<td>Full set of unlocked IDs</td>
+</tr>
+<tr>
+<td><code>save()</code></td>
+<td>Writes the encrypted file</td>
+</tr>
+</tbody>
+</table>
+<h4><code>CertificateCreator</code></h4>
+<p>Loads or creates a certificate file. Uses <code>Encoder</code> for XOR-based encryption.</p>
+<h4><code>Encoder</code></h4>
+<p>Simple XOR encoding using a key derived from the certificate type.</p>
+<hr />
+<h2>12 · <code>postProcessing</code> — Post-processing</h2>
+<h4><code>PostProcessingFilter</code> (abstract)</h4>
+<p>Base class for screen-space effects. Renders using <code>FullScreenQuad</code> + a custom fragment shader.</p>
+<p>Subclasses implement their own <code>ShaderProgram</code> and call <code>renderQuad()</code> with a source texture.</p>
+<p><strong>Provided GLSL vertices:</strong><br />
+- <code>basicVertex.glsl</code> — standard full-screen quad pass-through<br />
+- <code>basicVertexFlip.glsl</code> — flipped Y version (for FBO blit differences)</p>
+<p>Games extend <code>PostProcessingFilter</code> for blur, bloom, colour correction, etc.</p>
+<hr />
+<h2>13 · <code>utils</code> — Engine Utilities</h2>
+<h4><code>EngineUtils</code></h4>
+<p>General static utility methods used across the engine.</p>
+<h4><code>TextureExporter</code></h4>
+<p>Reads an FBO texture back from the GPU (<code>glReadPixels</code>) and saves it to a PNG file. Used for screenshot capture or shadow map debugging.</p>
+<h4>Container types:</h4>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Container&lt;T&gt;</code></td>
+<td>Mutable single-value holder</td>
+</tr>
+<tr>
+<td><code>FloatContainer</code></td>
+<td>Primitive float holder (avoids boxing)</td>
+</tr>
+<tr>
+<td><code>IntContainer</code></td>
+<td>Primitive int holder</td>
+</tr>
+</tbody>
+</table>
+<p>These are used across the engine when a lambda or callback needs to mutate a captured value.</p>
+<hr />
+<h2>Cross-Cutting Design Patterns</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Where used</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Singleton</strong></td>
+<td><code>Engine</code>, <code>AudioMaster</code>, <code>ParticleMaster</code>, <code>Ui</code>, <code>Debugger</code></td>
+</tr>
+<tr>
+<td><strong>Builder</strong></td>
+<td><code>Window</code>, <code>Fbo</code>, <code>Texture</code>, <code>Sound2d/3d</code>, <code>SliderUi</code>, <code>Text</code></td>
+</tr>
+<tr>
+<td><strong>Strategy</strong></td>
+<td><code>UiScalingAlgorithm</code>, <code>ByteFormat</code>, <code>PitchProvider</code>, <code>SoundProvider</code>, <code>EasingFunction</code></td>
+</tr>
+<tr>
+<td><strong>Component (ECS-style)</strong></td>
+<td>Particle effect system (<code>ParticleEffectComponent[]</code> per emitter)</td>
+</tr>
+<tr>
+<td><strong>Template Method</strong></td>
+<td><code>ShaderProgram.initVariables()</code>, <code>GameCamera.move()</code>, <code>SplashScreen.isReadyForLoading()</code>, <code>UiComponent.init()</code> / <code>updateSelf()</code></td>
+</tr>
+<tr>
+<td><strong>Observer</strong></td>
+<td><code>WindowSizeListener</code>, <code>DebugListener</code>, <code>BaseLayout</code> change listeners</td>
+</tr>
+<tr>
+<td><strong>Command / Request</strong></td>
+<td><code>Request</code> interface in <code>BackgroundLoader</code></td>
+</tr>
+<tr>
+<td><strong>Object Pool</strong></td>
+<td><code>SourcePool</code> (AL sources), toolbox <code>Vec3Pool</code>, <code>Vec2Pool</code>, <code>Vec4Pool</code></td>
+</tr>
+<tr>
+<td><strong>Dirty Flag</strong></td>
+<td><code>Camera</code> matrices (recomputed only on change)</td>
+</tr>
+<tr>
+<td><strong>Lazy Init</strong></td>
+<td><code>UiComponent.animator</code>, shader <code>Uniforms</code></td>
+</tr>
+<tr>
+<td><strong>Composite</strong></td>
+<td><code>UiComponent</code> (tree of children), <code>CompoundSound</code>, <code>CompoundParticleEffect</code>, <code>SequenceAction</code></td>
+</tr>
+<tr>
+<td><strong>Null Object</strong></td>
+<td><code>EmptyAudioMaster</code>, <code>EmptyState</code>, <code>EmptyPlaythrough</code></td>
+</tr>
+<tr>
+<td><strong>Factory Method</strong></td>
+<td><code>EngineCreator.init()</code>, <code>ParticleMaster.init()</code>, <code>ShadowMaster.init()</code></td>
+</tr>
+<tr>
+<td><strong>Two-phase init</strong></td>
+<td><code>EngineCreator</code>: essential systems → splash → full systems</td>
+</tr>
+<tr>
+<td><strong>Atomic file write</strong></td>
+<td><code>SavingProcess</code>: write temp → rename</td>
+</tr>
+</tbody>
+</table>
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="39-3d-models-asset-list.html"><span>◀</span><span><span class="nav-label">Previous</span>39 — 3D Models Asset List</span></a><a class="nav-btn" href="../index.html">🏠 Index</a><a class="nav-btn next" href="41-toolbox-reference.html"><span><span class="nav-label">Next</span>41 — Toolbox Reference</span><span>▶</span></a></div>
+  </main>
+</body>
+</html>

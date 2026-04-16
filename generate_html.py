@@ -59,6 +59,8 @@ PAGES = [
     ("docs/37-complete-game-mechanics.md",     "37 — Complete Game Mechanics",  "📖 Reference"),
     ("docs/38-postgresql-database.md",         "38 — PostgreSQL Database Design", "📖 Reference"),
     ("docs/39-3d-models-asset-list.md",        "39 — 3D Models Asset List",     "📖 Reference"),
+    ("docs/40-lowpoly-engine-reference.md",    "40 — LowPolyEngine Reference",  "🔧 Engine Dev"),
+    ("docs/41-toolbox-reference.md",           "41 — Toolbox Reference",        "🔧 Engine Dev"),
 ]
 
 # ── Shared CSS ─────────────────────────────────────────────────────────────────

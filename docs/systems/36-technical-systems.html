@@ -508,12 +508,12 @@
 <hr />
 <h2>🌿 Fresh Tag Propagation</h2>
 <p>The Fresh tag is implemented as a metadata flag:</p>
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>ItemData<span style="color: #bbbbbb"> </span>{
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">type</span>:<span style="color: #bbbbbb"> </span>ItemType
-<span style="color: #bbbbbb">  </span>quantity:<span style="color: #bbbbbb"> </span>int
-<span style="color: #bbbbbb">  </span>origin:<span style="color: #bbbbbb"> </span>ItemOrigin.FARM<span style="color: #bbbbbb"> </span><span style="color: #666666">|</span><span style="color: #bbbbbb"> </span>ItemOrigin.SUPPLIER
-<span style="color: #bbbbbb">  </span>freshTag:<span style="color: #bbbbbb"> </span><span style="color: #B00040">bool</span><span style="color: #bbbbbb">  </span><span style="color: #3D7B7B; font-style: italic">// true only for FARM-origin</span>
-<span style="color: #bbbbbb">  </span>harvestTime:<span style="color: #bbbbbb"> </span>timestamp
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>ItemData<span style="color: #BBB"> </span>{
+<span style="color: #BBB">  </span><span style="color: #008000; font-weight: bold">type</span>:<span style="color: #BBB"> </span>ItemType
+<span style="color: #BBB">  </span>quantity:<span style="color: #BBB"> </span>int
+<span style="color: #BBB">  </span>origin:<span style="color: #BBB"> </span>ItemOrigin.FARM<span style="color: #BBB"> </span><span style="color: #666">|</span><span style="color: #BBB"> </span>ItemOrigin.SUPPLIER
+<span style="color: #BBB">  </span>freshTag:<span style="color: #BBB"> </span><span style="color: #B00040">bool</span><span style="color: #BBB">  </span><span style="color: #3D7B7B; font-style: italic">// true only for FARM-origin</span>
+<span style="color: #BBB">  </span>harvestTime:<span style="color: #BBB"> </span>timestamp
 }
 </code></pre></div>
 
@@ -525,15 +525,15 @@
 <hr />
 <h2>🤖 Customer AI</h2>
 <p>Customers use a <strong>simple goal-based AI</strong>:</p>
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">CustomerAI</span>.<span style="color: #19177C">Update()</span><span style="color: #bbbbbb"> </span>{
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">(hasTarget</span><span style="color: #bbbbbb"> </span><span style="color: #666666">&amp;&amp;</span><span style="color: #bbbbbb"> </span><span style="color: #666666">!</span><span style="color: #19177C">targetEmpty)</span><span style="color: #bbbbbb"> </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">walk</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">to</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">target</span>
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">findBestTarget()</span>
-<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">filter</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">budget</span>
-<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">filter</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">preference</span>
-<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">weight</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">Fresh</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">badge</span>
-<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">weight</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">by</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">category</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">preference</span>
-<span style="color: #bbbbbb">    </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">select</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">highest</span><span style="color: #666666">-</span><span style="color: #19177C">weighted</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">display</span>
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">(noTarget)</span><span style="color: #bbbbbb"> </span>→<span style="color: #bbbbbb"> </span><span style="color: #19177C">leave</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">store</span>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">CustomerAI</span>.<span style="color: #19177C">Update()</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #BBB"> </span><span style="color: #19177C">(hasTarget</span><span style="color: #BBB"> </span><span style="color: #666">&amp;&amp;</span><span style="color: #BBB"> </span><span style="color: #666">!</span><span style="color: #19177C">targetEmpty)</span><span style="color: #BBB"> </span>→<span style="color: #BBB"> </span><span style="color: #19177C">walk</span><span style="color: #BBB"> </span><span style="color: #19177C">to</span><span style="color: #BBB"> </span><span style="color: #19177C">target</span>
+<span style="color: #BBB">  </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #BBB"> </span><span style="color: #19177C">findBestTarget()</span>
+<span style="color: #BBB">    </span>→<span style="color: #BBB"> </span><span style="color: #19177C">filter</span><span style="color: #BBB"> </span><span style="color: #19177C">by</span><span style="color: #BBB"> </span><span style="color: #19177C">budget</span>
+<span style="color: #BBB">    </span>→<span style="color: #BBB"> </span><span style="color: #19177C">filter</span><span style="color: #BBB"> </span><span style="color: #19177C">by</span><span style="color: #BBB"> </span><span style="color: #19177C">preference</span>
+<span style="color: #BBB">    </span>→<span style="color: #BBB"> </span><span style="color: #19177C">weight</span><span style="color: #BBB"> </span><span style="color: #19177C">by</span><span style="color: #BBB"> </span><span style="color: #19177C">Fresh</span><span style="color: #BBB"> </span><span style="color: #19177C">badge</span>
+<span style="color: #BBB">    </span>→<span style="color: #BBB"> </span><span style="color: #19177C">weight</span><span style="color: #BBB"> </span><span style="color: #19177C">by</span><span style="color: #BBB"> </span><span style="color: #19177C">category</span><span style="color: #BBB"> </span><span style="color: #19177C">preference</span>
+<span style="color: #BBB">    </span>→<span style="color: #BBB"> </span><span style="color: #19177C">select</span><span style="color: #BBB"> </span><span style="color: #19177C">highest</span><span style="color: #666">-</span><span style="color: #19177C">weighted</span><span style="color: #BBB"> </span><span style="color: #19177C">display</span>
+<span style="color: #BBB">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #BBB"> </span><span style="color: #19177C">(noTarget)</span><span style="color: #BBB"> </span>→<span style="color: #BBB"> </span><span style="color: #19177C">leave</span><span style="color: #BBB"> </span><span style="color: #19177C">store</span>
 }
 </code></pre></div>
 
@@ -541,13 +541,13 @@
 <hr />
 <h2>🔧 Worker AI</h2>
 <p>Farm workers use a <strong>priority-based task queue</strong>:</p>
-<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">WorkerAI</span>.<span style="color: #19177C">Tick()</span><span style="color: #bbbbbb"> </span>{
-<span style="color: #bbbbbb">  </span><span style="color: #19177C">currentTask</span><span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">taskQueue</span>.<span style="color: #19177C">peek()</span>
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">(currentTask</span><span style="color: #bbbbbb"> </span><span style="color: #666666">!=</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">null)</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">executeTask(currentTask)</span>
-<span style="color: #bbbbbb">  </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #bbbbbb"> </span>{
-<span style="color: #bbbbbb">    </span><span style="color: #19177C">tasks</span><span style="color: #bbbbbb"> </span><span style="color: #666666">=</span><span style="color: #bbbbbb"> </span><span style="color: #19177C">scanForAvailableTasks()</span>
-<span style="color: #bbbbbb">    </span><span style="color: #19177C">taskQueue</span>.<span style="color: #19177C">addRange(prioritySort(tasks))</span>
-<span style="color: #bbbbbb">  </span>}
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">WorkerAI</span>.<span style="color: #19177C">Tick()</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">  </span><span style="color: #19177C">currentTask</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #19177C">taskQueue</span>.<span style="color: #19177C">peek()</span>
+<span style="color: #BBB">  </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #BBB"> </span><span style="color: #19177C">(currentTask</span><span style="color: #BBB"> </span><span style="color: #666">!=</span><span style="color: #BBB"> </span><span style="color: #19177C">null)</span><span style="color: #BBB"> </span><span style="color: #19177C">executeTask(currentTask)</span>
+<span style="color: #BBB">  </span><span style="color: #008000; font-weight: bold">else</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #19177C">tasks</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #19177C">scanForAvailableTasks()</span>
+<span style="color: #BBB">    </span><span style="color: #19177C">taskQueue</span>.<span style="color: #19177C">addRange(prioritySort(tasks))</span>
+<span style="color: #BBB">  </span>}
 }
 </code></pre></div>
 

@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>41 — Toolbox Reference — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus { border-color: var(--accent); }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🔧 Engine Dev</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>Toolbox — Complete In-Depth Reference</h1>
+<blockquote>
+<p><strong>207 source files · 26 top-level packages · Every class documented</strong></p>
+</blockquote>
+<hr />
+<h2>Package map</h2>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>toolbox<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>math3d<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Maths,<span style="color: #BBB"> </span>easing,<span style="color: #BBB"> </span>vectors,<span style="color: #BBB"> </span>waves,<span style="color: #BBB"> </span>bounding<span style="color: #BBB"> </span>volumes,<span style="color: #BBB"> </span>directions
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>rng<span style="color: #666">/</span><span style="color: #BBB">             </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Deterministic<span style="color: #BBB"> </span>noise,<span style="color: #BBB"> </span>Perlin<span style="color: #BBB"> </span>noise,<span style="color: #BBB"> </span>rich<span style="color: #BBB"> </span>random<span style="color: #BBB"> </span>generator
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>valueDrivers<span style="color: #666">/</span><span style="color: #BBB">    </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Time<span style="color: #666">-</span>based<span style="color: #BBB"> </span>animated<span style="color: #BBB"> </span><span style="color: #008000">float</span><span style="color: #BBB"> </span>value<span style="color: #BBB"> </span>system
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>hashIds<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Typed<span style="color: #BBB"> </span>ID<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>registry<span style="color: #BBB"> </span>system<span style="color: #BBB"> </span>(used<span style="color: #BBB"> </span>by<span style="color: #BBB"> </span>the<span style="color: #BBB"> </span>whole<span style="color: #BBB"> </span>entity<span style="color: #BBB"> </span>system)
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>errors<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Crash<span style="color: #BBB"> </span>handler,<span style="color: #BBB"> </span>pop<span style="color: #666">-</span>up,<span style="color: #BBB"> </span>ProgramError
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>listeners<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Safe<span style="color: #BBB"> </span>observer<span style="color: #BBB"> </span>pattern<span style="color: #BBB"> </span>with<span style="color: #BBB"> </span>concurrent<span style="color: #666">-</span>removal<span style="color: #BBB"> </span>support
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>fileUtils<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>File<span style="color: #BBB"> </span>I<span style="color: #666">/</span>O<span style="color: #BBB"> </span>helpers,<span style="color: #BBB"> </span>classpath<span style="color: #666">-</span>resource<span style="color: #BBB"> </span>wrapper,<span style="color: #BBB"> </span>root<span style="color: #BBB"> </span>finder
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>byteWork<span style="color: #666">/</span><span style="color: #BBB">        </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>GPU<span style="color: #666">-</span>ready<span style="color: #BBB"> </span>byte<span style="color: #BBB"> </span>packing<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">and</span><span style="color: #BBB"> </span>buffer<span style="color: #BBB"> </span>building
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>inputs<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Developer<span style="color: #BBB"> </span>console<span style="color: #BBB"> </span>keyboard<span style="color: #BBB"> </span>reader<span style="color: #BBB"> </span>(dev<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">tool</span><span style="color: #BBB"> </span>only)
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>colours<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Colour,<span style="color: #BBB"> </span>HSV,<span style="color: #BBB"> </span>gradients,<span style="color: #BBB"> </span>palettes,<span style="color: #BBB"> </span>colour<span style="color: #BBB"> </span>repository
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>dataStructures<span style="color: #666">/</span><span style="color: #BBB">  </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Bundle,<span style="color: #BBB"> </span>SafeList,<span style="color: #BBB"> </span>EasyArray,<span style="color: #BBB"> </span>Registry,<span style="color: #BBB"> </span>Tuple
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>fileWatcher<span style="color: #666">/</span><span style="color: #BBB">     </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>OS<span style="color: #666">-</span>level<span style="color: #BBB"> </span>file<span style="color: #BBB"> </span>change<span style="color: #BBB"> </span>watcher<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>hot<span style="color: #666">-</span>reload
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>gameRegistry<span style="color: #666">/</span><span style="color: #BBB">    </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Forward<span style="color: #666">-</span>reference<span style="color: #BBB"> </span>(lazy)<span style="color: #BBB"> </span>registry<span style="color: #BBB"> </span>with<span style="color: #BBB"> </span>Reference<span style="color: #666">&lt;</span>T<span style="color: #666">&gt;</span>
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>images<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>ImageData<span style="color: #BBB"> </span>(AWT)<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">and</span><span style="color: #BBB"> </span>RawByteImage<span style="color: #BBB"> </span>(STB)<span style="color: #BBB"> </span>loaders
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>memory<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>GPU<span style="color: #BBB"> </span>VAO<span style="color: #BBB"> </span>memory<span style="color: #BBB"> </span>slot<span style="color: #BBB"> </span>allocator<span style="color: #BBB"> </span>(MemorySlotChain)
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>misc<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>AsciiValues<span style="color: #BBB"> </span>constants,<span style="color: #BBB"> </span>generic<span style="color: #BBB"> </span>Listener<span style="color: #666">/</span>ListenerSet
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>modifiers<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Multiplier<span style="color: #BBB"> </span>stack<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>moddable<span style="color: #BBB"> </span><span style="color: #008000">float</span><span style="color: #BBB"> </span>values
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>objectPools<span style="color: #666">/</span><span style="color: #BBB">     </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Thread<span style="color: #666">-</span>safe<span style="color: #BBB"> </span>object<span style="color: #BBB"> </span>pools<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>Vec2<span style="color: #666">/3/4</span><span style="color: #BBB"> </span>reuse
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>readWrite<span style="color: #666">/</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Serialization<span style="color: #BBB"> </span>interfaces<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>CSV<span style="color: #BBB"> </span><span style="color: #666">/</span><span style="color: #BBB"> </span>CBA<span style="color: #BBB"> </span><span style="color: #666">/</span><span style="color: #BBB"> </span>tag<span style="color: #BBB"> </span>binary<span style="color: #BBB"> </span>format<span style="color: #BBB"> </span>implementations
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>smoothValues<span style="color: #666">/</span><span style="color: #BBB">    </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Exponential<span style="color: #666">-</span>smoothing<span style="color: #BBB"> </span>wrappers<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span><span style="color: #008000">float</span>,<span style="color: #BBB"> </span>angle,<span style="color: #BBB"> </span>colour,<span style="color: #BBB"> </span>Vec2,<span style="color: #BBB"> </span>Vec3
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>timing<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Timer<span style="color: #BBB"> </span>hierarchy:<span style="color: #BBB"> </span>single,<span style="color: #BBB"> </span>looping,<span style="color: #BBB"> </span>random<span style="color: #666">-</span>looping,<span style="color: #BBB"> </span>countdown,<span style="color: #BBB"> </span>nano
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>mesh3d<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Indexed<span style="color: #BBB"> </span>mesh<span style="color: #BBB"> </span>primitives<span style="color: #BBB"> </span>(IndexedMesh,<span style="color: #BBB"> </span>Mesh3d,<span style="color: #BBB"> </span>Corner)
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>meshBuilding<span style="color: #666">/</span><span style="color: #BBB">    </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Vertex<span style="color: #BBB"> </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>packed<span style="color: #BBB"> </span>byte[]<span style="color: #BBB"> </span>pipeline<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>GPU<span style="color: #BBB"> </span>upload
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>meshGeneration<span style="color: #666">/</span><span style="color: #BBB">  </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>High<span style="color: #666">-</span>level<span style="color: #BBB"> </span>shape<span style="color: #BBB"> </span>generators<span style="color: #BBB"> </span>(curves,<span style="color: #BBB"> </span>road<span style="color: #BBB"> </span>cross<span style="color: #666">-</span>sections,<span style="color: #BBB"> </span>fills)
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>modelFormats<span style="color: #666">/</span><span style="color: #BBB">    </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span><span style="color: #666">3</span>D<span style="color: #BBB"> </span>model<span style="color: #BBB"> </span>I<span style="color: #666">/</span>O:<span style="color: #BBB"> </span>OBJ,<span style="color: #BBB"> </span>streamline<span style="color: #BBB"> </span>CSV,<span style="color: #BBB"> </span>textured<span style="color: #BBB"> </span>OBJ,<span style="color: #BBB"> </span>SmoothPoly<span style="color: #BBB"> </span>CBA
+<span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>version<span style="color: #666">/</span><span style="color: #BBB">         </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>Version<span style="color: #BBB"> </span>value<span style="color: #BBB"> </span>object<span style="color: #BBB"> </span>with<span style="color: #BBB"> </span>save<span style="color: #666">/</span><span style="color: #008000">load</span><span style="color: #BBB"> </span>serializer
+</code></pre></div>
+
+<hr />
+<h2>1 · <code>math3d</code> — The Math Foundation</h2>
+<h3><code>Maths.java</code> (827 lines — the biggest utility class)</h3>
+<p>The central static math class. Everything uses it.</p>
+<p><strong>Categories inside:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Key methods</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>General utils</strong></td>
+<td><code>clamp</code>, <code>clamp0to1</code>, <code>difference</code>, <code>angleDifference</code></td>
+<td>Safe numeric operations</td>
+</tr>
+<tr>
+<td><strong>Waves</strong></td>
+<td><code>sineWave</code>, <code>sineWave0to1</code>, <code>triangleWave</code>, <code>quickSin</code></td>
+<td>Periodic oscillation without instantiating objects</td>
+</tr>
+<tr>
+<td><strong>Formatting</strong></td>
+<td><code>formatSeconds</code>, <code>formatAbbreviatedNumber</code>, <code>intToRoman</code>, <code>format</code></td>
+<td>Display strings for UI (e.g. <code>1234567 → "1.2M"</code>, <code>8 → "VIII"</code>)</td>
+</tr>
+<tr>
+<td><strong>Matrix maths</strong></td>
+<td><code>createModelMatrix</code>, <code>updateModelMatrix</code> (many overloads), <code>updateViewMatrix</code>, <code>calculateProjectionMatrix</code>, <code>calculateFittingProjectionMatrix</code></td>
+<td>Build TRS (translate-rotate-scale) matrices used by the renderer every frame</td>
+</tr>
+<tr>
+<td><strong>Vector maths</strong></td>
+<td><code>distance</code>, <code>distance2d</code>, <code>distanceSquared</code>, <code>projectionScalarProportion</code>, <code>getFacingAngle</code>, <code>getDirectionFromAngle</code>, <code>capVectorLength</code>, <code>calculateEdgeNormal</code></td>
+<td>Spatial queries for collision, AI, spawning</td>
+</tr>
+<tr>
+<td><strong>Geometry</strong></td>
+<td><code>calcNormalOfTriangle</code>, <code>normalizeAngle</code>, <code>randomPointOnCircle</code>, <code>generateRandomUnitVector</code>, <code>generateRandomUnitVectorWithinCone</code>, <code>rotateVec3</code></td>
+<td>Used by particle systems, rendering, physics</td>
+</tr>
+<tr>
+<td><strong>Interpolation</strong></td>
+<td><code>mix</code>, <code>map0to1Range</code>, <code>mapRanges</code>, <code>smoothInterpolate</code>, <code>smoothStep</code>, <code>smootherStep</code>, <code>lerpTowards</code></td>
+<td>Every animation and transition</td>
+</tr>
+</tbody>
+</table>
+<p>Two important <strong>globals</strong> live here:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>RandomGenerator<span style="color: #BBB"> </span>RAND<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>RandomGenerator();
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Noise<span style="color: #BBB"> </span>NOISE<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Noise(<span style="color: #666">10</span>);<span style="color: #BBB"> </span><span style="color: #3D7B7B; font-style: italic">// seed 10</span>
+</code></pre></div>
+
+<p>Shared random + noise instances used everywhere, so seed-dependent behaviour is consistent per session.</p>
+<p><strong><code>calculateFittingProjectionMatrix</code></strong> — Unique projection that keeps vertical FOV fixed at normal aspect ratios but locks <em>horizontal</em> FOV once the window becomes wider than <code>wideAspectRatio</code>. This prevents ultra-wide monitors from stretching the game into a fisheye view.</p>
+<hr />
+<h3><code>Easing.java</code> (258 lines)</h3>
+<p>Pure easing functions, all take <code>t ∈ [0,1]</code> → return <code>[0,1]</code> (or a derived range).</p>
+<table>
+<thead>
+<tr>
+<th>Function</th>
+<th>Shape</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>smoothStart2/3/4/5</code></td>
+<td><code>tⁿ</code> — slow start, fast end</td>
+<td>UI elements sliding in</td>
+</tr>
+<tr>
+<td><code>smoothStop2/3/4/5</code></td>
+<td><code>1-(1-t)ⁿ</code> — fast start, slow end</td>
+<td>UI elements decelerating</td>
+</tr>
+<tr>
+<td><code>smoothstep2</code></td>
+<td><code>t²(3-2t)</code> — S-curve</td>
+<td>Standard smooth transitions (also used by <code>Maths.smoothInterpolate</code>)</td>
+</tr>
+<tr>
+<td><code>smoothstep3</code></td>
+<td><code>t³(6t²-15t+10)</code> — smoother S-curve</td>
+<td>Higher quality animations</td>
+</tr>
+<tr>
+<td><code>arch</code></td>
+<td><code>4t(1-t)</code> — inverted parabola (0 at both ends, 1 at peak)</td>
+<td>Jump/hop arcs</td>
+</tr>
+<tr>
+<td><code>bounceArch</code></td>
+<td>arch + small tail bounce</td>
+<td>Melee swings, bouncing items</td>
+</tr>
+<tr>
+<td><code>popAndWobble</code></td>
+<td>Exponentially damped sine</td>
+<td>Item pickup animations, UI confirmation</td>
+</tr>
+<tr>
+<td><code>easeOutBounce</code></td>
+<td>3-segment quadratic</td>
+<td>Objects landing with a bounce</td>
+</tr>
+<tr>
+<td><code>elasticBounce</code></td>
+<td><code>2^(-10t)*sin(...)</code></td>
+<td>Spring-like overshoot</td>
+</tr>
+<tr>
+<td><code>fadeInOut</code></td>
+<td>0 → 1 → 0 with linear edges</td>
+<td>Particle opacity, transition overlays</td>
+</tr>
+<tr>
+<td><code>fadeInfadeOut</code></td>
+<td>Smooth cubic ramp in, constant, ramp out</td>
+<td>Long-duration transitions that need smooth edges</td>
+</tr>
+<tr>
+<td><code>jumpUp</code> / <code>jumpOff</code></td>
+<td>Quadratic arc for exactly one peak</td>
+<td>Crops, animals jumping</td>
+</tr>
+<tr>
+<td><code>bellCurve</code></td>
+<td>Symmetric arch using <code>smoothStart3</code> + <code>smoothStop3</code></td>
+<td>Distribution effects</td>
+</tr>
+<tr>
+<td><code>softBounce</code></td>
+<td>Ping-pong with smooth reversal</td>
+<td>Wind/sway effects</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3><code>RollingAverage.java</code></h3>
+<p>A circular sliding window average using a <code>LinkedList&lt;Float&gt;</code>.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>[v1, v2, ... v20] → sum / count
+</code></pre></div>
+
+<ul>
+<li>Used by <code>FrameTimer</code> for delta smoothing.</li>
+<li><code>addValue</code> drops the oldest entry once the window is full.</li>
+<li>O(n) per <code>getAverage()</code> — fine for n=20.</li>
+</ul>
+<hr />
+<h3><code>RollingAverageCounter.java</code></h3>
+<p>Extends <code>RollingAverage</code> for <strong>counting events per frame</strong> (e.g. draw calls, entities rendered).</p>
+<ul>
+<li><code>increment()</code> — call each time an event occurs</li>
+<li><code>update()</code> — call once per frame; snapshots the count into the rolling window</li>
+<li><code>getRecentMax()</code> — peak value in the last <code>framesPerMaxUpdate</code> frames — useful for debug overlays</li>
+</ul>
+<hr />
+<h3><code>RampFunction.java</code></h3>
+<p>A stateful ramp that goes from 0→1 when <code>activate()</code> is called, and 1→0 when <code>activate()</code> stops being called.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Every frame where activate() IS called:     value += gradient <span style="font-weight: bold">* delta  (up to 1)</span>
+<span style="font-weight: bold">Every frame where activate() IS NOT called: value -= gradient *</span> delta  (down to 0)
+</code></pre></div>
+
+<p><code>activate</code> must be called every frame while the condition is true — it self-resets. Great for smooth transitions on held keys, wind gusts, etc.</p>
+<hr />
+<h3><code>Wave.java</code> / <code>SineWave.java</code> / <code>TriangleWave.java</code></h3>
+<p>Abstract <code>Wave</code> with two concrete implementations for animated values. Every wave has:<br />
+- <code>period</code> — how long one full cycle takes (seconds)<br />
+- <code>min</code> / <code>max</code> — output range<br />
+- <code>randomize()</code> — jump to a random phase (used for variety in particle effects)<br />
+- <code>update(delta)</code> — advance time and return the new value</p>
+<p><code>SineWave</code> uses <code>sin(2π·t)</code>, scaled to <code>[min, max]</code>.<br />
+<code>TriangleWave</code> uses <code>|t·2 - 1|</code>, scaled to <code>[min, max]</code> — a linear sawtooth with no trig overhead.</p>
+<p><strong>Factory patterns:</strong></p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>SineWave.<span style="color: #687822">create</span>(<span style="color: #666">2.0f</span>)<span style="color: #BBB">         </span><span style="color: #3D7B7B; font-style: italic">// period=2s, output -1 to 1</span>
+SineWave.<span style="color: #687822">create</span>(<span style="color: #666">2.0f</span>,<span style="color: #BBB"> </span><span style="color: #666">5f</span>)<span style="color: #BBB">     </span><span style="color: #3D7B7B; font-style: italic">// period=2s, amplitude=5</span>
+SineWave.<span style="color: #687822">create0to1</span>(<span style="color: #666">1.0f</span>)<span style="color: #BBB">     </span><span style="color: #3D7B7B; font-style: italic">// period=1s, output 0 to 1</span>
+</code></pre></div>
+
+<hr />
+<h3><code>Aabb.java</code> (Axis-Aligned Bounding Box)</h3>
+<p>A mutable 3D AABB that supports:<br />
+- <code>includeVertex</code> / <code>includeVertices</code> — expand bounds to include a point<br />
+- <code>recalculate(vertices[])</code> — rebuild from scratch<br />
+- <code>completelyContains(other)</code> — containment test (quad-tree use)<br />
+- <code>getVolume()</code>, <code>calculateCenter()</code>, <code>generateVertices()</code> — 8 corner points<br />
+- <code>getPercentageVolumeOf(parent)</code> — ratio of this volume vs parent<br />
+- <code>fromBoxes(BoundingBox[])</code> — merge multiple oriented boxes into one AABB</p>
+<p>Initializes with "inside-out" bounds (<code>mins=MAX_VALUE, maxs=NEGATIVE_INFINITY</code>) so the first vertex always sets both.</p>
+<hr />
+<h3><code>BoundingBox.java</code></h3>
+<p>An <strong>oriented</strong> bounding box — unlike <code>Aabb</code>, its 8 vertices can be transformed to any position/rotation via <code>transform(Matrix4f)</code>. Holds both the raw vertices and a <code>TransformBox</code> (for rendering the wireframe outline of the box).</p>
+<p><code>BoundingBox.fromAabb(aabb)</code> — convert a world-aligned box into a transformable one.</p>
+<hr />
+<h3><code>TransformAabb.java</code></h3>
+<p>A live AABB that tracks an entity transform. Stores the <strong>original</strong> un-transformed AABB and recomputes the world-space bounds every time <code>transform(Transform)</code> is called by projecting all 8 corner vertices through the model matrix and re-fitting the AABB around them.</p>
+<hr />
+<h3><code>TransformBox.java</code></h3>
+<p>A <code>Matrix4f</code> wrapper that stores a center+scale transform. <code>fromAabb(aabb)</code> creates a matrix positioned at the AABB center and scaled to its dimensions — used to render the visible outline box in debug views.</p>
+<hr />
+<h3><code>Direction.java</code></h3>
+<p>An enum of all 8 compass directions (N, NE, E, SE, S, SW, W, NW) with integer XZ deltas:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>NORTH(<span style="color: #666">0</span>,<span style="color: #BBB"> </span><span style="color: #666">-1</span>)<span style="color: #BBB">  </span>EAST(<span style="color: #666">1</span>,<span style="color: #BBB"> </span><span style="color: #666">0</span>)<span style="color: #BBB">  </span>SOUTH(<span style="color: #666">0</span>,<span style="color: #BBB"> </span><span style="color: #666">1</span>)<span style="color: #BBB">  </span>WEST(<span style="color: #666">-1</span>,<span style="color: #BBB"> </span><span style="color: #666">0</span>)
+NW(<span style="color: #666">-1</span>,<span style="color: #666">-1</span>)<span style="color: #BBB">     </span>NE(<span style="color: #666">1</span>,<span style="color: #666">-1</span>)<span style="color: #BBB">    </span>SE(<span style="color: #666">1</span>,<span style="color: #666">1</span>)<span style="color: #BBB">      </span>SW(<span style="color: #666">-1</span>,<span style="color: #666">1</span>)
+</code></pre></div>
+
+<p>Helpers:<br />
+- <code>opposite()</code> — reverse direction using ordinal arithmetic (index 7 - ordinal)<br />
+- <code>translate(point, distance)</code> — move a Vec2 or Vec3 by a distance in this direction<br />
+- <code>randomCardinal()</code> / <code>random()</code> — used by entity AI<br />
+- <code>getByOrdinal(int)</code> — cached, avoids <code>values()</code> array allocation<br />
+- <code>getDirection(relX, relZ)</code> — reverse lookup from delta values</p>
+<hr />
+<h3><code>Rotation.java</code></h3>
+<p>Four tile rotations (UP=0°, RIGHT=270°, DOWN=180°, LEFT=90°) with embedded logic for how they transform coordinates.</p>
+<p>Each rotation stores: <code>swapCoords</code>, <code>negateX</code>, <code>negateZ</code> — enabling fast bit-flag-like transform without matrix math.</p>
+<p>Key uses:<br />
+- <code>applyTileRotation(Vector3f pos)</code> — rotates a point within a 1×1 tile grid (around centre 0.5, 0.5)<br />
+- <code>applyRotation(Direction)</code> / <code>undoRotation(Direction)</code> — convert entity-facing directions when a structure is rotated<br />
+- <code>getRotationFromNorth(Direction)</code> — maps a cardinal Direction to the matching Rotation</p>
+<hr />
+<h3><code>Coords.java</code></h3>
+<p>An immutable <code>(int x, int z)</code> pair for tile grid coordinates. Implements <code>Exportable</code> so it can be binary serialized to a save file as 8 bytes (2 × <code>writeInt</code>).</p>
+<hr />
+<h3><code>Vec2i.java</code></h3>
+<p>A <strong>mutable</strong> <code>(int x, int z)</code> pair (no <code>y</code> — this is always a 2D grid). Use <code>Coords</code> for read-only storage, <code>Vec2i</code> when you need to modify coordinates in place.</p>
+<hr />
+<h3><code>Triangle.java</code> / <code>Vertex.java</code></h3>
+<p>Simple geometric structs. <code>Vertex</code> holds <code>position + normal</code> (both <code>Vector3f</code>). <code>Triangle</code> holds three <code>Vertex</code> instances. <code>Triangle.newTriangle(p0, p1, p2, normal)</code> creates a flat-shaded triangle where all vertices share the same normal — used by geometry builders.</p>
+<hr />
+<h2>2 · <code>rng</code> — Random &amp; Noise Generation</h2>
+<h3><code>RandomGenerator.java</code></h3>
+<p>A rich wrapper around Java's <code>java.util.Random</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>randInt(max)</code></td>
+<td>0 to max-1</td>
+</tr>
+<tr>
+<td><code>randNewInt(max, prev)</code></td>
+<td>Like randInt but guaranteed different from previous (uses modulo trick)</td>
+</tr>
+<tr>
+<td><code>randFloat()</code> / <code>randFloat(max)</code></td>
+<td>Standard 0-1 or 0-max</td>
+</tr>
+<tr>
+<td><code>randFloatBetween(min, max)</code></td>
+<td>Explicit range</td>
+</tr>
+<tr>
+<td><code>varyFloat(avg, variance)</code></td>
+<td>avg ± random amount within variance</td>
+</tr>
+<tr>
+<td><code>varyFloatByPercent(avg, factor)</code></td>
+<td>avg ± (avg * factor)</td>
+</tr>
+<tr>
+<td><code>triangularRand(lowest, highest, mode)</code></td>
+<td>Triangle distribution — biased toward <code>mode</code></td>
+</tr>
+<tr>
+<td><code>randomGauss(mean, stdDevFactor)</code></td>
+<td>Gaussian / normal distribution, clamped to ≥0</td>
+</tr>
+<tr>
+<td><code>roundBasedOnChance(float)</code></td>
+<td>2.7 → 2 (30%) or 3 (70%) probabilistically</td>
+</tr>
+<tr>
+<td><code>takeChance(float)</code></td>
+<td>Returns true with probability <code>float</code></td>
+</tr>
+<tr>
+<td><code>randSubset(list, size)</code></td>
+<td>Random sub-list using shuffle</td>
+</tr>
+<tr>
+<td><code>randUnitVec2()</code></td>
+<td>Random unit vector on a circle</td>
+</tr>
+<tr>
+<td><code>randDirectionVec2(scale)</code></td>
+<td>Random unit vec scaled to radius</td>
+</tr>
+<tr>
+<td><code>randPosInRectangle</code></td>
+<td>Random 2D point in a defined rectangle</td>
+</tr>
+<tr>
+<td><code>randomPointInElipsoid</code></td>
+<td>Random 3D point inside an ellipsoid (used by particle spawners)</td>
+</tr>
+<tr>
+<td><code>generateRandomUnitVector()</code></td>
+<td>Uniformly distributed on sphere (spherical coordinate method)</td>
+</tr>
+</tbody>
+</table>
+<p>Seeded constructor <code>RandomGenerator(int seed)</code> enables reproducible procedural generation.</p>
+<hr />
+<h3><code>Noise.java</code></h3>
+<p><strong>Deterministic integer-keyed noise</strong> using squirrel hashing (not Perlin):</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Squirrel hash constants</span>
+<span style="color: #B00040">int</span><span style="color: #BBB"> </span>noise1<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0xB5297A4D</span>;
+<span style="color: #B00040">int</span><span style="color: #BBB"> </span>noise2<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0x68E31DA4</span>;
+<span style="color: #B00040">int</span><span style="color: #BBB"> </span>noise3<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0x1B56C4E9</span>;
+</code></pre></div>
+
+<p>The same <code>noise(x)</code> input always produces the same output for the same <code>seed</code>. No state — purely functional.</p>
+<ul>
+<li><code>noise(int)</code> → 0 to 1</li>
+<li><code>noiseSigned(int)</code> → -1 to 1</li>
+<li><code>noise(int x, int y)</code> → 2D hash using a prime multiplier (<code>198491317</code>)</li>
+<li><code>smoothNoise(float)</code> — interpolates between two integer-keyed noise values using <code>smoothstep2</code></li>
+</ul>
+<p><code>Maths.NOISE</code> is a shared instance with seed=10.</p>
+<hr />
+<h3><code>PerlinNoise.java</code></h3>
+<p>Multi-octave Perlin noise for terrain generation.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>total = Σ (octave i → amplitude=roughnessⁱ, frequency∝2ⁱ)
+</code></pre></div>
+
+<ul>
+<li><code>sample(x, y, scale)</code> — outputs roughly in [-1, 1] range</li>
+<li><code>sample0To1</code> — mapped to [0, 1]</li>
+</ul>
+<p>Smoothing: each grid point's value is blurred using a 3×3 kernel before bilinear interpolation.</p>
+<hr />
+<h3><code>SmoothNoiseFunction.java</code></h3>
+<p>A <strong>time-based</strong> noise sampler. Call <code>update(delta)</code> every frame and it returns a smoothly wandering value in [0, 1].</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>time<span style="color: #BBB"> </span><span style="color: #666">+=</span><span style="color: #BBB"> </span>delta<span style="color: #BBB"> </span><span style="color: #666">*</span><span style="color: #BBB"> </span>roughness;
+<span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>noise.<span style="color: #687822">smoothNoise</span>(time);
+</code></pre></div>
+
+<p><code>roughness</code> controls how fast the noise "drifts". Used for organic randomness: wind variation, eye movement, idle animation jitter.</p>
+<hr />
+<h2>3 · <code>valueDrivers</code> — Animated Float Values</h2>
+<p>This package provides a <strong>strategy pattern</strong> for driving float values over time. All concrete drivers extend <code>ValueDriver</code>.</p>
+<h3><code>ValueDriver.java</code> — Abstract base</h3>
+<p>Manages:<br />
+- <code>currentTime</code> — accumulated delta time<br />
+- <code>startTime</code> — optional delay before animation begins<br />
+- <code>length</code> — period length in seconds<br />
+- <code>stopAfterPeriod</code> — if true, freezes at end value after one cycle<br />
+- <code>stopped</code> flag</p>
+<p><code>update(delta)</code> → advances time, computes <code>relativeTime ∈ [0,1]</code>, calls <code>calculateValue(relativeTime)</code>.</p>
+<hr />
+<h3>Concrete Drivers</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Shape</th>
+<th><code>calculateValue(t)</code> formula</th>
+<th>Use case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ConstantDriver</code></td>
+<td>Flat line</td>
+<td><code>return value</code></td>
+<td>Particles with fixed speed/size; mutable via <code>setValue</code></td>
+</tr>
+<tr>
+<td><code>LinearDriver</code></td>
+<td>Straight ramp</td>
+<td><code>start + t * (end - start)</code></td>
+<td>Linear fades, gradual changes</td>
+</tr>
+<tr>
+<td><code>SlideDriver</code></td>
+<td>S-curve (one shot)</td>
+<td><code>smoothInterpolate(start, end, t)</code></td>
+<td>UI panels sliding in/out, camera moves</td>
+</tr>
+<tr>
+<td><code>BounceDriver</code></td>
+<td>Up-then-down (one shot)</td>
+<td>smooth up to peak, smooth down to end</td>
+<td>Item pickups, hop animations</td>
+</tr>
+<tr>
+<td><code>FadeDriver</code></td>
+<td>Trapezoid</td>
+<td>linear in → peak → linear out</td>
+<td>Particle alpha, sound volume envelopes</td>
+</tr>
+<tr>
+<td><code>WaveDriver</code></td>
+<td>Cosine wave (loops)</td>
+<td><code>0.5 + cos(t*2π)*(-0.5)</code> mapped to range</td>
+<td>Wind sway, bobbing UI elements</td>
+</tr>
+<tr>
+<td><code>SinWaveDriver</code></td>
+<td>Sine wave (loops)</td>
+<td><code>0.5 + sin(t*2π)*0.5</code> mapped to range</td>
+<td>Volume, brightness, idle oscillation</td>
+</tr>
+<tr>
+<td><code>KeyFrameDriver</code></td>
+<td>Arbitrary curve</td>
+<td>Binary-search interpolation between <code>KeyFrame[]</code></td>
+<td>Complex custom animations</td>
+</tr>
+</tbody>
+</table>
+<h3><code>KeyFrame.java</code></h3>
+<p>A <code>(time, value)</code> pair where <code>time ∈ [0,1]</code> and <code>value</code> is any float. Used by <code>KeyFrameDriver</code> to define arbitrary animation curves. <code>KeyFrameDriver</code> uses binary search (<code>O(log n)</code>) to find the two surrounding keyframes.</p>
+<hr />
+<h2>4 · <code>hashIds</code> — The ID &amp; Registry System</h2>
+<h3><code>Id.java</code></h3>
+<p>A namespaced identifier with the format <code>"namespace:localName"</code> (e.g. <code>"game:wheat"</code>, <code>"mymod:custom_crop"</code>).</p>
+<p>Internally stores:<br />
+- <code>fullHash</code> — <code>"namespace:localName".hashCode()</code> — primary map key<br />
+- <code>modHash</code> — <code>"namespace".hashCode()</code> — allows filtering by mod<br />
+- <code>name</code> — the full string (only in "generation" mode)</p>
+<p><strong>Two modes:</strong><br />
+- <code>Id.gen("game:wheat")</code> — creates a full ID with name (for registration)<br />
+- <code>Id.genForAccess("wheat")</code> — creates a hash-only ID for lookups (cheaper)<br />
+- <code>Id.load(reader)</code> — deserializes 8 bytes from a save file</p>
+<p><strong>Serialization:</strong> stored as 8 bytes (4 for fullHash + 4 for modHash) in save files.</p>
+<hr />
+<h3><code>HashId.java</code></h3>
+<p>A simpler, older ID type that stores only <code>String.hashCode()</code>. Mostly legacy — predecessor to <code>Id</code>.</p>
+<hr />
+<h3><code>Registrable.java</code></h3>
+<p>Interface: anything that can be registered in a <code>HashRegistry</code> must implement <code>getId(): Id</code>.</p>
+<hr />
+<h3><code>HashRegistry&lt;T extends Registrable&gt;</code></h3>
+<p>The <strong>typed, named, iterable registry</strong> for <code>Registrable</code> objects.</p>
+<ul>
+<li><strong>Duplicate protection:</strong> throws <code>ProgramError</code> on overwrite</li>
+<li><code>getNotNull(...)</code> — throws rather than returning null (fail-fast)</li>
+<li><code>getAll(Predicate&lt;T&gt;)</code> — filtered list</li>
+<li><code>Iterable&lt;T&gt;</code> — supports enhanced for loops over all registered values</li>
+</ul>
+<hr />
+<h3><code>SimpleHashRegistry&lt;T&gt;</code></h3>
+<p>Like <code>HashRegistry</code> but for types that don't implement <code>Registrable</code>. The caller provides the <code>Id</code> manually at registration time (<code>register(id, item)</code>).</p>
+<hr />
+<h2>5 · <code>errors</code> — Crash Handling</h2>
+<h3><code>ProgramError.java</code></h3>
+<p>A <code>RuntimeException</code> for expected programming errors (registry overwrites, null lookups).</p>
+<hr />
+<h3><code>ErrorManager.java</code></h3>
+<p>Static crash handler that:<br />
+1. Installs itself as <code>Thread.setDefaultUncaughtExceptionHandler</code> on <code>init(folder)</code><br />
+2. Shows a <code>JFrame</code> pop-up with the stack trace (via <code>ErrorPopUp</code>)<br />
+3. Writes a timestamped <code>.txt</code> log file to the <code>ErrorLogsTM/</code> folder<br />
+4. Sleeps the main thread for 100,000 s to keep the Swing pop-up alive</p>
+<p>Log file naming: <code>"2026-03-13_20-33-47 Error_5207.txt"</code> — visible in your workspace <code>ErrorLogsTM/</code>.</p>
+<hr />
+<h3><code>ErrorPopUp.java</code></h3>
+<p>A Swing <code>JFrame</code> pop-up with:<br />
+- A bold top message (user-facing explanation)<br />
+- A scrollable red <code>JTextArea</code> with the raw stack trace</p>
+<p>This is the red error window players see when the game crashes.</p>
+<hr />
+<h2>6 · <code>listeners</code> — Observer Pattern</h2>
+<h3><code>AbstractListenerSet&lt;T&gt;</code></h3>
+<p>A generic listener set with <strong>concurrent-removal safety</strong>. If a listener removes itself during notification, the removal is deferred until after the notification loop completes.</p>
+<h3><code>BoolListenerSet</code> / <code>BoolListener</code></h3>
+<p>A concrete listener set for <code>boolean</code> events (toggle changes, window resize). <code>BoolListener</code> is a functional interface: <code>listener.eventOccurred(boolean value)</code>.</p>
+<hr />
+<h2>7 · <code>fileUtils</code> — File &amp; Resource I/O</h2>
+<h3><code>MyFile.java</code></h3>
+<p>A classpath-resource path builder. Provides <code>getInputStream()</code> via <code>Class.getResourceAsStream(path)</code> — for loading shaders, textures, language files inside the JAR.</p>
+<h3><code>FileUtils.java</code></h3>
+<p>Static file utility methods:<br />
+- <code>getNameNoExt</code>, <code>deleteFile</code> (recursive), <code>openInputStream</code>/<code>openOutputStream</code><br />
+- <code>renameFile</code> — atomic move via <code>Files.move</code><br />
+- <code>generateTimeStampString()</code> — <code>"2026-03-13_20-33-47"</code> format for log names<br />
+- <code>readBoolean</code> / <code>booleanToInt</code> — integer-coded booleans for save file parsing</p>
+<h3><code>RootFolderFinder.java</code></h3>
+<p>Tries 4 different methods in order to find the game's root folder:<br />
+1. <code>ClassLoader.getSystemClassLoader().getResource(".")</code><br />
+2. <code>getProtectionDomain().getCodeSource().getLocation()</code> parent<br />
+3. Class resource URL, handling <code>jar:file:</code> prefix<br />
+4. <code>new File(".")</code> — current working directory fallback</p>
+<p>If all 4 fail, <code>ErrorManager.crashWithUserAlert</code> is called. The <code>DefaultErrorLogs/</code> folder in your workspace contains crashes from when this detection was failing during development.</p>
+<hr />
+<h2>8 · <code>byteWork</code> — GPU Buffer Packing</h2>
+<h3><code>DataUtils.java</code></h3>
+<p>Low-level byte-packing utilities for vertex data sent to the GPU:</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pack_2_10_10_10_REV_int(x,y,z,w)</code></td>
+<td>Packs 3 × signed 10-bit normals + 1 × 2-bit indicator into a 32-bit int. Saves 75% bandwidth vs 3 floats for normals</td>
+</tr>
+<tr>
+<td><code>quantizeNormalized</code></td>
+<td>Maps a float to <code>[0, highestLevel]</code> integer range</td>
+</tr>
+<tr>
+<td><code>packNormalizedFloatInShort</code></td>
+<td>Maps [0,1] float to [0, 65535] short — for UV coordinates</td>
+</tr>
+<tr>
+<td><code>createDirectByteBuffer</code></td>
+<td>Off-heap LWJGL memory via <code>MemoryUtil.memAlloc</code></td>
+</tr>
+<tr>
+<td><code>releaseBuffer</code></td>
+<td>Frees off-heap memory via <code>MemoryUtil.memFree</code></td>
+</tr>
+<tr>
+<td><code>intToByteArray</code> / <code>byteArrayToInt</code></td>
+<td>Big-endian int ↔ 4-byte array (used in <code>Id</code> serialization)</td>
+</tr>
+</tbody>
+</table>
+<h3><code>ByteArrayBuilder.java</code></h3>
+<p>A fluent writer backed by a <code>ByteBuffer</code>. Provides typed <code>store*</code> methods so vertex construction code reads naturally:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>builder.<span style="color: #687822">storeFloatVector</span>(position);<span style="color: #BBB">           </span><span style="color: #3D7B7B; font-style: italic">// 12 bytes</span>
+builder.<span style="color: #687822">store_10_10_10_2_Vector</span>(normal,<span style="color: #BBB"> </span><span style="color: #666">0</span>);<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// 4 bytes (packed)</span>
+builder.<span style="color: #687822">storeShortUvCoords</span>(uvCoords);<span style="color: #BBB">         </span><span style="color: #3D7B7B; font-style: italic">// 4 bytes (packed)</span>
+<span style="color: #3D7B7B; font-style: italic">// Total: 20 bytes per vertex instead of 32</span>
+</code></pre></div>
+
+<hr />
+<h2>9 · <code>inputs</code> — Developer Keyboard Console</h2>
+<h3><code>UserKeyboard.java</code></h3>
+<p>A <strong>console input reader</strong> for developer tools and editor scripts — not for in-game player input. Wraps <code>System.in</code> with a <code>BufferedReader</code> and provides blocking read methods: <code>getResponse</code>, <code>getNumber</code>, <code>getFloat</code>, <code>getVector</code>, <code>getYesOrNo</code>.</p>
+<p>Used in internal build tools (e.g. <code>.obj → .cba</code> conversion scripts with user prompts). Not used during live gameplay.</p>
+<hr />
+<h2>How the packages connect</h2>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>                 ┌──────────────────────┐
+                 │       Maths          │
+                 │  (global RAND/NOISE) │
+                 └──────────┬───────────┘
+                            │ used by
+         ┌──────────────────┼──────────────────┐
+         ▼                  ▼                  ▼
+      rng/             valueDrivers/      math3d primitives
+  (Noise, Perlin,   (Drivers use Maths   (Aabb, Direction,
+  RandomGenerator)   .smoothInterpolate)   Rotation, Coords)
+         │                  │                  │
+         └──────────────────┴──────────────────┘
+                            │
+                     hashIds/  ←──── errors/ProgramError
+                  (Id, HashRegistry)
+                            │
+                     Used by entity system
+                  (BlueprintRepositoryLoader,
+                   GameRepository, EntitySystem)
+</code></pre></div>
+
+<p><code>byteWork/</code> feeds the rendering pipeline directly.<br />
+<code>fileUtils/</code> is used during startup and save/load.<br />
+<code>listeners/</code> is used by the UI and input systems.</p>
+<hr />
+<h2>10 · <code>readWrite</code> — Serialization &amp; I/O Framework</h2>
+<p>The central I/O layer. All game save/load and asset-loading code talks to <code>Reader</code>/<code>Writer</code> interfaces, with multiple format backends swappable underneath.</p>
+<h3>Core interfaces (<code>readWrite/</code>)</h3>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Reader</code></td>
+<td><code>readInt/Float/Boolean/String/Long/Short/Byte/Bytes/Vec3/Vec2/readByteArray/skipBytes/skipByteArray/close</code></td>
+</tr>
+<tr>
+<td><code>Writer</code></td>
+<td>Symmetric write methods + <code>writeObject(Exportable)</code>, <code>writeObjectList</code>, <code>writeAsynchronousChunk</code></td>
+</tr>
+<tr>
+<td><code>Exportable</code></td>
+<td>Anything that can be written. Default <code>getSerializer()</code> returns the <code>NO_EXPORT</code> no-op.</td>
+</tr>
+<tr>
+<td><code>Serializer</code></td>
+<td>Functional interface: <code>export(Writer)</code>. <code>NO_EXPORT</code> constant is a no-op lambda.</td>
+</tr>
+<tr>
+<td><code>StateSerializer</code></td>
+<td>Extends <code>Serializer</code> adding <code>loadState(Reader)</code>. <code>NO_SAVE</code> constant is a two-way no-op.</td>
+</tr>
+<tr>
+<td><code>LineSplitter</code></td>
+<td>Positional tokenizer: splits a string on a separator and exposes <code>getNextString/Int/Long/Float/Double/Bool/Vec2/Vec3</code>, <code>peek()</code>, <code>hasMoreValues()</code>. Used by CSV + CBA readers.</td>
+</tr>
+</tbody>
+</table>
+<h3><code>binary/</code> — Java DataStream binary</h3>
+<ul>
+<li><strong><code>BinaryReader</code></strong> — Wraps <code>DataInputStream</code>. Open from <code>File</code>, <code>FileInputStream</code>, or <code>byte[]</code>. Big-endian Java binary format.</li>
+<li><strong><code>BinaryWriter</code></strong> — Wraps <code>DataOutputStream</code>. Open from <code>File</code> or any <code>OutputStream</code> (including <code>ByteArrayOutputStream</code> for in-memory writes). Factory <code>openByteArrayWriter()</code>. <code>writeAsynchronousChunk(ByteArrayOutputStream)</code> writes a size-prefixed byte blob — used for save-file sections assembled concurrently.</li>
+</ul>
+<h3><code>csvSimplified/</code> — Single-separator CSV</h3>
+<p>Custom tabular format using <code>FileUtils.SEPARATOR</code> (not a real comma-CSV).</p>
+<ul>
+<li><strong><code>CsvReader</code></strong> — Implements <code>Reader</code>. <code>nextLine()</code> reads the next row; subsequent <code>readInt/Float/String/Bool/Vec2/Vec3/readByteArray</code> calls consume tokens from that row via a <code>LineSplitter</code>.</li>
+<li><strong><code>CsvWriter</code></strong> — Implements <code>Writer</code>. <code>nextLine()</code> emits a line break and resets the first-value flag. Booleans written as <code>0</code>/<code>1</code>.</li>
+</ul>
+<h3><code>realCsv/</code> — RFC-style comma CSV</h3>
+<p>Proper comma-separated, with quoted fields when a value contains a comma.</p>
+<ul>
+<li><strong><code>RealCsvLine</code></strong> — Parsed CSV row. <code>next()</code> reassembles values that span multiple commas (quoted with <code>"</code>).</li>
+<li><strong><code>RealCsvReader</code></strong> — <code>nextLine()</code> → parse into <code>RealCsvLine</code>; <code>getNextValue/Int/Long/Float/Bool/IntArray/FloatArray/Vector</code>.</li>
+<li><strong><code>RealCsvWriter</code></strong> — Auto-quotes values with commas; <code>writeValue/Int/Float/Bool/writeVector/nextLine</code>.</li>
+</ul>
+<h3><code>misc/</code></h3>
+<ul>
+<li><strong><code>ClipboardPrintWriter</code></strong> — A <code>PrintWriter</code> that mirrors all output to a <code>StringBuilder</code>. <code>copyToClipBoard()</code> pushes the buffer to the system clipboard — used in dev-time data-export tools.</li>
+</ul>
+<h3><code>cbaFiles/</code> — CBA format (human-readable structured text)</h3>
+<p>The primary format for blueprint/entity definition files (<code>.cba</code>). Indented brace blocks, <code>key = value</code> attributes, <code>[…]</code> arrays.</p>
+<ul>
+<li><strong><code>CbaObject</code></strong> — In-memory node. Stores: <code>valueAttributes</code> (String), <code>objectAttributes</code> (nested <code>CbaObject</code>), <code>arrayAttributes</code> (<code>List&lt;CbaObject&gt;</code>), <code>bigStringArrayAttributes</code> (<code>List&lt;String&gt;</code> for multi-line <code>(…)</code> blocks). Rich typed getters: <code>getString/Int/Float/Boolean/getVector3f/getVector2f/getId/getColour/getIntArray/getFloatArray/getHexColourArray/getVec3Array/getStringArray/getObjectArray</code> — all with default-value overloads.</li>
+<li><strong><code>CbaObjectReader</code></strong> — Parses <code>.cba</code> files line-by-line into a <code>CbaObject</code> tree. Handles <code>{ }</code> objects, <code>[ ]</code> arrays, <code>( )</code> large strings.</li>
+<li><strong><code>CbaWriter</code></strong> — Writes <code>.cba</code> files. Tab-indented. <code>writeObjectStart/End</code>, <code>writeObjectArrayStart/End</code>, typed <code>writeString/Int/Float/Boolean/Colour/Vec3/FloatArray/IntArray</code>.</li>
+<li><strong><code>CbaLoaderRegistry&lt;T&gt;</code></strong> — Typed loader registry backed by a <code>HashRegistry&lt;RegistrableCbaLoader&lt;T&gt;&gt;</code>. <code>load(CbaObject)</code> reads the <code>id</code> attribute and dispatches to the matching registered loader. Optional <code>DefaultCreator</code> used when the object is absent.</li>
+<li><strong><code>RegistrableCbaLoader&lt;T&gt;</code></strong> — Interface: <code>Registrable</code> + <code>T load(CbaObject)</code>. Implement and register to support a new CBA-loadable type.</li>
+</ul>
+<h3><code>tagFormat/</code> — Tag binary format</h3>
+<p>Self-describing binary format with <code>HashId</code>-keyed tags. Field names are stored as 4-byte hashes — more efficient than CBA for save files.</p>
+<ul>
+<li><strong><code>DataObject</code></strong> — In-memory tree node. Three <code>Map&lt;HashId, …&gt;</code> buckets: primitives, child objects, object arrays. Typed getters (<code>getFloat/Int/Long/Short/Boolean/Vec2/Vec3/String/Colour/IntArray</code>) all with defaults. <code>getSerializableReader(id)</code> returns a <code>BinaryReader</code> over a stored <code>byte[]</code> primitive — bridges old <code>Exportable</code> code.</li>
+<li><strong><code>binaryReadWrite/Identifiers</code></strong> — Byte sentinels: <code>START (-1)</code>, <code>END (-2)</code>, <code>OBJ_ARRAY (-3)</code>.</li>
+<li><strong><code>DataObjectReader</code></strong> — Reads the binary tag stream: byte identifier → HashId int → nested object, array, or typed primitive.</li>
+<li><strong><code>DataObjectWriter</code></strong> — Writes the binary tag stream. <code>writeFloat/Int/Long/Boolean/String/IntArray</code>, <code>writeObject/writeObjectArray</code>, <code>writeSerializable/writeSerializableArray</code> (wraps legacy <code>Exportable</code> objects as <code>BYTE_ARRAY</code> primitives).</li>
+<li><strong><code>HashedSerializer</code></strong> — Abstract: <code>writeData(DataObjectWriter)</code>.</li>
+<li><strong><code>HashedStateSerializer</code></strong> — Adds <code>loadState(DataObject)</code>.</li>
+<li><strong><code>HashedIdSerializer</code></strong> — Carries a <code>HashId</code> identifying this object within its parent.</li>
+<li><strong><code>HashedIdStateSerializer</code></strong> — Adds <code>loadFromParentData(DataObject)</code> — looks up its own <code>HashId</code> key in the parent, then calls <code>loadStateFromThisData</code>.</li>
+<li><strong><code>HashedSerializingUtils</code></strong> — Bridge: <code>saveHashedStateObject</code> / <code>loadHashedStateObject</code> connect the new tag format with legacy <code>Writer</code>/<code>Reader</code> streams.</li>
+<li><strong><code>primitives/PrimitiveType</code></strong> — Enum (ordinal = byte identifier): <code>FLOAT, INT, SHORT, BOOLEAN, STRING, VEC2, VEC3, BYTE, LONG, INT_ARRAY, BYTE_ARRAY, COLOUR</code>. <strong>Order must never change</strong> (save file compatibility).</li>
+<li>Each primitive class (<code>FloatData</code>, <code>IntData</code>, <code>ShortData</code>, <code>BooleanData</code>, <code>StringData</code>, <code>Vec2Data</code>, <code>Vec3Data</code>, <code>ByteData</code>, <code>LongData</code>, <code>IntArrayData</code>, <code>ByteArrayData</code>, <code>ColourData</code>) implements <code>loadValue(Reader)</code> and <code>write(Writer)</code>.</li>
+<li><strong><code>PrimitiveLoader.load(Reader)</code></strong> — reads one identifier byte → creates the matching subclass → calls <code>loadValue</code>.</li>
+<li><strong><code>tagReadWrite/TagReader</code></strong> — Reads a human-readable tag text file into a <code>DataObject</code>. Auto-detects type: <code>"..."</code> → String, <code>#...</code> → Colour, <code>$...</code> → reference lookup, <code>.</code> in value → Float, else Int. Intended as a future CBA replacement.</li>
+</ul>
+<hr />
+<h2>11 · <code>mesh3d</code> — Indexed Mesh Primitives</h2>
+<ul>
+<li><strong><code>Corner</code></strong> — Enum of 4 tile corners (TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT) with 2D <code>(x, z)</code> offsets and a 1:1 mapping to <code>Rotation</code> values. <code>fromRotation</code> / <code>getCorrespondingRotation</code> convert between the two. <code>opposite()</code> returns the diagonally opposite corner.</li>
+<li><strong><code>IndexedMesh</code></strong> — A <code>List&lt;Vertex&gt;</code> + <code>List&lt;Integer&gt;</code> indices base class. Supports sections: <code>startNewSection</code> / <code>startNewSection(colour)</code> advances the <code>indexOffset</code>. <code>generateTriangle</code> / <code>generateQuad</code> emit offset-adjusted indices. <code>getSectionVertex(localIndex)</code> addresses vertices within the current section. <code>getCurrentSectionVertexCount</code> counts vertices added since the last section start.</li>
+<li><strong><code>Mesh3d</code></strong> — Extends <code>IndexedMesh</code> with high-level construction helpers:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>transformSection(translate, rotation)</code></td>
+<td>In-place TRS transform of all vertices in the current section</td>
+</tr>
+<tr>
+<td><code>rotateSection(rotation)</code></td>
+<td>Rotate the current section in place</td>
+</tr>
+<tr>
+<td><code>copyAndRotateSection(rotation)</code></td>
+<td>Duplicate the current section then rotate the copy</td>
+</tr>
+<tr>
+<td><code>append(Mesh3d)</code> / <code>append(Mesh3d, Rotation)</code></td>
+<td>Merge another mesh (with optional rotation)</td>
+</tr>
+<tr>
+<td><code>fan(center, points...)</code> / <code>fan(center, start, count)</code> / <code>fanLoop</code></td>
+<td>Triangle fan connectivity</td>
+</tr>
+<tr>
+<td><code>fill(topRow, bottomRow)</code> / <code>fill(topStart, perRow)</code> / <code>fill(top, bottom, perRow)</code> / <code>fillLoop</code></td>
+<td>Wall of quads between two rows of equal-count vertices</td>
+</tr>
+<tr>
+<td><code>storeVerticesAtHeight(y, normal, Vector2f...)</code></td>
+<td>Batch add 2D XZ vertices at a fixed Y</td>
+</tr>
+<tr>
+<td><code>generateQuadWithFaceNormal</code></td>
+<td>Generate a quad and compute the face normal from the geometry</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>12 · <code>meshBuilding</code> — Vertex Buffer Assembly</h2>
+<p>Converts <code>Vertex</code> data into packed <code>byte[]</code> arrays ready for GPU upload. 20 bytes per vertex: 12 (float×3 position) + 4 (packed 10-10-10-2 normal) + 4 (packed RGBA colour).</p>
+<ul>
+<li><strong><code>Vertex</code></strong> — Mutable struct: <code>Vector3f position</code>, <code>Vector3f normal</code>, <code>Colour colour</code>.</li>
+<li><strong><code>MeshBuilder3d</code></strong> (interface) — Abstract 3D building contract: <code>addVertex</code>, <code>setCurrentColour</code>, <code>generateQuad/Triangle</code>, <code>startNewSection</code>, <code>repeatPreviousVertices</code>, <code>setHeightOfPreviousVertices</code>, <code>getCurrentSectionVertexCount</code>.</li>
+<li><strong><code>MeshBuilder</code></strong> — <code>ArrayDeque&lt;Vertex&gt;</code> accumulator. <code>generateByteData()</code> flushes all vertices through <code>VertexByteArrayBuilder</code>. Subclasses override <code>initByteArrayBuilder()</code> to inject transform logic.</li>
+<li><strong><code>MeshTransformBuilder</code></strong> — Subclass of <code>MeshBuilder</code>; uses <code>VertexTransformByteArrayBuilder</code> — applies rotation + translation on byte flush.</li>
+<li><strong><code>MeshTranslateBuilder</code></strong> — Subclass; uses <code>VertexTranslateByteArrayBuilder</code> — translation only.</li>
+<li><strong><code>ArrayMeshBuilder3d</code></strong> — Implements <code>MeshBuilder3d</code>. Buffers a <code>List&lt;Vertex&gt;</code> internally; forwards completed triangles to an inner <code>MeshBuilder</code>.</li>
+<li><strong><code>QuadBuilder</code></strong> (meshBuilding) — Stores a <code>List&lt;Vector3f&gt;</code> position pool. <code>generateQuad/generateTriangle</code> calculate the face normal on-the-fly (<code>Maths.calcNormalOfTriangle</code>) and submit complete triangles to a <code>MeshBuilder</code>.</li>
+<li><strong><code>IntArrayBuilder</code></strong> — <code>IntBuffer</code> wrapper for index arrays. <code>addInt</code>, <code>putIntArray</code>, <code>getArray</code>.</li>
+<li><strong><code>VertexByteArrayBuilder</code></strong> — Extends <code>ByteArrayBuilder</code>. Stores 20 bytes/vertex. <code>storeVertex(Vertex)</code>, <code>storeIndexedMesh(IndexedMesh)</code> (iterates indices and stores each referenced vertex). <code>BYTES_PER_VERTEX = 20</code>.</li>
+<li><strong><code>VertexTransformByteArrayBuilder</code></strong> — Extends <code>VertexByteArrayBuilder</code>. Overrides <code>storeVertex</code> to apply <code>Rotation.applyTileRotation</code> + translate to position and <code>applyRotationToVec3</code> to normal, using <code>Vec3Pool</code> to avoid allocations.</li>
+<li><strong><code>VertexTranslateByteArrayBuilder</code></strong> — Extends <code>VertexByteArrayBuilder</code>. Adds <code>globalPos</code> to vertex position only.</li>
+<li><strong><code>TransformByteArrayBuilder</code></strong> / <strong><code>TranslateByteArrayBuilder</code></strong> — Lower-level variants of the above that extend <code>ByteArrayBuilder</code> directly and expose <code>storeTransformedPosition/storeTransformedNormal</code> for callers that control the byte layout manually.</li>
+</ul>
+<hr />
+<h2>13 · <code>meshGeneration</code> — High-Level Mesh Shape Helpers</h2>
+<p>Utilities that generate specific geometry shapes from 2D profiles, curves, and procedural rules.</p>
+<ul>
+<li><strong><code>ModelUtils</code></strong> — Static direction constants (<code>UP</code>, <code>RIGHT</code>, <code>LEFT</code>, <code>FORWARD</code>, <code>BACKWARD</code>), <code>copyVertices</code>, <code>reverseOrder</code>, <code>mirror(Vector2f[], Mirror)</code>, <code>processQuad(positions, normal, colour, Processor)</code>, <code>generateFlatQuad(xMin, xMax, zMin, zMax, colour, Processor)</code>, <code>canReduceInnerRoadCurve</code>.</li>
+<li><strong><code>Processor</code></strong> (interface) — <code>processVertex(pos, normal, colour)</code> — the single consumer vertex is emitted to. Decouples shape generation from buffer writing.</li>
+<li><strong><code>QuadBuilder</code></strong> (meshGeneration) — Fixed-size <code>Vector3f[]</code> position pool; <code>processQuad(i0,i1,i2,i3, norm, col)</code> emits 6 vertices (two triangles) to a <code>Processor</code>. <em>Distinct from <code>meshBuilding.QuadBuilder</code>.</em></li>
+<li><strong><code>CurveGenerator</code></strong> — Generates 2D arc vertices in polar coordinates: <code>calculateCurveVertices(radius, segmentCount)</code> → <code>segmentCount+1</code> points sweeping from <code>(radius, 0)</code> to <code>(0, radius)</code> (quarter-circle). <code>calculateRoundedCorner</code> offsets this into a box corner of size <code>cornerSize</code>.</li>
+<li><strong><code>Mirror</code></strong> (enum) — <code>X_AXIS</code>, <code>Z_AXIS</code>, <code>BOTH</code>, <code>NONE</code>. <code>mirrorVec2(pos)</code> flips X and/or Z (BOTH additionally swaps the two coordinates).</li>
+<li><strong><code>VertexFiller</code></strong> — Takes a 1D <code>Vector2f[]</code> profile, mirrors it horizontally, and fills in a strip of quads between the two lines using <code>ModelUtils.processQuad</code>. Used for symmetric road/path cross-sections.</li>
+<li><strong><code>IndexEdge</code></strong> — An edge between two 2D vertex indices. <code>extend(height, triangles)</code> extrudes it vertically into two wall triangles. <code>hashCode/equals</code> treat the same pair regardless of winding order as equal — safe for <code>Set</code> deduplication.</li>
+<li><strong><code>IndexTriangle</code></strong> — Three index references into a 2D vertex array. <code>getIndexEdge(i)</code> returns one of the 3 edges; <code>getTriangle(height)</code> lifts all three into 3D at the given Y.</li>
+<li><strong><code>RoadVertex</code></strong> — A pre-built vertex (position + normal + colour). <code>storeInstanceData(buffer, gridX, gridZ, rotation)</code> transforms and packs it directly into a <code>ByteBuffer</code> — used for road tile GPU instancing without going through a <code>MeshBuilder</code>.</li>
+</ul>
+<hr />
+<h2>14 · <code>modelFormats</code> — 3D Model File I/O</h2>
+<p>Four sub-systems covering every 3D asset format used in the game.</p>
+<h3><code>objects/</code> — Shared intermediate representation</h3>
+<ul>
+<li><strong><code>MaterialInfo</code></strong> (interface) — <code>getColour(): Colour</code></li>
+<li><strong><code>ColourMat</code></strong> — Solid colour material.</li>
+<li><strong><code>PaletteMat</code></strong> — Palette-indexed: <code>ColourPalette palette + uvX, uvY</code> → <code>palette.get(uvX, uvY)</code>.</li>
+<li><strong><code>GroupMat</code></strong> — Stub returning <code>null</code> colour (placeholder for group-level materials).</li>
+<li><strong><code>ModelSection</code></strong> — List of <code>Triangle</code> + integer <code>sectionId</code> + <code>MaterialInfo</code>. <code>getVertexCount() = triangles.size() * 3</code>.</li>
+<li><strong><code>Model</code></strong> — List of <code>ModelSection</code> + optional min/max bounds. <code>getTotalVertexCount()</code>, <code>getSectionColours(Colour[])</code>.</li>
+</ul>
+<h3><code>objImporter/</code> — Wavefront OBJ import</h3>
+<ul>
+<li><strong><code>RawObjData</code></strong> — Mutable lists of positions, normals, tex coords accumulated during parsing.</li>
+<li><strong><code>ObjMaterial</code></strong> — name, colour, alpha, specularFactor, shinyness, iqr — from <code>.mtl</code> file.</li>
+<li><strong><code>ObjVertex</code></strong> — index + position + normal + optional UV.</li>
+<li><strong><code>ObjModelSection</code></strong> — Named section: <code>List&lt;ObjVertex&gt;</code> + index list + <code>indicesOffset</code>.</li>
+<li><strong><code>ObjModel</code></strong> — Named list of <code>ObjModelSection</code>. <code>getVertexCount()</code> / <code>getIndicesCount()</code>.</li>
+<li><strong><code>MtlFileImporter</code></strong> — Reads <code>.mtl</code>: for each <code>newmtl</code>, parses shinyness, ambient, diffuse colour, specular, IQR, alpha.</li>
+<li><strong><code>ObjImporter</code></strong> — Reads <code>.obj</code>: scans for <code>mtllib</code>, processes <code>v/vn/vt/o/usemtl/f</code> lines. Deduplicates vertices with a <code>HashMap&lt;String, ObjVertex&gt;</code>. Returns <code>List&lt;ObjModel&gt;</code>. Entry point: <code>ObjImporter.importModels(File)</code>.</li>
+</ul>
+<h3><code>streamlineFormat/</code> — Game's custom streamline CSV format</h3>
+<ul>
+<li><strong><code>StreamlineExporter</code></strong> — Writes a <code>Model</code> to <code>CsvWriter</code>. Header (total verts, section count), then per section: metadata (id, vertex count, material type + colour), then triangle data (position×3 + normal×3 per vertex). Material prefixes: <code>$</code> = colour, <code>&amp;</code> = palette.</li>
+<li><strong><code>StreamlineImporter</code></strong> — Reads back from <code>CsvReader</code>. Supports <code>$</code>, <code>*</code> (colour + alpha), <code>&amp;</code> (palette) material types.</li>
+<li><strong><code>ByteDataExtractor</code></strong> — Converts a <code>Model</code> directly to packed <code>byte[]</code> via <code>VertexByteArrayBuilder</code> — for runtime loading without an intermediate CSV pass.</li>
+<li><strong><code>ModelDataExtractor</code></strong> — Abstract template: subclass provides <code>storeVertex(model, section, vertex, byteArray)</code> and the base handles all triangle iteration.</li>
+</ul>
+<h3><code>texturedObj/</code> — UV-mapped OBJ (no normals, texture coords only)</h3>
+<ul>
+<li><strong><code>Vertex</code></strong> — <code>Vector3f position</code> + <code>Vector2f textureCoords</code>.</li>
+<li><strong><code>Triangle</code></strong> — Three <code>Vertex</code> instances.</li>
+<li><strong><code>TexturedModel</code></strong> — A <code>Set&lt;Triangle&gt;</code>.</li>
+<li><strong><code>TexturedObjLoader</code></strong> — Parses <code>.obj</code> keeping <code>v</code> and <code>vt</code> only. UV Y is flipped (<code>1 - y</code>). Entry point: <code>TexturedObjLoader.loadModel(File)</code>.</li>
+<li><strong><code>TexturedModelDataExtractor</code></strong> — 20 bytes/vertex: <code>float×3 position</code> + <code>float×2 UV</code>.</li>
+</ul>
+<h3><code>smoothPoly/</code> — The game's primary 3D model format (<code>.cba</code> / <code>.obj</code>)</h3>
+<p><strong>Model data classes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmoothPolyVertex</code></td>
+<td><code>final position + normal</code>. <code>getTextureCoords()</code> returns <code>(0,0)</code></td>
+</tr>
+<tr>
+<td><code>SmoothPolyUvVertex</code></td>
+<td>Extends with actual <code>Vector2f uvCoords</code></td>
+</tr>
+<tr>
+<td><code>SmoothPolyMaterial</code></td>
+<td>colour, <code>customMatFactor</code> (0→1 blend to runtime custom colour), <code>customMaterialIndex</code> (0–3), <code>specularFactor</code>, <code>shinyness</code>, <code>flexibility</code> (wind sway), <code>flexAnchorHeight</code></td>
+</tr>
+<tr>
+<td><code>SmoothPolyModelSection</code></td>
+<td>id + material + <code>SmoothPolyVertex[]</code> + <code>hasUvCoords</code> flag</td>
+</tr>
+<tr>
+<td><code>BoundingInfo</code></td>
+<td><code>xzRadius</code> (footprint circle) + <code>height</code> — for culling</td>
+</tr>
+<tr>
+<td><code>SmoothPolyModel</code></td>
+<td>Implements <code>Registrable</code>. Sections + shared index array + <code>BoundingInfo</code>. Flags: <code>hasTransparency</code>, <code>usesMultipleCustomColours</code>, <code>hasShadow</code>. <code>merge(other)</code> appends sections and offset-adjusts indices.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Importers:</strong><br />
+- <strong><code>BoundsProcessor</code></strong> — Accumulates <code>maxHeight</code> and max <code>xzRadius²</code> across vertices. If a pre-calculated <code>BoundingInfo</code> is provided, it passes through unchanged.<br />
+- <strong><code>AttributeData</code></strong> / <strong><code>AttributeExtractor</code></strong> — Parse Blender material name suffixes encoded as <code>!key:value</code> pairs (e.g. <code>myMat!flex:0.3!part:2</code>).<br />
+- <strong><code>SmoothPolyObjImporter</code></strong> — Chains <code>ObjImporter</code> → <code>SmoothPolyModel</code>. Reads attribute tags from material names: <code>flex</code>, <code>uvs</code>, <code>mat</code> (material factor), <code>part</code> (custom mat index), <code>alpha</code>, <code>anchor</code>. Converts Blender Phong shinyness to the game's 0–100 range.<br />
+- <strong><code>SmoothPolyCbaImporter</code></strong> — Reads <code>.cba</code> files. Loads bounds, sections, index array, per-section vertex float arrays (6 floats/vertex, or 8 with UV), and material properties.<br />
+- <strong><code>SmoothPolyModelImporter</code></strong> — Router: dispatches to <code>SmoothPolyObjImporter</code> (<code>.obj</code>) or <code>SmoothPolyCbaImporter</code> (<code>.cba</code>) based on file extension.</p>
+<p><strong>Exporter:</strong><br />
+- <strong><code>SmoothPolyCbaExporter</code></strong> — Writes a <code>SmoothPolyModel</code> to <code>.cba</code>: bounds block (<code>xzRadius</code>, <code>height</code>), <code>indices</code> int array, and per-section vertex float array (interleaved px/py/pz/nx/ny/nz[/u/v]) + material fields.</p>
+<p><strong>Utility:</strong><br />
+- <strong><code>SmoothPolyAabbExtractor</code></strong> — Projects all model vertices through a <code>Matrix4f</code> and includes them in an <code>Aabb</code>. <code>calculateAabb(transform)</code> returns the world-space bounding box for a transformed model instance — used for shadow frustum fitting and entity culling.</p>
+<hr />
+<h2>15 · <code>colours</code> — Colour Math &amp; Palette System</h2>
+<ul>
+<li><strong><code>Colour</code></strong> — The universal colour value object (RGBA floats). Mutable. Key operations:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Colour(r,g,b)</code> / <code>(r,g,b,a)</code> / <code>(int r,g,b)</code> / <code>(Colour)</code> / <code>(Colour, alpha)</code></td>
+<td>Many constructors</td>
+</tr>
+<tr>
+<td><code>hex(String)</code></td>
+<td>Parse <code>#RRGGBB</code> hex string</td>
+</tr>
+<tr>
+<td><code>toLinearSpace()</code></td>
+<td>Apply gamma 2.2 — call once when loading sRGB textures</td>
+</tr>
+<tr>
+<td><code>asByteArray()</code></td>
+<td>RGBA as 4 bytes — used for GPU vertex packing</td>
+</tr>
+<tr>
+<td><code>getAlphaByte()</code></td>
+<td>Alpha as a single byte</td>
+</tr>
+<tr>
+<td><code>convertToHsv()</code></td>
+<td>Returns <code>HsvColour</code> via <code>Color.RGBtoHSB</code></td>
+</tr>
+<tr>
+<td><code>getLuminance()</code></td>
+<td>Perceptual brightness <code>0.2126r + 0.7152g + 0.0722b</code></td>
+</tr>
+<tr>
+<td><code>scale(f)</code> / <code>multiplyBy(Colour)</code> / <code>increaseColour(r,g,b)</code></td>
+<td>In-place math</td>
+</tr>
+<tr>
+<td><code>mix(c1, c2, blend, dest)</code></td>
+<td>Linear blend; writes to <code>dest</code> (or new object if null)</td>
+</tr>
+<tr>
+<td><code>add(c1, c2, dest)</code> / <code>sub(c1, c2, dest)</code></td>
+<td>Component-wise add/subtract</td>
+</tr>
+<tr>
+<td><code>hsvToRgb(h,s,v)</code></td>
+<td>Static HSV → RGB conversion</td>
+</tr>
+<tr>
+<td><code>fromBytes(byte[])</code> / <code>getAsDirectFloatBuffer()</code></td>
+<td>GPU upload helpers</td>
+</tr>
+<tr>
+<td><code>isEqualTo(Colour)</code> / <code>duplicate()</code></td>
+<td>Comparison and copy</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong><code>HsvColour</code></strong> — Mutable hue/saturation/value triple. <code>convertToRgb()</code> delegates to <code>Colour.hsvToRgb</code>.</li>
+<li><strong><code>ColourGradient</code></strong> (interface) — <code>get(float t)</code> for <code>t ∈ [0,1]</code> → <code>Colour</code>. 1D gradient abstraction.</li>
+<li><strong><code>GradientPoint</code></strong> — Immutable <code>(position ∈ [0,1], colour)</code> pair for defining gradient stops.</li>
+<li><strong><code>ColourGradientMulti</code></strong> — Implements <code>ColourGradient</code> with N <code>GradientPoint</code>s. Points are sorted by position at construction. <code>get(t)</code> binary-linear-searches for the surrounding pair and linearly interpolates.</li>
+<li><strong><code>ColourPalette</code></strong> — A 2D grid of <code>Colour</code> objects stored in linear space. Loaded from a PNG via <code>ImageData</code>; each pixel becomes one palette entry. <code>get(x, y)</code> returns the colour at column x, row y.</li>
+<li><strong><code>ColourRepository</code></strong> — A <code>Map&lt;String, ColourPalette&gt;</code>. <code>addPalette</code>, <code>getColourPalette(id)</code>, <code>getColour(paletteId, x, y)</code> (returns a duplicate).</li>
+</ul>
+<hr />
+<h2>16 · <code>dataStructures</code> — Custom Data Structures</h2>
+<ul>
+<li><strong><code>Bundle&lt;T&gt;</code></strong> — A <code>Collection&lt;T&gt;</code> that wraps a <code>Set&lt;Collection&lt;? extends T&gt;&gt;</code>. <code>addAll(collection)</code> adds an entire existing collection reference in O(1) — no copying. <code>merge(bundle)</code> merges two bundles. Iteration uses <code>BundleIterator</code>. <code>add(single item)</code> is unsupported (logs an error). Useful for gathering entities from multiple subsystem lists without flattening.</li>
+<li><strong><code>BundleIterator&lt;T&gt;</code></strong> — Two-level iterator: outer iterates the inner collection references; inner iterates each collection. <code>hasNext</code> is true if any inner iterator has more elements.</li>
+<li><strong><code>EasyArray&lt;T&gt;</code></strong> — A fixed-capacity generic array with a write pointer. <code>add(item)</code> appends at the pointer; <code>isFull()</code> checks capacity; <code>getArray()</code> returns the backing array.</li>
+<li><strong><code>Registry&lt;T&gt;</code></strong> — A <code>HashMap&lt;String, T&gt;</code> with <code>register(id, item)</code>, <code>get(id)</code>, <code>clear()</code>. Simpler alternative to <code>HashRegistry</code> when <code>Id</code> hashing is not needed.</li>
+<li><strong><code>SafeList&lt;T&gt;</code></strong> — A list safe to mutate during iteration (single-threaded). Defers <code>add</code>/<code>remove</code> calls to waiting queues during iteration; applies them automatically when <code>hasNext()</code> returns false at the end of a full sweep.</li>
+<li><strong><code>Tuple&lt;T,S&gt;</code></strong> — Immutable <code>(key, value)</code> pair. <code>getKey()</code> / <code>getValue()</code>.</li>
+</ul>
+<hr />
+<h2>17 · <code>fileWatcher</code> — Hot-Reload File Monitoring</h2>
+<ul>
+<li><strong><code>FileChangeWatcher</code></strong> — Wraps Java's <code>WatchService</code> to monitor specific files for modifications at runtime. <code>registerFileToWatch(File)</code> watches the file's parent folder. <code>getChangedFiles()</code> polls the watch service and returns a <code>Set&lt;File&gt;</code> of modified registered files since the last call. Used by dev tools for shader/asset hot-reload. <code>FileChangeWatcher.init()</code> is the factory — gracefully falls back to a no-op instance if the watch service cannot start.</li>
+</ul>
+<hr />
+<h2>18 · <code>gameRegistry</code> — Lazy Forward-Reference Registry</h2>
+<p>Extends <code>HashRegistry&lt;T&gt;</code> to handle assets that reference other assets which may not yet be loaded at parse time.</p>
+<ul>
+<li><strong><code>GameRegistry&lt;T&gt;</code></strong> — Subclass of <code>HashRegistry&lt;T&gt;</code>. Overrides <code>register(item)</code> to also resolve any pending <code>Reference</code> objects waiting for that <code>Id</code>. <code>getReference(id)</code> returns a <code>Reference&lt;T&gt;</code> immediately — if the item is already loaded, the reference is populated at once; otherwise it queues the reference and populates it when the item is eventually registered. <code>completeLoading()</code> logs any IDs that were requested but never fulfilled.</li>
+<li><strong><code>Reference&lt;T&gt;</code></strong> — Holds an <code>Id</code> and (optionally) the resolved item <code>T</code>. <code>onAvailable(ReferenceListener&lt;T&gt;)</code> fires the callback immediately if already resolved, or stores it for later. Static helper <code>referenceArray(references[], itemArray[])</code> wires up an array of references to fill a parallel item array.</li>
+<li><strong><code>ReferenceListener&lt;T&gt;</code></strong> — Functional interface: <code>onAvailable(T item)</code>.</li>
+</ul>
+<hr />
+<h2>19 · <code>images</code> — Image Loading</h2>
+<p>Two complementary image loaders for different use cases:</p>
+<ul>
+<li><strong><code>ImageData</code></strong> — AWT-based (<code>BufferedImage</code>). Loaded via <code>ImageIO.read</code>. <code>getColour(x, y)</code> extracts <code>int RGB</code> → <code>Colour</code>. <code>getPixelColours(boolean convertToLinearSpace)</code> extracts the entire image as a <code>Colour[width][height]</code> array. Used to load palette PNGs into <code>ColourPalette</code>.</li>
+<li><strong><code>RawByteImage</code></strong> — STB-based (via <code>STBImage.stbi_load</code>). Loads image file directly into a <code>ByteBuffer</code> with 4 channels (RGBA). Keeps the width and height. Used for textures sent directly to OpenGL.</li>
+</ul>
+<hr />
+<h2>20 · <code>memory</code> — GPU Memory Slot Allocator</h2>
+<p>A doubly-linked-list allocator that tracks which regions of a GPU buffer (VAO) are in use and which are free gaps — enabling re-use of freed slots without full buffer rebuilds.</p>
+<ul>
+<li><strong><code>MemorySlotChain</code></strong> — The allocator. Manages a linked list of <code>MemorySlot</code>s. <code>allocateMemory(length)</code> finds the first gap large enough and splits it (first-fit strategy), or appends to the end. <code>appendMemory(length)</code> always appends. <code>remove(slot)</code> converts a data slot back into a gap. <code>getCurrentByteSize()</code> returns the total size (including gaps) by reading the tail slot's end index.</li>
+<li><strong><code>MemorySlot</code></strong> — A node in the linked list. Holds <code>startIndex</code>, <code>length</code>, and <code>previous</code>/<code>next</code> pointers. <code>getEndIndex() = startIndex + length</code>. <code>remove()</code> replaces itself with a <code>GapSlot</code>. <code>isGap()</code> returns false for data slots.</li>
+<li><strong><code>GapSlot</code></strong> — Extends <code>MemorySlot</code>. Represents a free region. <code>fillWith(dataSlot)</code> places a data slot at the start of the gap, shrinking or eliminating the gap. Adjacent gaps are automatically merged via <code>connectToNext/connectToPrevious</code> overrides. When a gap is reduced to zero length it removes itself from the chain entirely.</li>
+</ul>
+<hr />
+<h2>21 · <code>misc</code> — Miscellaneous Utilities</h2>
+<ul>
+<li><strong><code>AsciiValues</code></strong> — Named constants: <code>ENTER (13)</code>, <code>BACK (8)</code>, <code>SPACE (32)</code>. Static helpers <code>isLetter(ascii)</code> and <code>isNumber(ascii)</code> — used by in-game text input boxes.</li>
+<li><strong><code>Listener</code></strong> — Functional interface: <code>eventOccurred()</code> — zero-payload event notification.</li>
+<li><strong><code>ListenerSet</code></strong> — A concurrent-safe <code>Listener</code> set. Defers <code>addListener</code>/<code>removeListener</code> calls made during <code>notifyListeners()</code> to <code>toAdd</code>/<code>toRemove</code> sets, flushing them after the notification loop completes. Older, simpler sibling of <code>listeners.AbstractListenerSet</code> (which carries a typed value).</li>
+</ul>
+<hr />
+<h2>22 · <code>modifiers</code> — Stackable Float Modifiers</h2>
+<p>Pattern for moddable game values (e.g. crop speed, sell price). Multiple sources can each contribute a multiplier; the final value is their product applied to a base.</p>
+<ul>
+<li><strong><code>Multiplier</code></strong> (interface) — <code>getValueMultiplier(): float</code>. Inner <code>DefaultMultiplier</code> always returns <code>1</code>.</li>
+<li><strong><code>FloatModifier</code></strong> — A constant-value <code>Multiplier</code> wrapping a <code>final float</code>.</li>
+<li><strong><code>Multipliers</code></strong> — Holds a <code>Set&lt;Multiplier&gt;</code>. <code>addMultiplier</code> / <code>removeMultiplier</code> / <code>getMultiplier()</code> (product of all). Safe for any number of sources.</li>
+<li><strong><code>ModifiableValue</code></strong> — Extends <code>Multipliers</code>. Stores a <code>baseValue</code> and a cached <code>modifiedValue</code>. Overrides <code>addMultiplier</code>/<code>removeMultiplier</code> to immediately recalculate <code>modifiedValue = baseValue * getMultiplier()</code>. <code>get()</code> returns the cached result — zero-cost reads.</li>
+</ul>
+<hr />
+<h2>23 · <code>objectPools</code> — Allocation-Free Vector Pools</h2>
+<p>Avoid per-frame <code>new Vector*f()</code> heap allocations in hot render/physics paths by recycling instances.</p>
+<ul>
+<li><strong><code>ObjectPool&lt;T&gt;</code></strong> — Abstract thread-safe pool backed by a <code>Stack&lt;T&gt;</code>. <code>get()</code> pops (or calls <code>createNewObject()</code> if empty). <code>release(T)</code> pushes back (drops silently if at <code>maxSize</code>). Pool size cap defaults to 100 in all concrete pools.</li>
+<li><strong><code>Vec3Pool</code></strong> — Static pool of <code>Vector3f</code>. <code>get(x,y,z)</code>, <code>get(ReadableVector3f)</code>, <code>get()</code> (zeroed). <code>release(Vector3f...)</code> releases varargs.</li>
+<li><strong><code>Vec2Pool</code></strong> — Static pool of <code>Vector2f</code>. Same pattern; <code>release(Vector2f)</code> and <code>releaseAll(Vector2f...)</code>.</li>
+<li><strong><code>Vec4Pool</code></strong> — Static pool of <code>Vector4f</code>. Extra <code>get(Vector3f, w)</code> for quick 4D promotion. <code>release(Vector4f)</code> and <code>releaseAll(Vector4f...)</code>.</li>
+</ul>
+<hr />
+<h2>24 · <code>smoothValues</code> — Exponential Interpolation Wrappers</h2>
+<p>All smooth values share the same <code>agility</code>-based approach: every frame, <code>actual</code> moves a fraction <code>min(delta * agility, 1)</code> of the remaining distance to <code>target</code>. Higher agility = faster tracking.</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Tracks</th>
+<th>Key extras</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SmoothFloat</code></td>
+<td><code>float</code></td>
+<td><code>cancelTarget()</code> (snap target to actual), <code>force(v)</code> (instant jump), <code>increaseTarget(dt)</code></td>
+</tr>
+<tr>
+<td><code>LinearSmoothFloat</code></td>
+<td><code>float</code></td>
+<td>Moves at constant <code>speed</code> units/sec instead of exponential; clamps at target</td>
+</tr>
+<tr>
+<td><code>SmoothAngle</code></td>
+<td><code>float</code> angle</td>
+<td>Uses <code>Maths.angleDifference</code> so interpolation wraps correctly across the 0°/360° boundary</td>
+</tr>
+<tr>
+<td><code>SmoothColour</code></td>
+<td><code>Colour</code></td>
+<td>Uses <code>Vec3Pool</code> internally; <code>setTarget(Colour)</code> / <code>force(Colour)</code></td>
+</tr>
+<tr>
+<td><code>SmoothVec3</code></td>
+<td><code>Vector3f</code></td>
+<td><code>increaseTarget/increaseAll</code>, <code>forceOnlyActualValue</code> (shift both by same delta), <code>reached()</code></td>
+</tr>
+<tr>
+<td><code>SmoothVector2f</code></td>
+<td><code>Vector2f</code></td>
+<td><code>getDistanceToTarget()</code>, <code>forcePreserveTarget</code> (shift actual, keep relative offset), <code>reached()</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>25 · <code>timing</code> — Timer Hierarchy</h2>
+<p>All timers extend abstract <code>Timer</code>, which implements <code>Exportable</code> (save/load via <code>TimerSerializer</code>).</p>
+<p><strong><code>Timer</code> base:</strong><br />
+- <code>check(delta)</code> — advances <code>time</code>; calls <code>targetReached()</code> and returns <code>true</code> when <code>time &gt;= duration</code>.<br />
+- <code>restart()</code> / <code>stop()</code> / <code>pause()</code> / <code>continueOn()</code> — lifecycle control.<br />
+- <code>randomizeStartTime()</code> — jump to a random phase within <code>[0, duration)</code>.<br />
+- <code>TimerSerializer</code> (inner class) — saves/loads <code>duration</code>, <code>time</code>, <code>running</code> as 3 values.</p>
+<p><strong>Concrete timers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SingleTimer</code></td>
+<td>Fires once then stops (<code>running = false</code>)</td>
+</tr>
+<tr>
+<td><code>LoopingTimer</code></td>
+<td>Wraps: <code>time %= duration</code> on trigger — loops forever at fixed period</td>
+</tr>
+<tr>
+<td><code>RandomLoopingTimer</code></td>
+<td>Like <code>LoopingTimer</code> but picks a new random <code>duration ∈ [minTime, maxTime]</code> after each trigger</td>
+</tr>
+<tr>
+<td><code>Countdown</code></td>
+<td>Counts <strong>down</strong> from a given time. <code>check(delta)</code> decrements; returns true at zero. <code>getProgress()</code> → 0→1 over the countdown. Implements <code>Exportable</code> (saves <code>time</code> + <code>startTime</code>).</td>
+</tr>
+<tr>
+<td><code>NanoTimer</code></td>
+<td>Wall-clock timer using <code>System.nanoTime()</code>. Useful for performance budgets: <code>check()</code> subtracts elapsed nanos; returns true when budget is exhausted. <code>restart()</code> resets.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>26 · <code>version</code> — Version Value Object</h2>
+<ul>
+<li><strong><code>Version</code></strong> — Immutable <code>majorVersion.minorVersion.update[patch]</code> (e.g. <code>"1.4.2"</code> or <code>"1.4.2b"</code>). <code>patch</code> defaults to <code>'a'</code> (omitted from <code>toString</code>). <code>isNewerThan(Version)</code> compares in order: major → minor → update → patch char. Implements <code>Exportable</code>.</li>
+<li><strong><code>Version.VersionSerializer</code></strong> — Writes/reads 4 <code>int</code>s (major, minor, update, patch char as int). Static <code>VersionSerializer.load(Reader)</code> reconstructs a <code>Version</code> from a save stream.</li>
+</ul>
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="40-lowpoly-engine-reference.html"><span>◀</span><span><span class="nav-label">Previous</span>40 — LowPolyEngine Reference</span></a><a class="nav-btn" href="../index.html">🏠 Index</a></div>
+  </main>
+</body>
+</html>
