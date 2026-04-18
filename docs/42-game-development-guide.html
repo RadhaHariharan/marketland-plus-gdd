@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>42 — Game Development Guide — Marketland+ GDD</title>
+  <style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --accent: #4f8ef7;
+    --accent2: #38c172;
+    --text: #e2e8f0;
+    --muted: #8892a4;
+    --border: #2d3348;
+    --radius: 10px;
+    --max-w: 860px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    padding: 0 1rem 3rem;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Top bar ── */
+  .topbar {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: .6rem 1rem;
+    display: flex; align-items: center; gap: .8rem;
+    font-size: .88rem;
+  }
+  .topbar .home-link { font-weight: 700; font-size: 1rem; color: var(--text); }
+  .topbar .home-link:hover { color: var(--accent); text-decoration: none; }
+  .topbar .spacer { flex: 1; }
+  .topbar .group-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .2rem .7rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+
+  /* ── Page content ── */
+  .page-wrap {
+    max-width: var(--max-w);
+    margin: 2.5rem auto 0;
+  }
+
+  /* ── Markdown body ── */
+  .md-body h1 { font-size: 2rem; font-weight: 800; margin-bottom: 1rem; color: var(--text); }
+  .md-body h2 { font-size: 1.4rem; font-weight: 700; margin: 2rem 0 .6rem; border-bottom: 1px solid var(--border); padding-bottom: .3rem; }
+  .md-body h3 { font-size: 1.1rem; font-weight: 600; margin: 1.4rem 0 .4rem; color: var(--accent); }
+  .md-body h4 { font-size: 1rem; font-weight: 600; margin: 1rem 0 .3rem; color: var(--accent2); }
+  .md-body p { margin: .6rem 0; }
+  .md-body ul, .md-body ol { margin: .5rem 0 .5rem 1.5rem; }
+  .md-body li { margin: .25rem 0; }
+  .md-body strong { color: #fff; }
+  .md-body em { color: #cbd5e1; }
+  .md-body blockquote {
+    border-left: 3px solid var(--accent);
+    padding: .5rem 1rem;
+    margin: 1rem 0;
+    background: var(--surface2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    color: var(--muted);
+  }
+  .md-body code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: .1rem .35rem;
+    font-size: .88em;
+    font-family: 'Fira Code', 'Consolas', monospace;
+  }
+  .md-body pre {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+  }
+  .md-body pre code { background: none; border: none; padding: 0; font-size: .85em; }
+  .md-body hr { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+  .md-body table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+    font-size: .9rem;
+  }
+  .md-body th {
+    background: var(--surface2);
+    text-align: left;
+    padding: .5rem .8rem;
+    border: 1px solid var(--border);
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .md-body td {
+    padding: .45rem .8rem;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .md-body tr:nth-child(even) td { background: rgba(255,255,255,.03); }
+
+  /* ── Prev / Next nav ── */
+  .page-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .6rem 1rem;
+    color: var(--text);
+    font-size: .9rem;
+    transition: border-color .2s, background .2s;
+    max-width: 48%;
+  }
+  .nav-btn:hover { border-color: var(--accent); background: var(--surface2); text-decoration: none; }
+  .nav-btn.next { margin-left: auto; text-align: right; }
+  .nav-label { font-size: .72rem; color: var(--muted); display: block; }
+
+  /* ── Index page ── */
+  .hero {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+  }
+  .hero h1 { font-size: 2.6rem; font-weight: 900; letter-spacing: -.5px; }
+  .hero .sub { color: var(--muted); margin-top: .5rem; font-size: 1.05rem; }
+  .hero .badges { margin-top: 1rem; display: flex; flex-wrap: wrap; justify-content: center; gap: .5rem; }
+  .badge {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: .25rem .8rem;
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  .section-group { margin-bottom: 2.5rem; }
+  .section-group h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1rem;
+    padding-bottom: .4rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: .75rem;
+  }
+  .card {
+    display: block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: .9rem 1.1rem;
+    color: var(--text);
+    transition: border-color .2s, background .2s, transform .15s;
+  }
+  .card:hover {
+    border-color: var(--accent);
+    background: var(--surface2);
+    transform: translateY(-2px);
+    text-decoration: none;
+  }
+  .card .num { font-size: .75rem; color: var(--muted); }
+  .card .title { font-weight: 600; margin-top: .15rem; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 1.8rem; }
+    .nav-btn { max-width: 100%; }
+    .page-nav { flex-direction: column; }
+  }
+
+  /* ── XP Calculator ── */
+  .xp-calc-box {
+    max-width: var(--max-w);
+    margin: 1.5rem auto 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.4rem 1.6rem;
+  }
+  .xp-calc-box h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .xp-calc-row {
+    display: flex;
+    gap: .75rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .xp-calc-row label { color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .xp-calc-row input[type="number"] {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 1rem;
+    padding: .4rem .75rem;
+    width: 140px;
+    outline: none;
+  }
+  .xp-calc-row input[type="number"]:focus { border-color: var(--accent); }
+  .xp-calc-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius);
+    padding: .45rem 1.1rem;
+    font-size: .95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .15s;
+  }
+  .xp-calc-btn:hover { opacity: .85; }
+  .xp-calc-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem 1.2rem;
+    font-size: .92rem;
+    line-height: 1.8;
+    display: none;
+  }
+  .xp-calc-result.visible { display: block; }
+  .xp-progress-bar {
+    height: 10px;
+    background: var(--border);
+    border-radius: 5px;
+    overflow: hidden;
+    margin: .5rem 0 .25rem;
+  }
+  .xp-progress-fill {
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 5px;
+    transition: width .3s ease;
+  }
+  .xp-steps {
+    margin-top: .75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: calc(var(--radius) - 2px);
+    padding: .75rem 1rem;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: .8rem;
+    color: var(--muted);
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <span class="spacer"></span>
+    <span class="group-badge">🔧 Engine Dev</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+      <h1>🌾 HomeGrown — Complete Game Development Guide</h1>
+<blockquote>
+<p><strong>An advanced, in-depth reference for creating game scenes, menus, entities, mods, and gameplay systems inside the HomeGrown / LowPolyEngine codebase.</strong></p>
+</blockquote>
+<hr />
+<h2>📋 Table of Contents</h2>
+<ol>
+<li><a href="#1-architecture-overview">Architecture Overview</a></li>
+<li><a href="#2-project-structure">Project Structure</a></li>
+<li><a href="#3-application-entry-point">Application Entry Point</a></li>
+<li><a href="#4-gamemanager--the-central-hub">GameManager — The Central Hub</a></li>
+<li><a href="#5-sessions--your-game-save-slot">Sessions — Your Game Save Slot</a></li>
+<li><a href="#6-creating-a-game-scene">Creating a Game Scene</a></li>
+<li><a href="#7-the-world-grid--tile-system">The World Grid &amp; Tile System</a></li>
+<li><a href="#8-entity-system--blueprints--components">Entity System — Blueprints &amp; Components</a></li>
+<li><a href="#9-all-built-in-components">All Built-in Components</a></li>
+<li><a href="#10-creating-a-custom-entity-mod-or-built-in">Creating a Custom Entity (Mod or Built-in)</a></li>
+<li><a href="#11-items-system">Items System</a></li>
+<li><a href="#12-ui--menu-system">UI &amp; Menu System</a></li>
+<li><a href="#13-menus--main-menu--in-game-ui">Menus — Main Menu &amp; In-Game UI</a></li>
+<li><a href="#14-audio-system">Audio System</a></li>
+<li><a href="#15-rendering-pipeline">Rendering Pipeline</a></li>
+<li><a href="#16-camera-system">Camera System</a></li>
+<li><a href="#17-gameplay-systems">Gameplay Systems</a></li>
+<li><a href="#18-save-system">Save System</a></li>
+<li><a href="#19-modding-guide--complete-reference">Modding Guide — Complete Reference</a></li>
+<li><a href="#20-controls--input-system">Controls &amp; Input System</a></li>
+<li><a href="#21-particles--visual-effects">Particles &amp; Visual Effects</a></li>
+<li><a href="#22-terrain-generation">Terrain Generation</a></li>
+<li><a href="#23-debugging--configuration">Debugging &amp; Configuration</a></li>
+<li><a href="#24-step-by-step-make-a-full-game-scene-from-scratch">Step-by-Step: Make a Full Game Scene from Scratch</a></li>
+</ol>
+<hr />
+<h2>1. Architecture Overview</h2>
+<p>HomeGrown is built on the <strong>LowPolyEngine</strong> (a custom OpenGL engine using LWJGL 3). The game is split across three namespaces:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>thinmatrix<span style="color: #666">.</span>toolbox<span style="color: #BBB">          </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>General<span style="color: #666">-</span>purpose<span style="color: #BBB"> </span>utilities<span style="color: #BBB"> </span>(math,<span style="color: #BBB"> </span>file<span style="color: #BBB"> </span>I<span style="color: #666">/</span>O,<span style="color: #BBB"> </span>timing,<span style="color: #BBB"> </span>RNG<span style="border: 1px solid #F00">…</span>)
+thinmatrix<span style="color: #666">.</span>lowPolyEngine<span style="color: #BBB">    </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>The<span style="color: #BBB"> </span>engine<span style="color: #BBB"> </span>itself<span style="color: #BBB"> </span>(windowing,<span style="color: #BBB"> </span>rendering,<span style="color: #BBB"> </span>audio,<span style="color: #BBB"> </span>UI<span style="color: #BBB"> </span>framework<span style="border: 1px solid #F00">…</span>)
+thinmatrix<span style="color: #666">.</span>farmGame<span style="color: #BBB">         </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>The<span style="color: #BBB"> </span>actual<span style="color: #BBB"> </span>game<span style="color: #BBB"> </span>logic<span style="color: #BBB"> </span>(entities,<span style="color: #BBB"> </span>scenes,<span style="color: #BBB"> </span>items,<span style="color: #BBB"> </span>gameplay<span style="border: 1px solid #F00">…</span>)
+</code></pre></div>
+
+<h3>Core Loop</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">FarmGameApp</span>.<span style="color: #19177C">main()</span>
+<span style="color: #BBB">    </span>└──<span style="color: #BBB"> </span><span style="color: #19177C">GameManager</span>.<span style="color: #19177C">init(configs</span>,<span style="color: #BBB"> </span><span style="color: #19177C">mods)</span><span style="color: #BBB">       </span>←<span style="color: #BBB"> </span><span style="color: #19177C">one</span><span style="color: #666">-</span><span style="color: #19177C">time</span><span style="color: #BBB"> </span><span style="color: #19177C">setup</span>
+<span style="color: #BBB">    </span>└──<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">while</span><span style="color: #BBB"> </span><span style="color: #19177C">(</span><span style="color: #666">!</span><span style="color: #19177C">readyToClose())</span>
+<span style="color: #BBB">            </span>└──<span style="color: #BBB"> </span><span style="color: #19177C">GameManager</span>.<span style="color: #19177C">update()</span><span style="color: #BBB">          </span>←<span style="color: #BBB"> </span><span style="color: #19177C">called</span><span style="color: #BBB"> </span><span style="color: #19177C">every</span><span style="color: #BBB"> </span><span style="color: #19177C">frame</span>
+<span style="color: #BBB">                    </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">SessionManager</span>.<span style="color: #19177C">updatePublicSession()</span>
+<span style="color: #BBB">                    </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">AmbientSoundPlayer</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">                    </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">MusicPlayer</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">                    </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">HomegrownUi</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">                    </span>└──<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #BBB"> </span><span style="color: #19177C">(active</span><span style="color: #BBB"> </span><span style="color: #19177C">session)</span>
+<span style="color: #BBB">                            </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">Session</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">                            </span>│<span style="color: #BBB">    </span>└──<span style="color: #BBB"> </span><span style="color: #19177C">Scene</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">                            </span>│<span style="color: #BBB">         </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">SceneSystems</span><span style="color: #BBB"> </span><span style="color: #19177C">(in</span><span style="color: #BBB"> </span><span style="color: #19177C">order)</span>
+<span style="color: #BBB">                            </span>│<span style="color: #BBB">         </span>└──<span style="color: #BBB"> </span><span style="color: #19177C">EntityManager</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">                            </span>├──<span style="color: #BBB"> </span><span style="color: #19177C">Scene</span>.<span style="color: #19177C">render()</span>
+<span style="color: #BBB">                            </span>└──<span style="color: #BBB"> </span><span style="color: #19177C">AutoSaver</span>.<span style="color: #19177C">update()</span>
+<span style="color: #BBB">    </span>└──<span style="color: #BBB"> </span><span style="color: #19177C">GameManager</span>.<span style="color: #19177C">cleanUp()</span>
+</code></pre></div>
+
+<hr />
+<h2>2. Project Structure</h2>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>FarmGame<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>res<span style="color: #666">/</span><span style="color: #BBB">                       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>All<span style="color: #BBB"> </span>game<span style="color: #BBB"> </span>resources<span style="color: #BBB"> </span>(loaded<span style="color: #BBB"> </span>at<span style="color: #BBB"> </span>runtime)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>entities<span style="color: #666">/</span><span style="color: #BBB">              </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Entity<span style="color: #BBB"> </span>blueprint<span style="color: #BBB"> </span>folders<span style="color: #BBB"> </span>(one<span style="color: #BBB"> </span>folder<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>one<span style="color: #BBB"> </span>entity<span style="color: #BBB"> </span>type)
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>Plants<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>carrot<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>EntityInfo_carrot<span style="color: #666">.</span>cba<span style="color: #BBB">   </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Main<span style="color: #BBB"> </span>blueprint<span style="color: #BBB"> </span>definition
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>carrot1<span style="color: #666">.</span>cba<span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Growth<span style="color: #BBB"> </span>stage<span style="color: #BBB"> </span><span style="color: #666">1</span><span style="color: #BBB"> </span>model
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>carrot2<span style="color: #666">.</span>cba<span style="color: #BBB">             </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Growth<span style="color: #BBB"> </span>stage<span style="color: #BBB"> </span><span style="color: #666">2</span><span style="color: #BBB"> </span>model
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>turnip<span style="color: #666">/</span><span style="color: #BBB"> </span><span style="border: 1px solid #F00">…</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>Trees<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>Fences<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>Misc<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>items<span style="color: #666">/</span><span style="color: #BBB">                 </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Item<span style="color: #BBB"> </span>blueprint<span style="color: #BBB"> </span>folders
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>Tools<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>fork<span style="color: #666">/</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>ItemInfo_fork<span style="color: #666">.</span>cba<span style="color: #BBB">       </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Item<span style="color: #BBB"> </span>definition
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>fork0<span style="color: #666">.</span>cba<span style="color: #BBB"> </span><span style="border: 1px solid #F00">…</span><span style="color: #BBB"> </span>fork7<span style="color: #666">.</span>cba<span style="color: #BBB">   </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Tiered<span style="color: #BBB"> </span>models
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">│</span><span style="color: #BBB">       </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>shovel<span style="color: #666">/</span><span style="color: #BBB"> </span><span style="border: 1px solid #F00">…</span>
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>sounds<span style="color: #666">/</span><span style="color: #BBB">                </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span><span style="color: #666">.</span>ogg<span style="color: #BBB"> </span>audio<span style="color: #BBB"> </span>files
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>particleFx<span style="color: #666">/</span><span style="color: #BBB">            </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span><span style="color: #666">.</span>cba<span style="color: #BBB"> </span>particle<span style="color: #BBB"> </span>effect<span style="color: #BBB"> </span>definitions
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>fonts<span style="color: #666">/</span><span style="color: #BBB">                 </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Font<span style="color: #BBB"> </span>files
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>GUIs<span style="color: #666">/</span><span style="color: #BBB">                  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>PNG<span style="color: #BBB"> </span>images<span style="color: #BBB"> </span>used<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">in</span><span style="color: #BBB"> </span>the<span style="color: #BBB"> </span>UI
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>soilTextures<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Terrain<span style="color: #BBB"> </span>textures
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>lang<span style="color: #666">/</span><span style="color: #BBB">                  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Localisation<span style="color: #BBB"> </span>files
+<span style="border: 1px solid #F00">│</span><span style="color: #BBB">   </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>cursors<span style="color: #666">/</span><span style="color: #BBB">               </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Cursor<span style="color: #BBB"> </span>images
+<span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>src<span style="color: #666">/</span>
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>thinmatrix<span style="color: #666">/</span>
+<span style="color: #BBB">        </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>farmGame<span style="color: #666">/</span><span style="color: #BBB">          </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Game<span style="color: #BBB"> </span>code
+<span style="color: #BBB">        </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>lowPolyEngine<span style="color: #666">/</span><span style="color: #BBB">     </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>Engine<span style="color: #BBB"> </span>code
+</code></pre></div>
+
+<hr />
+<h2>3. Application Entry Point</h2>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/main/FarmGameApp.java</code></p>
+<p>This is where everything starts. You will almost never need to modify this file unless you are adding global startup logic.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">FarmGameApp</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">main</span>(String<span style="color: #666">[]</span><span style="color: #BBB"> </span>args)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 1. Discover all mods (including the main game mod)</span>
+<span style="color: #BBB">        </span>Mod<span style="color: #666">[]</span><span style="color: #BBB"> </span>mods<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>TempModSetup.<span style="color: #687822">getAvailableMods</span>();
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 2. Boot the engine, load all resources, open the window</span>
+<span style="color: #BBB">        </span>GameManager.<span style="color: #687822">init</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>BuildConfigs(),<span style="color: #BBB"> </span>mods);
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 3. Optional — set initial volume</span>
+<span style="color: #BBB">        </span>AudioMaster.<span style="color: #687822">instance</span>().<span style="color: #687822">volumeLevels</span>
+<span style="color: #BBB">            </span>.<span style="color: #687822">getVolumeControl</span>(GameVolume.<span style="color: #687822">MUSIC_SLIDER</span>).<span style="color: #687822">setVolume</span>(<span style="color: #666">0.7f</span>);
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 4. Main game loop</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">while</span><span style="color: #BBB"> </span>(<span style="color: #666">!</span>GameManager.<span style="color: #687822">readyToClose</span>())<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span>GameManager.<span style="color: #687822">update</span>();
+<span style="color: #BBB">        </span>}
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 5. Save everything and close</span>
+<span style="color: #BBB">        </span>GameManager.<span style="color: #687822">cleanUp</span>();
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h3>Key Config Classes</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BuildConfigs</code></td>
+<td>Production settings (version string, no cheats)</td>
+</tr>
+<tr>
+<td><code>DevConfigs</code></td>
+<td>Developer settings (cheats enabled, faster speed)</td>
+</tr>
+<tr>
+<td><code>GlobalConfigs</code></td>
+<td>Shared between dev and build configs</td>
+</tr>
+<tr>
+<td><code>GameConfigs</code></td>
+<td>Interface — your config class must implement this</td>
+</tr>
+</tbody>
+</table>
+<p>To switch to dev mode, change <code>new BuildConfigs()</code> → <code>new DevConfigs()</code>.</p>
+<hr />
+<h2>4. GameManager — The Central Hub</h2>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/main/GameManager.java</code></p>
+<p><code>GameManager</code> is a static singleton that provides global access to all major systems. You will use it constantly.</p>
+<h3>Key Static Fields</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>configs</code></td>
+<td><code>GameConfigs</code></td>
+<td>Current game configuration</td>
+</tr>
+<tr>
+<td><code>ambientPlayer</code></td>
+<td><code>AmbientSoundPlayer</code></td>
+<td>Controls background ambient sounds</td>
+</tr>
+<tr>
+<td><code>musicPlayer</code></td>
+<td><code>MusicPlayer</code></td>
+<td>Controls background music</td>
+</tr>
+<tr>
+<td><code>gameControls</code></td>
+<td><code>GameControls</code></td>
+<td>Keyboard/mouse control bindings</td>
+</tr>
+<tr>
+<td><code>DEBUG</code></td>
+<td><code>GameDebug</code></td>
+<td>Enable/disable debug overlays</td>
+</tr>
+</tbody>
+</table>
+<h3>Key Static Methods</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Get the currently active session (player&#39;s farm)</span>
+Session<span style="color: #BBB"> </span>session<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getCurrentSession</span>();
+
+<span style="color: #3D7B7B; font-style: italic">// Get the global entity/item/sound repository</span>
+GameRepository<span style="color: #BBB"> </span>repo<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getRepository</span>();
+
+<span style="color: #3D7B7B; font-style: italic">// Get frame delta time (seconds since last frame, device-independent)</span>
+<span style="color: #B00040">float</span><span style="color: #BBB"> </span>dt<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getDelta</span>();
+
+<span style="color: #3D7B7B; font-style: italic">// Get gameplay delta (dt * gameSpeed config multiplier)</span>
+<span style="color: #B00040">float</span><span style="color: #BBB"> </span>gdt<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getGameplayDelta</span>();
+
+<span style="color: #3D7B7B; font-style: italic">// Spawn entities at runtime</span>
+Blueprint<span style="color: #BBB"> </span>blueprint<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getRepository</span>().<span style="color: #687822">entitySystem</span>.<span style="color: #687822">get</span>(<span style="color: #BA2121">&quot;carrot&quot;</span>);
+blueprint.<span style="color: #687822">createInstance</span>(scene,<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>EntityTransform(x,<span style="color: #BBB"> </span><span style="color: #666">0</span>,<span style="color: #BBB"> </span>z));
+</code></pre></div>
+
+<h3>Delta Time — Device Independence</h3>
+<p><code>getDelta()</code> returns the time (in seconds) since the last frame. <strong>Always multiply movement, growth timers, and animations by delta</strong> to make them frame-rate independent:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// BAD — speed depends on frame rate</span>
+position<span style="color: #BBB"> </span><span style="color: #666">+=</span><span style="color: #BBB"> </span><span style="color: #666">5f</span>;
+
+<span style="color: #3D7B7B; font-style: italic">// GOOD — consistent on all devices</span>
+position<span style="color: #BBB"> </span><span style="color: #666">+=</span><span style="color: #BBB"> </span><span style="color: #666">5f</span><span style="color: #BBB"> </span><span style="color: #666">*</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getDelta</span>();
+</code></pre></div>
+
+<hr />
+<h2>5. Sessions — Your Game Save Slot</h2>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/main/sessions/Session.java</code></p>
+<p>A <code>Session</code> represents one player's game save (one farm). Multiple sessions can exist (different save files), but only one is <strong>active</strong> at a time.</p>
+<h3>Session Contents</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">Session</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>PlayerInventory<span style="color: #BBB"> </span>inventory;<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// What the player is holding</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>MoneyCount<span style="color: #BBB"> </span>moneyCount;<span style="color: #BBB">       </span><span style="color: #3D7B7B; font-style: italic">// Player&#39;s gold/currency</span>
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// scenes are managed internally</span>
+}
+</code></pre></div>
+
+<h3>Switching Between Scenes Within a Session</h3>
+<p>A session can host multiple scenes (e.g. "Garden Scene" and "Town Scene"). Switching is done via the <code>SceneSystem</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Inside a SceneSystem or gameplay code:</span>
+session.<span style="color: #687822">switchToScene</span>(townSceneId);<span style="color: #BBB">  </span><span style="color: #3D7B7B; font-style: italic">// triggers endActivity() → makeActive()</span>
+</code></pre></div>
+
+<h3>Creating a New Session</h3>
+<p>Sessions are created by a <code>SessionCreator</code> implementation. The default is <code>StandardSessionCreator</code>.</p>
+<p>To customise the starting inventory, look at <code>StartInventoryBuild.java</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Give the player starting items</span>
+inventory.<span style="color: #687822">addItem</span>(<span style="color: #BA2121">&quot;hoe&quot;</span>,<span style="color: #BBB"> </span><span style="color: #666">1</span>);
+inventory.<span style="color: #687822">addItem</span>(<span style="color: #BA2121">&quot;wateringCan&quot;</span>,<span style="color: #BBB"> </span><span style="color: #666">1</span>);
+inventory.<span style="color: #687822">addItem</span>(<span style="color: #BA2121">&quot;carrotSeed&quot;</span>,<span style="color: #BBB"> </span><span style="color: #666">10</span>);
+</code></pre></div>
+
+<hr />
+<h2>6. Creating a Game Scene</h2>
+<p>A <strong>Scene</strong> is the full 3D world the player sees and interacts with. It contains:<br />
+- A <strong>Camera</strong><br />
+- An <strong>Environment</strong> (sun, lighting)<br />
+- An <strong>EntityManager</strong> (all living entities)<br />
+- A list of <strong>SceneSystems</strong> (terrain, land management, flying items, etc.)</p>
+<h3>The Two Built-in Scene Types</h3>
+<table>
+<thead>
+<tr>
+<th>Scene</th>
+<th>Creator Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Garden Scene</td>
+<td><code>GardenSceneCreator</code></td>
+<td>The farm itself — tiles, entities, land plots</td>
+</tr>
+<tr>
+<td>Town Scene</td>
+<td><code>TownSceneCreator</code></td>
+<td>The shop town — fixed viewpoints, NPC entities</td>
+</tr>
+</tbody>
+</table>
+<h3>Step-by-Step: Create a Brand New Scene Type</h3>
+<h4>Step 1 — Create the Scene Creator</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">package</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.scene.prefabs.myScene.creation</span>;
+
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.main.GameManager</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.main.sessions.Session</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.rendering.SceneRenderSystem</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.scene.Scene</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.scene.creation.SceneCreator</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.lowPolyEngine.engineMain.gameObjects.Environment</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.lowPolyEngine.engineMain.gameObjects.Light</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.toolbox.colours.Colour</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.toolbox.readWrite.Reader</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">org.lwjgl.util.vector.Vector3f</span>;
+
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MySceneCreator</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>SceneCreator<span style="color: #BBB"> </span>{
+
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// How far shadows are rendered</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>SHADOW_DISTANCE<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">150</span>f;
+
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// Sun direction (x,y,z) — negative Y = sun above</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Light<span style="color: #BBB"> </span>SUN<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Light(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Vector3f(<span style="color: #666">0.4f</span>,<span style="color: #BBB"> </span><span style="color: #666">-0.8f</span>,<span style="color: #BBB"> </span><span style="color: #666">-0.6f</span>),<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Colour(<span style="color: #666">1f</span>,<span style="color: #BBB"> </span><span style="color: #666">0.85f</span>,<span style="color: #BBB"> </span><span style="color: #666">0.7f</span>));
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Scene<span style="color: #BBB"> </span><span style="color: #00F">createNew</span>(Session<span style="color: #BBB"> </span>session)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 1. Create a camera</span>
+<span style="color: #BBB">        </span>MySceneCamera<span style="color: #BBB"> </span>camera<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MySceneCamera(Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">window</span>);
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 2. Initialise the renderer for this scene</span>
+<span style="color: #BBB">        </span>SceneRenderSystem<span style="color: #BBB"> </span>renderSystem<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">            </span>GameManager.<span style="color: #687822">getRenderEngine</span>().<span style="color: #687822">initSceneRenderSystem</span>(<span style="color: #666">256</span>,<span style="color: #BBB"> </span>SHADOW_DISTANCE);
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 3. Environment (lighting)</span>
+<span style="color: #BBB">        </span>Environment<span style="color: #BBB"> </span>environment<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Environment(SUN,<span style="color: #BBB"> </span><span style="color: #666">0f</span>);<span style="color: #BBB"> </span><span style="color: #3D7B7B; font-style: italic">// 0f = no fog</span>
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 4. Create the scene object</span>
+<span style="color: #BBB">        </span>Scene<span style="color: #BBB"> </span>scene<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Scene(session,<span style="color: #BBB"> </span>renderSystem,<span style="color: #BBB"> </span>camera,<span style="color: #BBB"> </span>GameSounds.<span style="color: #687822">MY_AMBIENT</span>,<span style="color: #BBB"> </span>environment);
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 5. Add SceneSystems (order matters — they update in registration order)</span>
+<span style="color: #BBB">        </span>scene.<span style="color: #687822">addSystem</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MySandboxGrid(scene,<span style="color: #BBB"> </span>renderSystem));
+<span style="color: #BBB">        </span>scene.<span style="color: #687822">addSystem</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MyCustomSystem(scene));
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// 6. (Optional) systems after entity manager update</span>
+<span style="color: #BBB">        </span>scene.<span style="color: #687822">switchToAddingAfterEntityManager</span>();
+<span style="color: #BBB">        </span>scene.<span style="color: #687822">addSystem</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>AnotherSystem());
+
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>scene;
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Scene<span style="color: #BBB"> </span><span style="color: #00F">load</span>(Session<span style="color: #BBB"> </span>session,<span style="color: #BBB"> </span>Reader<span style="color: #BBB"> </span>reader)<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">throws</span><span style="color: #BBB"> </span>Exception<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Deserialise the scene from a save file</span>
+<span style="color: #BBB">        </span>MySceneCamera<span style="color: #BBB"> </span>camera<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>MySceneCamera.<span style="color: #687822">Serializer</span>.<span style="color: #687822">load</span>(reader);
+<span style="color: #BBB">        </span>SceneRenderSystem<span style="color: #BBB"> </span>renderSystem<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">            </span>GameManager.<span style="color: #687822">getRenderEngine</span>().<span style="color: #687822">initSceneRenderSystem</span>(<span style="color: #666">256</span>,<span style="color: #BBB"> </span>SHADOW_DISTANCE);
+<span style="color: #BBB">        </span>Environment<span style="color: #BBB"> </span>environment<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Environment(SUN,<span style="color: #BBB"> </span><span style="color: #666">0f</span>);
+<span style="color: #BBB">        </span>Scene<span style="color: #BBB"> </span>scene<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Scene(session,<span style="color: #BBB"> </span>renderSystem,<span style="color: #BBB"> </span>camera,<span style="color: #BBB"> </span>GameSounds.<span style="color: #687822">MY_AMBIENT</span>,<span style="color: #BBB"> </span>environment);
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// … load state from reader …</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>scene;
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h4>Step 2 — Register Your Scene Creator in SessionCreator</h4>
+<p>In <code>StandardSessionCreator</code> (or your custom <code>SessionCreator</code>), tell the session what scenes to create:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MySessionCreator</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>SessionCreator<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Session<span style="color: #BBB"> </span><span style="color: #00F">createSession</span>(SessionArgs<span style="color: #BBB"> </span>args)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>Session<span style="color: #BBB"> </span>session<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Session(<span style="color: #3D7B7B; font-style: italic">/* … */</span>);
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// garden scene</span>
+<span style="color: #BBB">        </span>session.<span style="color: #687822">addScene</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>GardenSceneCreator().<span style="color: #687822">createNew</span>(session));
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// your new scene</span>
+<span style="color: #BBB">        </span>session.<span style="color: #687822">addScene</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MySceneCreator().<span style="color: #687822">createNew</span>(session));
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>session;
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h4>Step 3 — Implement SceneSystem (optional custom systems)</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyCustomSystem</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">extends</span><span style="color: #BBB"> </span>SceneSystem<span style="color: #BBB"> </span>{
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Scene<span style="color: #BBB"> </span>scene;
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #00F">MyCustomSystem</span>(Scene<span style="color: #BBB"> </span>scene)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">super</span>(Id.<span style="color: #687822">of</span>(<span style="color: #BA2121">&quot;myCustomSystem&quot;</span>));
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">this</span>.<span style="color: #687822">scene</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>scene;
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Called every frame while this scene is active</span>
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">initActiveState</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Called when the player enters this scene</span>
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">endActiveState</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Called when the player leaves this scene</span>
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">cleanUp</span>()<span style="color: #BBB"> </span>{<span style="color: #BBB"> </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Serializer<span style="color: #BBB"> </span><span style="color: #00F">getSerializer</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>writer<span style="color: #BBB"> </span><span style="color: #666">-&gt;</span><span style="color: #BBB"> </span>{<span style="color: #BBB"> </span><span style="color: #3D7B7B; font-style: italic">/* write state to save file */</span><span style="color: #BBB"> </span>};
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<hr />
+<h2>7. The World Grid &amp; Tile System</h2>
+<p><strong>Files:</strong><br />
+- <code>thinmatrix/farmGame/scene/sandboxGrid/WorldGrid.java</code><br />
+- <code>thinmatrix/farmGame/scene/sandboxGrid/Tile.java</code><br />
+- <code>thinmatrix/farmGame/scene/sandboxGrid/TileContents.java</code><br />
+- <code>thinmatrix/farmGame/scene/sandboxGrid/SandboxGrid.java</code></p>
+<h3>Concepts</h3>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>WorldGrid</strong></td>
+<td>The 2D grid of tiles representing the terrain</td>
+</tr>
+<tr>
+<td><strong>Tile</strong></td>
+<td>One grid cell — stores terrain type, entity slots, and tile contents</td>
+</tr>
+<tr>
+<td><strong>TileContents</strong></td>
+<td>What is sitting on a tile (entities, decorations)</td>
+</tr>
+<tr>
+<td><strong>SandboxGrid</strong></td>
+<td>A <code>SceneSystem</code> wrapping the world grid + terrain mesh generator</td>
+</tr>
+</tbody>
+</table>
+<h3>Grid Coordinates</h3>
+<p>The garden scene uses a 256×256 tile grid (<code>WORLD_SIZE = 256</code>).</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Get a tile at grid position (x, z)</span>
+Tile<span style="color: #BBB"> </span>tile<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getTile</span>(x,<span style="color: #BBB"> </span>z);
+
+<span style="color: #3D7B7B; font-style: italic">// Get the 3D world position of the center of tile (x, z)</span>
+<span style="color: #3D7B7B; font-style: italic">// By convention: 1 tile = 1 world unit</span>
+<span style="color: #B00040">float</span><span style="color: #BBB"> </span>worldX<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span><span style="color: #666">0.5f</span>;
+<span style="color: #B00040">float</span><span style="color: #BBB"> </span>worldZ<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span><span style="color: #666">0.5f</span>;
+</code></pre></div>
+
+<h3>Terrain Types</h3>
+<p>Each tile has a terrain type (dirt, grass, path, soil, etc.). Terrain types determine:<br />
+- What the tile looks like (texture atlas index)<br />
+- Whether crops can be planted<br />
+- What entities can be placed</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Change a tile&#39;s terrain type</span>
+tile.<span style="color: #687822">setTerrainType</span>(TerrainType.<span style="color: #687822">SOIL</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Notify the mesh generator to regenerate this chunk</span>
+terrainMeshManager.<span style="color: #687822">markDirty</span>(x,<span style="color: #BBB"> </span>z);
+</code></pre></div>
+
+<h3>Iterating Neighbours</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// 4-directional neighbours (N, E, S, W)</span>
+<span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(Tile<span style="color: #BBB"> </span>neighbour<span style="color: #BBB"> </span>:<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>TileNeighbour4Iterable(worldGrid,<span style="color: #BBB"> </span>tile))<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// process neighbour</span>
+}
+
+<span style="color: #3D7B7B; font-style: italic">// 8-directional neighbours (including diagonals)</span>
+<span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(Tile<span style="color: #BBB"> </span>neighbour<span style="color: #BBB"> </span>:<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>TileNeighbour8Iterable(worldGrid,<span style="color: #BBB"> </span>tile))<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// process neighbour</span>
+}
+</code></pre></div>
+
+<h3>Grid Placement &amp; Blocking</h3>
+<p>The <code>TileObjectComponent</code> is responsible for placing an entity on one or more tiles and marking them as "blocked" (nothing else can be placed there):</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// In entity blueprint&#39;s EntityInfo.cba:</span>
+<span style="color: #3D7B7B; font-style: italic">// tileObject: { width: 1, height: 1, blocking: true }</span>
+</code></pre></div>
+
+<p>Entities that span multiple tiles (e.g. a 2×2 barn) declare their footprint in the <code>TileObjectComponent</code> blueprint.</p>
+<hr />
+<h2>8. Entity System — Blueprints &amp; Components</h2>
+<p>This is the most important system in the game. Everything in the world (plants, trees, fences, machines) is an <strong>Entity</strong> defined by a <strong>Blueprint</strong>.</p>
+<h3>Architecture</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Blueprint<span style="color: #BBB">  </span>(loaded<span style="color: #BBB"> </span>from<span style="color: #BBB"> </span>disk,<span style="color: #BBB"> </span>shared<span style="color: #BBB"> </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>acts<span style="color: #BBB"> </span>like<span style="color: #BBB"> </span>a<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span><span style="color: #BBB"> </span>definition)
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>ComponentBlueprint[]<span style="color: #BBB">  </span>(one<span style="color: #BBB"> </span>per<span style="color: #BBB"> </span>component<span style="color: #BBB"> </span>type)
+<span style="color: #BBB">            </span><span style="border: 1px solid #F00">↓</span><span style="color: #BBB">  </span>createInstance()
+Entity<span style="color: #BBB">  </span>(live<span style="color: #BBB"> </span><span style="color: #A2F; font-weight: bold">in</span><span style="color: #BBB"> </span>the<span style="color: #BBB"> </span>scene,<span style="color: #BBB"> </span>unique<span style="color: #BBB"> </span><span style="border: 1px solid #F00">—</span><span style="color: #BBB"> </span>acts<span style="color: #BBB"> </span>like<span style="color: #BBB"> </span>an<span style="color: #BBB"> </span>object<span style="color: #BBB"> </span>instance)
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>Component[]<span style="color: #BBB">  </span>(actual<span style="color: #BBB"> </span>runtime<span style="color: #BBB"> </span>state)
+</code></pre></div>
+
+<h3>Entity Blueprint Folder Structure</h3>
+<p>Each entity type is a folder inside <code>res/entities/</code>. The engine detects entity folders by the presence of a file named <code>EntityInfo_&lt;name&gt;.cba</code>.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>res/entities/Plants/carrot/
+    EntityInfo_carrot.cba    ← Required. Defines all components.
+    carrot1.cba              ← 3D model (growth stage 1)
+    carrot2.cba              ← 3D model (growth stage 2)
+    carrotSeed.cba           ← Seed model
+</code></pre></div>
+
+<h3>EntityInfo CBA Format</h3>
+<p>The <code>.cba</code> file format is the game's custom binary/tag format. Here is what an <code>EntityInfo</code> typically contains (conceptually):</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>entity {
+    savingEnabled: true
+
+    tileObject {
+        width: 1
+        height: 1
+        blocking: true
+    }
+
+    render {
+        part &quot;main&quot; {
+            mesh: &quot;carrot1.cba&quot;
+        }
+    }
+
+    growth {
+        stages: 2
+        stageDuration: 120.0   # seconds per stage
+        meshes: [&quot;carrot1.cba&quot;, &quot;carrot2.cba&quot;]
+    }
+
+    harvestable {
+        item: &quot;carrot&quot;
+        minAmount: 1
+        maxAmount: 3
+    }
+
+    seed {
+        seedModel: &quot;carrotSeed.cba&quot;
+    }
+
+    health {
+        factors: [WATER, SOIL_QUALITY]
+    }
+}
+</code></pre></div>
+
+<h3>How the Engine Loads Entities</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>GameRepository<span style="color: #666">.</span>loadGameResources()
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>EntitySystem<span style="color: #666">.</span>loadEntities()
+<span style="color: #BBB">            </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>BlueprintRepositoryLoader<span style="color: #666">.</span>loadEntityFolder()
+<span style="color: #BBB">                    </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>For<span style="color: #BBB"> </span>each<span style="color: #BBB"> </span>sub<span style="color: #666">-</span>folder<span style="color: #BBB"> </span>that<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">is</span><span style="color: #BBB"> </span>an<span style="color: #BBB"> </span>entity<span style="color: #BBB"> </span>folder:
+<span style="color: #BBB">                            </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>BlueprintLoader<span style="color: #666">.</span>loadBlueprint()<span style="color: #BBB">  </span><span style="border: 1px solid #F00">←</span><span style="color: #BBB"> </span>reads<span style="color: #BBB"> </span>EntityInfo_<span style="color: #666">*.</span>cba
+</code></pre></div>
+
+<hr />
+<h2>9. All Built-in Components</h2>
+<p>These are the component types defined in <code>GameComp.java</code>. Each entity can have any combination of them.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TileObjectComponent</strong></td>
+<td>Places the entity on tiles, handles blocking</td>
+</tr>
+<tr>
+<td><strong>RenderComponent</strong></td>
+<td>Defines the 3D meshes to draw</td>
+</tr>
+<tr>
+<td><strong>GrowthComponent</strong></td>
+<td>Multi-stage growth over time</td>
+</tr>
+<tr>
+<td><strong>HarvestableComponent</strong></td>
+<td>Entity produces items when interacted with</td>
+</tr>
+<tr>
+<td><strong>SeedComponent</strong></td>
+<td>Entity spawns from a seed item</td>
+</tr>
+<tr>
+<td><strong>HealthComponent</strong></td>
+<td>Entity has health affected by environment factors</td>
+</tr>
+<tr>
+<td><strong>AgeComponent</strong></td>
+<td>Entity tracks age in game-time</td>
+</tr>
+<tr>
+<td><strong>FruiterComponent</strong></td>
+<td>Cyclic fruit production (like apple trees)</td>
+</tr>
+<tr>
+<td><strong>ConnectorComponent</strong></td>
+<td>Entity changes shape based on neighbours (fences)</td>
+</tr>
+<tr>
+<td><strong>ClimberComponent</strong></td>
+<td>Entity climbs support poles (beans, tomatoes)</td>
+</tr>
+<tr>
+<td><strong>SupportPoleComponent</strong></td>
+<td>Provides a pole for climbers</td>
+</tr>
+<tr>
+<td><strong>StorageComponent</strong></td>
+<td>Entity stores items (chest, crate)</td>
+</tr>
+<tr>
+<td><strong>ShopComponent</strong></td>
+<td>Entity opens a shop UI when clicked</td>
+</tr>
+<tr>
+<td><strong>InfoComponent</strong></td>
+<td>Entity shows an info panel when examined</td>
+</tr>
+<tr>
+<td><strong>DecoComponent</strong></td>
+<td>Pure decoration, no interaction</td>
+</tr>
+<tr>
+<td><strong>ParticleComponent</strong></td>
+<td>Entity emits particle effects</td>
+</tr>
+<tr>
+<td><strong>SounderComponent</strong></td>
+<td>Entity plays sounds at its location</td>
+</tr>
+<tr>
+<td><strong>PreviewComponent</strong></td>
+<td>Entity has a placement preview ghost</td>
+</tr>
+<tr>
+<td><strong>TieredModelComponent</strong></td>
+<td>Entity model changes based on tier/level</td>
+</tr>
+<tr>
+<td><strong>OnClickComponent</strong></td>
+<td>Custom click interaction</td>
+</tr>
+<tr>
+<td><strong>PlasticMeltComponent</strong></td>
+<td>Plastic melter machine logic</td>
+</tr>
+</tbody>
+</table>
+<h3>Component Blueprint Parameters (CBA tags)</h3>
+<p>Each component blueprint reads its configuration from the EntityInfo CBA file using tag-based reading:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// GrowthCompBlueprint reads:</span>
+<span style="color: #3D7B7B; font-style: italic">//   - stageDuration  (float)</span>
+<span style="color: #3D7B7B; font-style: italic">//   - stageCount     (int)</span>
+<span style="color: #3D7B7B; font-style: italic">//   - meshNames      (string array)</span>
+</code></pre></div>
+
+<hr />
+<h2>10. Creating a Custom Entity (Mod or Built-in)</h2>
+<h3>Step 1 — Create the Entity Folder</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>res/entities/MyCategory/myPlant/
+    EntityInfo_myPlant.cba
+    myPlant_stage1.cba
+    myPlant_stage2.cba
+</code></pre></div>
+
+<h3>Step 2 — Write the 3D Models</h3>
+<p>Export your models as <code>.cba</code> (SmoothPoly format). The engine reads:<br />
+- <code>.cba</code> files exported by the <code>SmoothPolyCbaExporter</code><br />
+- Vertex positions, normals, UVs, and palette material data</p>
+<p>To convert from OBJ: Use <code>SmoothPolyObjImporter</code> → <code>SmoothPolyCbaExporter</code> toolchain.</p>
+<h3>Step 3 — Write EntityInfo_myPlant.cba</h3>
+<p>Create the blueprint definition file declaring every component your entity needs.</p>
+<h3>Step 4 — If adding to the main game</h3>
+<p>The entity will be auto-discovered by <code>BlueprintRepositoryLoader</code> scanning <code>res/entities/</code> recursively. No code registration required.</p>
+<h3>Step 5 — Spawn the entity at runtime</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Get the blueprint</span>
+Blueprint<span style="color: #BBB"> </span>blueprint<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getRepository</span>().<span style="color: #687822">entitySystem</span>.<span style="color: #687822">get</span>(<span style="color: #BA2121">&quot;myPlant&quot;</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Spawn at a tile position (tile 50, 70)</span>
+EntityTransform<span style="color: #BBB"> </span>transform<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>EntityTransform(<span style="color: #666">50.5f</span>,<span style="color: #BBB"> </span><span style="color: #666">0f</span>,<span style="color: #BBB"> </span><span style="color: #666">70.5f</span>,<span style="color: #BBB"> </span><span style="color: #666">0f</span>,<span style="color: #BBB"> </span><span style="color: #666">1f</span>);
+blueprint.<span style="color: #687822">createInstance</span>(scene,<span style="color: #BBB"> </span>transform,<span style="color: #BBB"> </span>TileObjectParams.<span style="color: #687822">auto</span>());
+</code></pre></div>
+
+<h3>Step 6 — Custom Component (Advanced)</h3>
+<p>If your entity needs brand-new behaviour, create a custom component:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// 1. Define the type enum value</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">enum</span><span style="color: #BBB"> </span>MyGameComp<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ComponentType<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span>MY_COMPONENT;
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// implement required methods</span>
+}
+
+<span style="color: #3D7B7B; font-style: italic">// 2. Create the blueprint (loaded from CBA)</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyCompBlueprint</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ComponentBlueprint<span style="color: #666">&lt;</span>MyComponent<span style="color: #666">&gt;</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>myParam;
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #00F">MyCompBlueprint</span>(<span style="color: #B00040">float</span><span style="color: #BBB"> </span>myParam)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">this</span>.<span style="color: #687822">myParam</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>myParam;
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>MyComponent<span style="color: #BBB"> </span><span style="color: #00F">createInstance</span>(Entity<span style="color: #BBB"> </span>entity,<span style="color: #BBB"> </span>ComponentBundle<span style="color: #BBB"> </span>bundle)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MyComponent(entity,<span style="color: #BBB"> </span>myParam);
+<span style="color: #BBB">    </span>}
+}
+
+<span style="color: #3D7B7B; font-style: italic">// 3. Create the runtime component</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyComponent</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>Component<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Entity<span style="color: #BBB"> </span>entity;
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>timer;
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>duration;
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #00F">MyComponent</span>(Entity<span style="color: #BBB"> </span>entity,<span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>duration)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">this</span>.<span style="color: #687822">entity</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>entity;
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">this</span>.<span style="color: #687822">duration</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>duration;
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>timer<span style="color: #BBB"> </span><span style="color: #666">+=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getDelta</span>();
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">if</span><span style="color: #BBB"> </span>(timer<span style="color: #BBB"> </span><span style="color: #666">&gt;=</span><span style="color: #BBB"> </span>duration)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span><span style="color: #3D7B7B; font-style: italic">// do something</span>
+<span style="color: #BBB">            </span>timer<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>ComponentType<span style="color: #BBB"> </span><span style="color: #00F">getType</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>MyGameComp.<span style="color: #687822">MY_COMPONENT</span>;
+<span style="color: #BBB">    </span>}
+}
+
+<span style="color: #3D7B7B; font-style: italic">// 4. Create the loader (reads CBA tags)</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyCompLoader</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>RegistrableCbaLoader<span style="color: #666">&lt;</span>ComponentBlueprint<span style="color: #666">&gt;</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>ComponentBlueprint<span style="color: #BBB"> </span><span style="color: #00F">load</span>(CbaObjectReader<span style="color: #BBB"> </span>reader)<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">throws</span><span style="color: #BBB"> </span>Exception<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>duration<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>reader.<span style="color: #687822">readFloat</span>(<span style="color: #BA2121">&quot;duration&quot;</span>);
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MyCompBlueprint(duration);
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<hr />
+<h2>11. Items System</h2>
+<p>Items are things that can be in the player's <strong>inventory</strong> and <strong>hotbar</strong>. Seeds, tools, harvested crops — all items.</p>
+<h3>Item Folder Structure</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>res/items/Tools/fork/
+    ItemInfo_fork.cba   ← Main item definition
+    fork0.cba           ← Tier 0 model (held in hand)
+    fork7.cba           ← Tier 7 model (max tier)
+</code></pre></div>
+
+<h3>Item Definition (CBA)</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>item<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span>name:<span style="color: #BBB"> </span><span style="color: #BA2121">&quot;fork&quot;</span>
+<span style="color: #BBB">    </span>maxStack:<span style="color: #BBB"> </span><span style="color: #666">1</span>
+<span style="color: #BBB">    </span>tier:<span style="color: #BBB"> </span><span style="color: #666">0</span>
+
+<span style="color: #BBB">    </span>toolComp<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>toolType:<span style="color: #BBB"> </span>HOE
+<span style="color: #BBB">        </span>useSound:<span style="color: #BBB"> </span><span style="color: #BA2121">&quot;digging&quot;</span>
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span>render<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>mesh:<span style="color: #BBB"> </span><span style="color: #BA2121">&quot;fork0.cba&quot;</span>
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h3>Item Tiers</h3>
+<p>Many tools (fork, hoe, shovel, watering can) have tiers 0–7 (<code>fork0.cba</code> through <code>fork7.cba</code>). Upgrading in the shop advances the tier and swaps the mesh.</p>
+<h3>Registering Item Loaders</h3>
+<p>Item components (like <code>toolComp</code>) need a registered loader. In your <code>Mod</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #A2F">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">registerItemCompLoaders</span>(HashRegistry<span style="color: #666">&lt;</span>ItemCompLoader<span style="color: #666">&gt;</span><span style="color: #BBB"> </span>registry)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span>registry.<span style="color: #687822">register</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MyItemCompLoader());
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// The main game already registers all built-in item comp loaders</span>
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// via GameItemComps.registerLoaders(registry)</span>
+}
+</code></pre></div>
+
+<hr />
+<h2>12. UI &amp; Menu System</h2>
+<p>The UI system is built into the LowPolyEngine using a constraint-based layout (similar to Android <code>ConstraintLayout</code>).</p>
+<h3>Key Classes</h3>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ui</code></td>
+<td>Static access point — <code>Ui.getContainer()</code> is the root</td>
+</tr>
+<tr>
+<td><code>UiBlock</code></td>
+<td>A rectangular UI panel (background, image, etc.)</td>
+</tr>
+<tr>
+<td><code>UiText</code></td>
+<td>Renders text</td>
+</tr>
+<tr>
+<td><code>UiButton</code></td>
+<td>Clickable button with hover and press states</td>
+</tr>
+<tr>
+<td><code>ConstraintUtils</code></td>
+<td>Helper for positioning (fill, center, align edges…)</td>
+</tr>
+<tr>
+<td><code>HomegrownUiStyle</code></td>
+<td>The game's style sheet (colours, fonts, sizes)</td>
+</tr>
+</tbody>
+</table>
+<h3>Adding a UI Element</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Create a panel</span>
+UiBlock<span style="color: #BBB"> </span>panel<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>UiBlock(Colour.<span style="color: #687822">WHITE</span>);
+panel.<span style="color: #687822">setLevel</span>(<span style="color: #666">2</span>);<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// higher = drawn on top</span>
+
+<span style="color: #3D7B7B; font-style: italic">// Add it to the container with constraints</span>
+Ui.<span style="color: #687822">getContainer</span>().<span style="color: #687822">add</span>(panel,<span style="color: #BBB"> </span>ConstraintUtils.<span style="color: #687822">center</span>(<span style="color: #666">200</span>,<span style="color: #BBB"> </span><span style="color: #666">100</span>));
+<span style="color: #3D7B7B; font-style: italic">// or</span>
+Ui.<span style="color: #687822">getContainer</span>().<span style="color: #687822">add</span>(panel,<span style="color: #BBB"> </span>ConstraintUtils.<span style="color: #687822">fill</span>());<span style="color: #BBB">  </span><span style="color: #3D7B7B; font-style: italic">// full screen</span>
+
+<span style="color: #3D7B7B; font-style: italic">// Show/hide with optional transition</span>
+panel.<span style="color: #687822">displayer</span>.<span style="color: #687822">setTransition</span>(Transitions.<span style="color: #687822">fade</span>(<span style="color: #666">0.4f</span>));
+panel.<span style="color: #687822">setDisplayed</span>(<span style="color: #008000; font-weight: bold">true</span>);
+panel.<span style="color: #687822">setDisplayed</span>(<span style="color: #008000; font-weight: bold">false</span>);
+</code></pre></div>
+
+<h3>Creating a Button</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>UiButton<span style="color: #BBB"> </span>myButton<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>UiButton(style.<span style="color: #687822">buttonStyle</span>());
+myButton.<span style="color: #687822">setText</span>(<span style="color: #BA2121">&quot;Click Me&quot;</span>);
+myButton.<span style="color: #687822">setOnClick</span>(()<span style="color: #BBB"> </span><span style="color: #666">-&gt;</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// do something</span>
+});
+Ui.<span style="color: #687822">getContainer</span>().<span style="color: #687822">add</span>(myButton,<span style="color: #BBB"> </span>ConstraintUtils.<span style="color: #687822">below</span>(otherElement,<span style="color: #BBB"> </span><span style="color: #666">10</span>));
+</code></pre></div>
+
+<h3>UI Layers (Levels)</h3>
+<p>UI elements draw in ascending level order. Typical conventions:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>Background panels</td>
+</tr>
+<tr>
+<td>1</td>
+<td>Main game UI (hotbar, HUD)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Pop-up panels (inventory, shop)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Dialogue boxes</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Full-screen overlays (white flash on scene transition)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>13. Menus — Main Menu &amp; In-Game UI</h2>
+<h3>Main Menu</h3>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/ui/gameMenu/GameMenuUi.java</code></p>
+<p>The main menu is created by <code>HomegrownUi.initGameMenu()</code> after loading is complete.</p>
+<p>Structure:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>GameMenuUi
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>New<span style="color: #BBB"> </span>Game<span style="color: #BBB"> </span>button<span style="color: #BBB"> </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>SessionManager<span style="color: #666">.</span>createNewSession()
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">├──</span><span style="color: #BBB"> </span>Load<span style="color: #BBB"> </span>Game<span style="color: #BBB"> </span>button<span style="color: #BBB"> </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>SessionManager<span style="color: #666">.</span>loadSession(saveFile)
+<span style="color: #BBB">    </span><span style="border: 1px solid #F00">└──</span><span style="color: #BBB"> </span>Quit<span style="color: #BBB"> </span>button<span style="color: #BBB"> </span><span style="border: 1px solid #F00">→</span><span style="color: #BBB"> </span>Engine<span style="color: #666">.</span>instance()<span style="color: #666">.</span>requestClose()
+</code></pre></div>
+
+<p>To <strong>add a new button to the main menu</strong>, extend <code>GameMenuUi</code> or modify it directly:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>UiButton<span style="color: #BBB"> </span>myButton<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>UiButton(style.<span style="color: #687822">buttonStyle</span>());
+myButton.<span style="color: #687822">setText</span>(<span style="color: #BA2121">&quot;My Feature&quot;</span>);
+myButton.<span style="color: #687822">setOnClick</span>(()<span style="color: #BBB"> </span><span style="color: #666">-&gt;</span><span style="color: #BBB"> </span>{<span style="color: #BBB"> </span><span style="color: #3D7B7B; font-style: italic">/* open my feature screen */</span><span style="color: #BBB"> </span>});
+<span style="color: #008000; font-weight: bold">this</span>.<span style="color: #687822">add</span>(myButton,<span style="color: #BBB"> </span>ConstraintUtils.<span style="color: #687822">below</span>(lastButton,<span style="color: #BBB"> </span><span style="color: #666">8</span>));
+</code></pre></div>
+
+<h3>In-Game UI (HUD)</h3>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/ui/GameUi.java</code></p>
+<p>The <code>GameUi</code> is the HUD displayed while a session is active:<br />
+- Hotbar (tool slots)<br />
+- Money counter<br />
+- Time display<br />
+- Tool tooltips<br />
+- Examine panel (click on entity → info panel)</p>
+<h3>Examine / Info Panels</h3>
+<p>When a player clicks an entity with the <code>InfoComponent</code>, an info panel is shown. You can provide custom panel content by implementing <code>InfoPanelProvider</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyInfoPanelProvider</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>InfoPanelProvider<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>UiBlock<span style="color: #BBB"> </span><span style="color: #00F">createPanel</span>(Entity<span style="color: #BBB"> </span>entity,<span style="color: #BBB"> </span>HomegrownUiStyle<span style="color: #BBB"> </span>style)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>UiBlock<span style="color: #BBB"> </span>panel<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>UiBlock(style.<span style="color: #687822">panelColour</span>());
+<span style="color: #BBB">        </span>UiText<span style="color: #BBB"> </span>label<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>UiText(<span style="color: #BA2121">&quot;My Entity Info&quot;</span>,<span style="color: #BBB"> </span>style.<span style="color: #687822">bodyFont</span>());
+<span style="color: #BBB">        </span>panel.<span style="color: #687822">add</span>(label,<span style="color: #BBB"> </span>ConstraintUtils.<span style="color: #687822">center</span>());
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>panel;
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h3>Scene Transition (White Flash)</h3>
+<p>When switching between scenes, the engine fades to white and back:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Internally done by HomegrownUi:</span>
+whiteScreen.<span style="color: #687822">setDisplayed</span>(<span style="color: #008000; font-weight: bold">true</span>);<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// fade to white</span>
+<span style="color: #3D7B7B; font-style: italic">// ... after transition ...</span>
+whiteScreen.<span style="color: #687822">setDisplayed</span>(<span style="color: #008000; font-weight: bold">false</span>);<span style="color: #BBB">  </span><span style="color: #3D7B7B; font-style: italic">// fade back</span>
+</code></pre></div>
+
+<p>The <code>sceneSwitchAudioFader</code> also ducks audio during this transition.</p>
+<hr />
+<h2>14. Audio System</h2>
+<h3>Playing Sounds on an Entity</h3>
+<p>Use <code>SounderComponent</code>. Declare it in the EntityInfo CBA:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #19177C">sounder</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #19177C">sound</span>:<span style="color: #BBB"> </span><span style="color: #BA2121">&quot;mySound.ogg&quot;</span>
+<span style="color: #BBB">    </span><span style="color: #19177C">radius</span>:<span style="color: #BBB"> </span><span style="color: #666">10</span>.<span style="color: #666">0</span>
+<span style="color: #BBB">    </span><span style="color: #19177C">volume</span>:<span style="color: #BBB"> </span><span style="color: #666">1</span>.<span style="color: #666">0</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">loop</span>:<span style="color: #BBB"> </span><span style="color: #19177C">false</span>
+}
+</code></pre></div>
+
+<h3>Ambient Sounds</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// In your SceneCreator, pass an ambient sound to the Scene constructor:</span>
+AmbientSound<span style="color: #BBB"> </span>ambient<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameSounds.<span style="color: #687822">GARDEN_AMBIENT</span>;
+Scene<span style="color: #BBB"> </span>scene<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Scene(session,<span style="color: #BBB"> </span>renderSystem,<span style="color: #BBB"> </span>camera,<span style="color: #BBB"> </span>ambient,<span style="color: #BBB"> </span>environment);
+
+<span style="color: #3D7B7B; font-style: italic">// The scene&#39;s makeActive() automatically starts playing it:</span>
+GameManager.<span style="color: #687822">ambientPlayer</span>.<span style="color: #687822">playSound</span>(sceneAmbientSound);
+</code></pre></div>
+
+<h3>Background Music</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Music is controlled through:</span>
+GameManager.<span style="color: #687822">musicPlayer</span>.<span style="color: #687822">playTrack</span>(<span style="color: #BA2121">&quot;myTrack.ogg&quot;</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Volume is controlled via:</span>
+AudioMaster.<span style="color: #687822">instance</span>().<span style="color: #687822">volumeLevels</span>
+<span style="color: #BBB">    </span>.<span style="color: #687822">getVolumeControl</span>(GameVolume.<span style="color: #687822">MUSIC_SLIDER</span>)
+<span style="color: #BBB">    </span>.<span style="color: #687822">setVolume</span>(<span style="color: #666">0.7f</span>);
+</code></pre></div>
+
+<h3>3D Positional Audio</h3>
+<p>The listener position (the "ears") is tied to the camera:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>AudioMaster.<span style="color: #687822">instance</span>().<span style="color: #687822">listenerManager</span>.<span style="color: #687822">setListener</span>(camera);
+</code></pre></div>
+
+<p>Any sound node placed at a world position will attenuate based on distance to the camera.</p>
+<hr />
+<h2>15. Rendering Pipeline</h2>
+<p>The game uses a custom multi-pass OpenGL renderer.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Scene.render()
+    └── SceneRenderSystem.render(scene)
+            ├── Shadow Pass     (depth map from sun&#39;s perspective)
+            ├── Geometry Pass   (all 3D objects, entities, terrain)
+            ├── Post-Processing (optional — bloom, colour grading)
+            └── UI Pass         (2D UI elements on top)
+</code></pre></div>
+
+<h3>Render Component</h3>
+<p>Every visible entity needs a <code>RenderComponent</code> with one or more <code>RenderablePart</code>s. Each part references a mesh (<code>.cba</code> file) and a material.</p>
+<h3>Mesh Atlas</h3>
+<p>For performance, all entity meshes are packed into a <strong>Mesh Atlas</strong> — a single large VBO shared across all entities. The engine logs this:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Updated mesh atlas size to 1,464 vertices and 5,562 indices.
+</code></pre></div>
+
+<p>This means draw calls are batched by material, greatly reducing GPU overhead.</p>
+<h3>Shadow Distance</h3>
+<p>Set in your <code>SceneCreator</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Larger = more shadow coverage but more GPU cost</span>
+<span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>SHADOW_DISTANCE<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">200</span>f;
+</code></pre></div>
+
+<hr />
+<h2>16. Camera System</h2>
+<h3>Garden Scene Camera (StandardCamera)</h3>
+<p>The farm view uses an isometric-style camera that pans, zooms, and rotates:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>CameraConfigs
+    ├── minZoom, maxZoom
+    ├── panSpeed
+    ├── rotationSpeed
+    └── clampBounds (CameraClamp)
+</code></pre></div>
+
+<p>Camera movement is bound to <code>CameraControls</code> (WASD or arrow keys, scroll to zoom, middle mouse to rotate).</p>
+<h3>Town Scene Camera (TownCamera)</h3>
+<p>The town uses fixed <strong>ViewPoints</strong> — discrete camera positions the player snaps between:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">TownViewPoints</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>ViewPoint<span style="color: #BBB"> </span>SHOP<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>ViewPoint(
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Vector3f(<span style="color: #666">50</span>f,<span style="color: #BBB"> </span><span style="color: #666">20</span>f,<span style="color: #BBB"> </span><span style="color: #666">80</span>f),<span style="color: #BBB">   </span><span style="color: #3D7B7B; font-style: italic">// position</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Vector3f(<span style="color: #666">0f</span>,<span style="color: #BBB"> </span><span style="color: #666">1f</span>,<span style="color: #BBB"> </span><span style="color: #666">0f</span>),<span style="color: #BBB">       </span><span style="color: #3D7B7B; font-style: italic">// look-at target</span>
+<span style="color: #BBB">        </span><span style="color: #666">60</span>f<span style="color: #BBB">                              </span><span style="color: #3D7B7B; font-style: italic">// FOV</span>
+<span style="color: #BBB">    </span>);
+}
+</code></pre></div>
+
+<p>Transitioning between viewpoints uses <code>SmoothCameraMover</code> (lerps position and orientation over time).</p>
+<h3>Creating a Custom Camera</h3>
+<p>Extend <code>GameCamera</code> and implement:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyCamera</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">extends</span><span style="color: #BBB"> </span>GameCamera<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">update</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// update position/rotation based on input</span>
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Matrix4f<span style="color: #BBB"> </span><span style="color: #00F">getViewMatrix</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// return the view matrix</span>
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<hr />
+<h2>17. Gameplay Systems</h2>
+<h3>Land Management (Farm Plots)</h3>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/gameplay/landManagement/LandManager.java</code></p>
+<p>The player starts with two unlocked plots (<code>STARTING_PLOTS</code>). Additional plots must be purchased. Each plot is a rectangular area of tiles the player can develop.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// In GardenSceneCreator:</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Coords<span style="color: #666">[]</span><span style="color: #BBB"> </span>STARTING_PLOTS<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Coords(<span style="color: #666">5</span>,<span style="color: #BBB"> </span><span style="color: #666">9</span>),
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Coords(<span style="color: #666">4</span>,<span style="color: #BBB"> </span><span style="color: #666">9</span>)
+};
+LandManager<span style="color: #BBB"> </span>landManager<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>LandManagerCreator.<span style="color: #687822">init</span>(scene,<span style="color: #BBB"> </span>worldGrid,<span style="color: #BBB"> </span>STARTING_PLOTS);
+</code></pre></div>
+
+<h3>Flying Items (Item Pickup Animations)</h3>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/gameplay/flyingItems/FlyingItemManager.java</code></p>
+<p>When an entity is harvested, items "fly" from the entity to the inventory UI. This is a <code>SceneSystem</code> that manages these animated arcs.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Spawn a flying item from world position to inventory</span>
+FlyingItemManager.<span style="color: #687822">instance</span>().<span style="color: #687822">spawnFlyer</span>(itemId,<span style="color: #BBB"> </span>worldPos);
+</code></pre></div>
+
+<h3>Automation Machines</h3>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/gameplay/automation/machines/groups/MachineGroupManager.java</code></p>
+<p>Machines (auto-planter, auto-harvester, sprinkler) are grouped into machine groups that manage their shared behaviour. This is added to every garden scene:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>scene.<span style="color: #687822">addSystem</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MachineGroupManager());
+</code></pre></div>
+
+<h3>Shop System</h3>
+<p><strong>Files:</strong> <code>thinmatrix/farmGame/gameplay/shops/</code></p>
+<p>Shops are registered in <code>MainGameMod.createEmptyShops()</code>. Each shop is a <code>ShopBlueprint</code> with:<br />
+- A list of items for sale (with prices)<br />
+- Lock conditions (e.g. "unlock after selling 50 carrots")</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #A2F">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">createEmptyShops</span>(HashRegistry<span style="color: #666">&lt;</span>ShopBlueprint<span style="color: #666">&gt;</span><span style="color: #BBB"> </span>shopRegistry)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span>GameShops.<span style="color: #687822">registerGameShops</span>(shopRegistry);
+<span style="color: #BBB">    </span>ShopInfoLoader.<span style="color: #687822">LOCK_CONTROL_LOADERS</span>.<span style="color: #687822">register</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>AmountSoldLockLoader());
+}
+</code></pre></div>
+
+<h3>Time System</h3>
+<p>Game time runs through <code>GameManager.getGameplayDelta()</code>, which is <code>frameDelta × gameSpeed</code>. You can pause or speed up game time by modifying <code>configs.gameSpeed</code>.</p>
+<p>The town scene has a <code>TimePauser</code> that stops game time while the player is in town.</p>
+<hr />
+<h2>18. Save System</h2>
+<p><strong>Files:</strong> <code>thinmatrix/lowPolyEngine/resourceManagement/saveSystem/</code></p>
+<p>Saves are stored in <code>FarmGame/saves/</code> as <code>.dat</code> binary files.</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>saves/
+    6506_SAVE_2026-03-18_17-35-59_My_First_Farm.dat
+</code></pre></div>
+
+<h3>How Saving Works</h3>
+<p>Every major object implements <code>Exportable</code> (which provides a <code>Serializer</code>) and <code>StateSerializer</code> (which has a <code>loadState(Reader)</code> method).</p>
+<p>The save order <strong>must match</strong> the load order exactly:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Saving (in SceneSerializer):</span>
+writer.<span style="color: #687822">writeObject</span>(camera);
+writer.<span style="color: #687822">writeObject</span>(worldGrid);
+writer.<span style="color: #687822">writeObject</span>(entityManager);
+writer.<span style="color: #687822">writeObject</span>(landManager);
+
+<span style="color: #3D7B7B; font-style: italic">// Loading (in SceneCreator.load()):</span>
+StandardCamera<span style="color: #BBB"> </span>camera<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>CameraSerializer.<span style="color: #687822">load</span>(reader);
+worldGrid.<span style="color: #687822">getSerializer</span>().<span style="color: #687822">loadState</span>(reader);
+scene.<span style="color: #687822">entityManager</span>.<span style="color: #687822">getSerializer</span>().<span style="color: #687822">loadEntities</span>(scene,<span style="color: #BBB"> </span>reader);
+LandManager<span style="color: #BBB"> </span>landManager<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>LandManagerCreator.<span style="color: #687822">load</span>(scene,<span style="color: #BBB"> </span>worldGrid,<span style="color: #BBB"> </span>reader);
+</code></pre></div>
+
+<h3>Auto-Save</h3>
+<p><code>AutoSaver</code> triggers a save every N minutes. Configure in <code>GameConfigs</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>autoSaveEnabled<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">true</span>;
+autoSaveIntervalMinutes<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">5</span>;
+</code></pre></div>
+
+<h3>Save Versioning</h3>
+<p>When the save format changes between game versions, increment <code>SAVE_VERSION</code> in <code>GameManager</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>SAVE_VERSION<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">2</span>;<span style="color: #BBB">  </span><span style="color: #3D7B7B; font-style: italic">// was 1</span>
+</code></pre></div>
+
+<p>Mismatched versions show the player an error rather than corrupting the save.</p>
+<hr />
+<h2>19. Modding Guide — Complete Reference</h2>
+<p>The game is designed to be extended through <strong>Mods</strong>. A Mod is a Java class + a resource folder.</p>
+<h3>What a Mod Can Do</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add new entities</td>
+<td>Drop folders in <code>mods/&lt;modId&gt;/entities/</code></td>
+</tr>
+<tr>
+<td>Add new items</td>
+<td>Drop folders in <code>mods/&lt;modId&gt;/items/</code></td>
+</tr>
+<tr>
+<td>Register item component loaders</td>
+<td>Override <code>registerItemCompLoaders()</code></td>
+</tr>
+<tr>
+<td>Add new entity component types</td>
+<td>Override <code>getEntityComponentTypes()</code></td>
+</tr>
+<tr>
+<td>Create new shops</td>
+<td>Override <code>createEmptyShops()</code></td>
+</tr>
+<tr>
+<td>Add sounds/textures</td>
+<td>Drop files in mod's <code>res/</code> folder</td>
+</tr>
+</tbody>
+</table>
+<h3>Step-by-Step: Create a Mod</h3>
+<h4>1. Create the Mod Class</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">package</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">com.example.mymod</span>;
+
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.main.modSupport.Mod</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.entities.architecture.ComponentType</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.items.loading.ItemCompLoader</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.farmGame.gameplay.shops.ShopBlueprint</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">thinmatrix.toolbox.hashIds.HashRegistry</span>;
+<span style="color: #008000; font-weight: bold">import</span><span style="color: #BBB"> </span><span style="color: #00F; font-weight: bold">java.io.File</span>;
+
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyMod</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">extends</span><span style="color: #BBB"> </span>Mod<span style="color: #BBB"> </span>{
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #00F">MyMod</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">super</span>(<span style="color: #BA2121">&quot;mymod&quot;</span>,<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>File(<span style="color: #BA2121">&quot;mods/mymod&quot;</span>));
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">     * Register any custom item component loaders your mod adds.</span>
+<span style="color: #3D7B7B; font-style: italic">     * The loader ID must match the tag name used in your ItemInfo CBA files.</span>
+<span style="color: #3D7B7B; font-style: italic">     */</span>
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">registerItemCompLoaders</span>(HashRegistry<span style="color: #666">&lt;</span>ItemCompLoader<span style="color: #666">&gt;</span><span style="color: #BBB"> </span>registry)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>registry.<span style="color: #687822">register</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MySpecialItemCompLoader());
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">     * Register any custom entity component types your mod adds.</span>
+<span style="color: #3D7B7B; font-style: italic">     * These are enum values implementing ComponentType.</span>
+<span style="color: #3D7B7B; font-style: italic">     */</span>
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>ComponentType<span style="color: #666">[]</span><span style="color: #BBB"> </span><span style="color: #00F">getEntityComponentTypes</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>MyModComponents.<span style="color: #687822">values</span>();
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">/**</span>
+<span style="color: #3D7B7B; font-style: italic">     * Create empty shop blueprints. Don&#39;t add items here — they aren&#39;t loaded yet.</span>
+<span style="color: #3D7B7B; font-style: italic">     * Items are added to the shop during the item-loading phase.</span>
+<span style="color: #3D7B7B; font-style: italic">     */</span>
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">createEmptyShops</span>(HashRegistry<span style="color: #666">&lt;</span>ShopBlueprint<span style="color: #666">&gt;</span><span style="color: #BBB"> </span>shopRegistry)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>shopRegistry.<span style="color: #687822">register</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>ShopBlueprint(Id.<span style="color: #687822">of</span>(<span style="color: #BA2121">&quot;mymod&quot;</span>,<span style="color: #BBB"> </span><span style="color: #BA2121">&quot;myShop&quot;</span>)));
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h4>2. Create the Mod Folder Structure</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>mods/mymod/
+    entities/
+        MyPlants/
+            mySpecialPlant/
+                EntityInfo_mySpecialPlant.cba
+                stage1.cba
+                stage2.cba
+    items/
+        MyItems/
+            mySpecialSeed/
+                ItemInfo_mySpecialSeed.cba
+                seed.cba
+    sounds/
+        myAmbient.ogg
+    particleFx/
+        myEffect.cba
+</code></pre></div>
+
+<h4>3. Register the Mod at Startup</h4>
+<p>In <code>TempModSetup.getAvailableMods()</code> (or your own setup class):</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span>Mod<span style="color: #666">[]</span><span style="color: #BBB"> </span><span style="color: #00F">getAvailableMods</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Mod<span style="color: #666">[]</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MainGameMod(),<span style="color: #BBB">      </span><span style="color: #3D7B7B; font-style: italic">// Always first!</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MyMod(),<span style="color: #BBB">            </span><span style="color: #3D7B7B; font-style: italic">// Your mod</span>
+<span style="color: #BBB">    </span>};
+}
+</code></pre></div>
+
+<h4>4. Namespace Convention</h4>
+<p>All IDs in your mod should use your mod's namespace to avoid conflicts:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Entity IDs:    &quot;mymod:mySpecialPlant&quot;
+Item IDs:      &quot;mymod:mySpecialSeed&quot;
+Shop IDs:      &quot;mymod:myShop&quot;
+Sound IDs:     &quot;mymod:myAmbient&quot;
+</code></pre></div>
+
+<p>In CBA files, use <code>namespace:name</code>. In code:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>Id.<span style="color: #687822">of</span>(<span style="color: #BA2121">&quot;mymod&quot;</span>,<span style="color: #BBB"> </span><span style="color: #BA2121">&quot;mySpecialPlant&quot;</span>)
+</code></pre></div>
+
+<p>The <code>DEFAULT_NAMESPACE</code> (for the base game) is <code>"homegrown"</code>.</p>
+<h4>5. Entity Component Types in Your Mod</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">enum</span><span style="color: #BBB"> </span>MyModComponents<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ComponentType<span style="color: #BBB"> </span>{
+
+<span style="color: #BBB">    </span>MY_SPECIAL_COMP<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>String<span style="color: #BBB"> </span><span style="color: #00F">getTagName</span>()<span style="color: #BBB"> </span>{<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #BA2121">&quot;mySpecialComp&quot;</span>;<span style="color: #BBB"> </span>}
+
+<span style="color: #BBB">        </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>ComponentBlueprint<span style="color: #BBB"> </span><span style="color: #00F">loadBlueprint</span>(CbaObjectReader<span style="color: #BBB"> </span>reader)<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">throws</span><span style="color: #BBB"> </span>Exception<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MySpecialCompLoader().<span style="color: #687822">load</span>(reader);
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">    </span>};
+}
+</code></pre></div>
+
+<h4>6. Item Components in Your Mod</h4>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MySpecialItemComp</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ItemComp<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// your item behaviour</span>
+}
+
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MySpecialItemCompLoader</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ItemCompLoader<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>String<span style="color: #BBB"> </span><span style="color: #00F">getTagName</span>()<span style="color: #BBB"> </span>{<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #BA2121">&quot;mySpecialItemComp&quot;</span>;<span style="color: #BBB"> </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>ItemComp<span style="color: #BBB"> </span><span style="color: #00F">load</span>(CbaObjectReader<span style="color: #BBB"> </span>reader)<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">throws</span><span style="color: #BBB"> </span>Exception<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>power<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>reader.<span style="color: #687822">readFloat</span>(<span style="color: #BA2121">&quot;power&quot;</span>);
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MySpecialItemComp(power);
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h3>Mod Loading Order</h3>
+<p>Resources are loaded in mod order. If two mods define the same ID, the <strong>last one wins</strong>. To override a base-game entity, create a mod with the same entity folder name and the correct namespace.</p>
+<hr />
+<h2>20. Controls &amp; Input System</h2>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/main/gameControls/GameControls.java</code></p>
+<p>Controls are grouped into logical sets:</p>
+<table>
+<thead>
+<tr>
+<th>Class</th>
+<th>Controls</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CameraControls</code></td>
+<td>Pan, zoom, rotate camera</td>
+</tr>
+<tr>
+<td><code>BasicToolControls</code></td>
+<td>Use tool, cancel, cycle hotbar</td>
+</tr>
+<tr>
+<td><code>HotbarControls</code></td>
+<td>Number keys for hotbar slots</td>
+</tr>
+<tr>
+<td><code>DialogueControls</code></td>
+<td>Advance dialogue, close</td>
+</tr>
+<tr>
+<td><code>MiscControls</code></td>
+<td>Fullscreen toggle, cash-in cheat, plant spawn</td>
+</tr>
+<tr>
+<td><code>TownCamKeyboardControls</code></td>
+<td>Keyboard navigation in town scene</td>
+</tr>
+</tbody>
+</table>
+<h3>Reading Input</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Is a key currently held down?</span>
+<span style="color: #B00040">boolean</span><span style="color: #BBB"> </span>held<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">keyboard</span>.<span style="color: #687822">isKeyDown</span>(GLFW.<span style="color: #687822">GLFW_KEY_W</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Was a key just pressed this frame?</span>
+<span style="color: #B00040">boolean</span><span style="color: #BBB"> </span>pressed<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">keyboard</span>.<span style="color: #687822">keyPressEvent</span>(GLFW.<span style="color: #687822">GLFW_KEY_SPACE</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Mouse button</span>
+<span style="color: #B00040">boolean</span><span style="color: #BBB"> </span>leftClick<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">mouse</span>.<span style="color: #687822">isButtonDown</span>(GLFW.<span style="color: #687822">GLFW_MOUSE_BUTTON_LEFT</span>);
+<span style="color: #B00040">boolean</span><span style="color: #BBB"> </span>leftPressed<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">mouse</span>.<span style="color: #687822">buttonPressEvent</span>(GLFW.<span style="color: #687822">GLFW_MOUSE_BUTTON_LEFT</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Mouse position (screen pixels)</span>
+<span style="color: #B00040">float</span><span style="color: #BBB"> </span>mouseX<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">mouse</span>.<span style="color: #687822">getX</span>();
+<span style="color: #B00040">float</span><span style="color: #BBB"> </span>mouseY<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">mouse</span>.<span style="color: #687822">getY</span>();
+</code></pre></div>
+
+<h3>Defining a New Control</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyControls</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Control<span style="color: #BBB"> </span>myAction;
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #00F">MyControls</span>(Keyboard<span style="color: #BBB"> </span>keyboard)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>myAction<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Control(keyboard,<span style="color: #BBB"> </span>GLFW.<span style="color: #687822">GLFW_KEY_F</span>);
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">boolean</span><span style="color: #BBB"> </span><span style="color: #00F">isMyAction</span>()<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>myAction.<span style="color: #687822">isPressed</span>();
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<p>Add your controls class to <code>GameControls</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>MyControls<span style="color: #BBB"> </span>myControls;
+
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #00F">GameControls</span>(Mouse<span style="color: #BBB"> </span>mouse,<span style="color: #BBB"> </span>Keyboard<span style="color: #BBB"> </span>keyboard,<span style="color: #BBB"> </span>StateManager<span style="color: #BBB"> </span>stateManager)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// ... existing ...</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">this</span>.<span style="color: #687822">myControls</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>MyControls(keyboard);
+}
+</code></pre></div>
+
+<hr />
+<h2>21. Particles &amp; Visual Effects</h2>
+<p><strong>File:</strong> <code>thinmatrix/lowPolyEngine/particles/ParticleMaster.java</code></p>
+<p>Particle effects are defined as <code>.cba</code> files in <code>res/particleFx/</code>.</p>
+<h3>Playing a Particle Effect</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Get a global effect by name</span>
+ParticleEffect<span style="color: #BBB"> </span>effect<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>ParticleMaster.<span style="color: #687822">instance</span>().<span style="color: #687822">getGlobalEffect</span>(<span style="color: #BA2121">&quot;myEffect.cba&quot;</span>);
+
+<span style="color: #3D7B7B; font-style: italic">// Update it each frame at a world transform</span>
+effect.<span style="color: #687822">update</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Transform(worldX,<span style="color: #BBB"> </span>worldY,<span style="color: #BBB"> </span>worldZ));
+
+<span style="color: #3D7B7B; font-style: italic">// Create a variant with a position offset</span>
+ParticleEffect<span style="color: #BBB"> </span>variant<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>effect.<span style="color: #687822">createVariant</span>(
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Vec3Param(<span style="color: #BA2121">&quot;offset&quot;</span>,<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Vector3f(<span style="color: #666">0f</span>,<span style="color: #BBB"> </span><span style="color: #666">1.5f</span>,<span style="color: #BBB"> </span><span style="color: #666">0f</span>))
+);
+</code></pre></div>
+
+<h3>Entity Particle Component</h3>
+<p>Use <code>ParticleComponent</code> in EntityInfo CBA:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>particle {
+    effect: &quot;leafFall.cba&quot;
+    offsetY: 2.0
+}
+</code></pre></div>
+
+<hr />
+<h2>22. Terrain Generation</h2>
+<p><strong>Files:</strong><br />
+- <code>thinmatrix/farmGame/scene/sandboxGrid/TerrainGeneratorCreator.java</code><br />
+- <code>thinmatrix/farmGame/terrain/meshGeneration/TerrainMeshGenerator.java</code></p>
+<p>The terrain mesh is generated procedurally from the <code>WorldGrid</code>. Each chunk of tiles is meshed together using the soil textures from <code>res/soilTextures/</code>.</p>
+<h3>Initial Generation</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Called once when creating a new game:</span>
+populator.<span style="color: #687822">generateTerrainTiles</span>(sandboxGrid.<span style="color: #687822">worldGrid</span>);
+sandboxGrid.<span style="color: #687822">terrainMeshManager</span>.<span style="color: #687822">doInitialFullGridGeneration</span>();
+</code></pre></div>
+
+<h3>ScenePopulator</h3>
+<p>The <code>ScenePopulator</code> interface allows you to customise what's on the map when a new game starts:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">interface</span> <span style="color: #00F; font-weight: bold">ScenePopulator</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">generateTerrainTiles</span>(WorldGrid<span style="color: #BBB"> </span>worldGrid);
+<span style="color: #BBB">    </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">generateNewSessionScenery</span>(Scene<span style="color: #BBB"> </span>scene,<span style="color: #BBB"> </span>WorldGrid<span style="color: #BBB"> </span>worldGrid);
+}
+</code></pre></div>
+
+<p>Default implementation is <code>EmptyScenePopulator</code> (flat grass).</p>
+<p>Custom implementation example:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">MyScenePopulator</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ScenePopulator<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">generateTerrainTiles</span>(WorldGrid<span style="color: #BBB"> </span>worldGrid)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Set all tiles to grass</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getSize</span>();<span style="color: #BBB"> </span>x<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getSize</span>();<span style="color: #BBB"> </span>z<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">                </span>worldGrid.<span style="color: #687822">getTile</span>(x,<span style="color: #BBB"> </span>z).<span style="color: #687822">setTerrainType</span>(TerrainType.<span style="color: #687822">GRASS</span>);
+<span style="color: #BBB">            </span>}
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Add a path down the middle</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getSize</span>();<span style="color: #BBB"> </span>z<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span>worldGrid.<span style="color: #687822">getTile</span>(worldGrid.<span style="color: #687822">getSize</span>()<span style="color: #666">/2</span>,<span style="color: #BBB"> </span>z)
+<span style="color: #BBB">                     </span>.<span style="color: #687822">setTerrainType</span>(TerrainType.<span style="color: #687822">PATH</span>);
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">generateNewSessionScenery</span>(Scene<span style="color: #BBB"> </span>scene,<span style="color: #BBB"> </span>WorldGrid<span style="color: #BBB"> </span>worldGrid)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Spawn some decorative trees</span>
+<span style="color: #BBB">        </span>Blueprint<span style="color: #BBB"> </span>tree<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getRepository</span>().<span style="color: #687822">entitySystem</span>.<span style="color: #687822">get</span>(<span style="color: #BA2121">&quot;tree&quot;</span>);
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>i<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>i<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span><span style="color: #666">10</span>;<span style="color: #BBB"> </span>i<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">10</span><span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span>i<span style="color: #BBB"> </span><span style="color: #666">*</span><span style="color: #BBB"> </span><span style="color: #666">20</span>;
+<span style="color: #BBB">            </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">5</span>;
+<span style="color: #BBB">            </span>tree.<span style="color: #687822">createInstance</span>(scene,
+<span style="color: #BBB">                </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>EntityTransform(x<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span><span style="color: #666">0.5f</span>,<span style="color: #BBB"> </span><span style="color: #666">0</span>,<span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span><span style="color: #666">0.5f</span>,<span style="color: #BBB"> </span><span style="color: #666">0</span>,<span style="color: #BBB"> </span><span style="color: #666">1</span>),
+<span style="color: #BBB">                </span>TileObjectParams.<span style="color: #687822">auto</span>());
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<hr />
+<h2>23. Debugging &amp; Configuration</h2>
+<h3>GameDebug</h3>
+<p><strong>File:</strong> <code>thinmatrix/farmGame/main/GameDebug.java</code></p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// Enable various debug overlays at startup:</span>
+GameManager.<span style="color: #687822">DEBUG</span>.<span style="color: #687822">showEntityBounds</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">true</span>;
+GameManager.<span style="color: #687822">DEBUG</span>.<span style="color: #687822">showTileGrid</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">true</span>;
+GameManager.<span style="color: #687822">DEBUG</span>.<span style="color: #687822">logFrameTime</span><span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">true</span>;
+</code></pre></div>
+
+<h3>DevConfigs</h3>
+<p>Use <code>new DevConfigs()</code> instead of <code>new BuildConfigs()</code> to enable:<br />
+- Cheat keys (Alt+N to spawn items)<br />
+- Faster time progression<br />
+- Dev-only debug UI</p>
+<h3>Error Logs</h3>
+<p>Errors are written to <code>FarmGame/ErrorLogsTM/</code>. Each file is timestamped and contains the full stack trace. The <code>DefaultErrorLogs/</code> folder (in the project root) catches errors that occur before the game folder is found.</p>
+<h3>Common Errors</h3>
+<table>
+<thead>
+<tr>
+<th>Error</th>
+<th>Cause</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NullPointerException in BlueprintRepositoryLoader.isEntityFolder</code></td>
+<td>Entity folder has a null file listing (permissions issue or missing folder)</td>
+<td>Ensure <code>res/entities/</code> exists and is readable</td>
+</tr>
+<tr>
+<td><code>GLFW_FEATURE_UNAVAILABLE: Cocoa: Regular windows do not have icons</code></td>
+<td>macOS doesn't support window icons — harmless</td>
+<td>Wrap <code>glfwSetWindowIcon</code> in an OS check</td>
+</tr>
+<tr>
+<td><code>unit 1 GLD_TEXTURE_INDEX_2D is unloadable</code></td>
+<td>OpenGL texture unit issue on some macOS drivers — harmless warning</td>
+<td>No fix needed</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>24. Step-by-Step: Make a Full Game Scene from Scratch</h2>
+<p>Here is a complete walkthrough to add a brand-new scene (e.g. a "Cave Scene") to the game.</p>
+<h3>Phase 1 — Resources</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>res/entities/CaveEntities/
+    crystalFormation/
+        EntityInfo_crystalFormation.cba
+        crystal_small.cba
+        crystal_large.cba
+    stalagmite/
+        EntityInfo_stalagmite.cba
+        stalagmite.cba
+</code></pre></div>
+
+<h3>Phase 2 — Scene Creator</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// thinmatrix/farmGame/scene/prefabs/caveScene/creation/CaveSceneCreator.java</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">CaveSceneCreator</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>SceneCreator<span style="color: #BBB"> </span>{
+
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>CAVE_SIZE<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">128</span>;
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span><span style="color: #B00040">float</span><span style="color: #BBB"> </span>SHADOW_DISTANCE<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">80</span>f;
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">private</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>Light<span style="color: #BBB"> </span>AMBIENT_LIGHT<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Light(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Vector3f(<span style="color: #666">0f</span>,<span style="color: #BBB"> </span><span style="color: #666">-1f</span>,<span style="color: #BBB"> </span><span style="color: #666">0f</span>),<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Colour(<span style="color: #666">0.2f</span>,<span style="color: #BBB"> </span><span style="color: #666">0.2f</span>,<span style="color: #BBB"> </span><span style="color: #666">0.4f</span>));
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Scene<span style="color: #BBB"> </span><span style="color: #00F">createNew</span>(Session<span style="color: #BBB"> </span>session)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>CaveCamera<span style="color: #BBB"> </span>camera<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>CaveCamera(Engine.<span style="color: #687822">instance</span>().<span style="color: #687822">window</span>);
+<span style="color: #BBB">        </span>SceneRenderSystem<span style="color: #BBB"> </span>renderSystem<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">            </span>GameManager.<span style="color: #687822">getRenderEngine</span>().<span style="color: #687822">initSceneRenderSystem</span>(CAVE_SIZE,<span style="color: #BBB"> </span>SHADOW_DISTANCE);
+<span style="color: #BBB">        </span>Environment<span style="color: #BBB"> </span>environment<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Environment(AMBIENT_LIGHT,<span style="color: #BBB"> </span><span style="color: #666">0.05f</span>);<span style="color: #BBB"> </span><span style="color: #3D7B7B; font-style: italic">// slight fog</span>
+
+<span style="color: #BBB">        </span>Scene<span style="color: #BBB"> </span>scene<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>Scene(session,<span style="color: #BBB"> </span>renderSystem,<span style="color: #BBB"> </span>camera,
+<span style="color: #BBB">                                </span>GameSounds.<span style="color: #687822">CAVE_AMBIENT</span>,<span style="color: #BBB"> </span>environment);
+
+<span style="color: #BBB">        </span>WorldGrid<span style="color: #BBB"> </span>worldGrid<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>WorldGrid(scene,<span style="color: #BBB"> </span>CAVE_SIZE);
+<span style="color: #BBB">        </span>TerrainMeshGenerator<span style="color: #BBB"> </span>terrainMesh<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">            </span>TerrainGeneratorCreator.<span style="color: #687822">create</span>(worldGrid,<span style="color: #BBB"> </span>renderSystem);
+<span style="color: #BBB">        </span>SandboxGrid<span style="color: #BBB"> </span>sandboxGrid<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>SandboxGrid(worldGrid,<span style="color: #BBB"> </span>terrainMesh);
+
+<span style="color: #BBB">        </span>scene.<span style="color: #687822">addSystem</span>(sandboxGrid);
+<span style="color: #BBB">        </span>scene.<span style="color: #687822">addSystem</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>EntityEffectManager());
+
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Populate the cave with crystals</span>
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>CavePopulator().<span style="color: #687822">generateTerrainTiles</span>(worldGrid);
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>CavePopulator().<span style="color: #687822">generateNewSessionScenery</span>(scene,<span style="color: #BBB"> </span>worldGrid);
+<span style="color: #BBB">        </span>terrainMesh.<span style="color: #687822">doInitialFullGridGeneration</span>();
+
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>scene;
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Scene<span style="color: #BBB"> </span><span style="color: #00F">load</span>(Session<span style="color: #BBB"> </span>session,<span style="color: #BBB"> </span>Reader<span style="color: #BBB"> </span>reader)<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">throws</span><span style="color: #BBB"> </span>Exception<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// Load from save file</span>
+<span style="color: #BBB">        </span>CaveCamera<span style="color: #BBB"> </span>camera<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>CaveCamera.<span style="color: #687822">Serializer</span>.<span style="color: #687822">load</span>(reader);
+<span style="color: #BBB">        </span><span style="color: #3D7B7B; font-style: italic">// ... rest of load logic</span>
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h3>Phase 3 — Cave Populator</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">class</span> <span style="color: #00F; font-weight: bold">CavePopulator</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">implements</span><span style="color: #BBB"> </span>ScenePopulator<span style="color: #BBB"> </span>{
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">generateTerrainTiles</span>(WorldGrid<span style="color: #BBB"> </span>worldGrid)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>size<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getSize</span>();
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span>size;<span style="color: #BBB"> </span>x<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span>size;<span style="color: #BBB"> </span>z<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">                </span>worldGrid.<span style="color: #687822">getTile</span>(x,<span style="color: #BBB"> </span>z).<span style="color: #687822">setTerrainType</span>(TerrainType.<span style="color: #687822">STONE</span>);
+<span style="color: #BBB">            </span>}
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">    </span>}
+
+<span style="color: #BBB">    </span><span style="color: #A2F">@Override</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #B00040">void</span><span style="color: #BBB"> </span><span style="color: #00F">generateNewSessionScenery</span>(Scene<span style="color: #BBB"> </span>scene,<span style="color: #BBB"> </span>WorldGrid<span style="color: #BBB"> </span>worldGrid)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">        </span>Blueprint<span style="color: #BBB"> </span>crystal<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getRepository</span>().<span style="color: #687822">entitySystem</span>.<span style="color: #687822">get</span>(<span style="color: #BA2121">&quot;crystalFormation&quot;</span>);
+<span style="color: #BBB">        </span>RandomGenerator<span style="color: #BBB"> </span>rng<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>RandomGenerator(<span style="color: #666">12345L</span>);
+<span style="color: #BBB">        </span><span style="color: #008000; font-weight: bold">for</span><span style="color: #BBB"> </span>(<span style="color: #B00040">int</span><span style="color: #BBB"> </span>i<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #666">0</span>;<span style="color: #BBB"> </span>i<span style="color: #BBB"> </span><span style="color: #666">&lt;</span><span style="color: #BBB"> </span><span style="color: #666">30</span>;<span style="color: #BBB"> </span>i<span style="color: #666">++</span>)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">            </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>x<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>rng.<span style="color: #687822">nextInt</span>(<span style="color: #666">5</span>,<span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getSize</span>()<span style="color: #BBB"> </span><span style="color: #666">-</span><span style="color: #BBB"> </span><span style="color: #666">5</span>);
+<span style="color: #BBB">            </span><span style="color: #B00040">int</span><span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>rng.<span style="color: #687822">nextInt</span>(<span style="color: #666">5</span>,<span style="color: #BBB"> </span>worldGrid.<span style="color: #687822">getSize</span>()<span style="color: #BBB"> </span><span style="color: #666">-</span><span style="color: #BBB"> </span><span style="color: #666">5</span>);
+<span style="color: #BBB">            </span>crystal.<span style="color: #687822">createInstance</span>(scene,
+<span style="color: #BBB">                </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>EntityTransform(x<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span><span style="color: #666">0.5f</span>,<span style="color: #BBB"> </span><span style="color: #666">0f</span>,<span style="color: #BBB"> </span>z<span style="color: #BBB"> </span><span style="color: #666">+</span><span style="color: #BBB"> </span><span style="color: #666">0.5f</span>,<span style="color: #BBB"> </span>rng.<span style="color: #687822">nextFloat</span>()<span style="color: #666">*360</span>f,<span style="color: #BBB"> </span><span style="color: #666">1f</span>),
+<span style="color: #BBB">                </span>TileObjectParams.<span style="color: #687822">auto</span>());
+<span style="color: #BBB">        </span>}
+<span style="color: #BBB">    </span>}
+}
+</code></pre></div>
+
+<h3>Phase 4 — Add Scene to Session</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// In your SessionCreator:</span>
+<span style="color: #A2F">@Override</span>
+<span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span>Scene<span style="color: #BBB"> </span><span style="color: #00F">createScenes</span>(Session<span style="color: #BBB"> </span>session)<span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// Garden scene (first = starting scene)</span>
+<span style="color: #BBB">    </span>session.<span style="color: #687822">addScene</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>GardenSceneCreator().<span style="color: #687822">createNew</span>(session));
+<span style="color: #BBB">    </span><span style="color: #3D7B7B; font-style: italic">// Cave scene</span>
+<span style="color: #BBB">    </span>session.<span style="color: #687822">addScene</span>(<span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>CaveSceneCreator().<span style="color: #687822">createNew</span>(session));
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">return</span><span style="color: #BBB"> </span>session;
+}
+</code></pre></div>
+
+<h3>Phase 5 — Add a Button to Travel to Cave</h3>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">// In your game UI, add a &quot;Go to Cave&quot; button:</span>
+UiButton<span style="color: #BBB"> </span>caveButton<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>UiButton(style.<span style="color: #687822">buttonStyle</span>());
+caveButton.<span style="color: #687822">setText</span>(<span style="color: #BA2121">&quot;Enter Cave&quot;</span>);
+caveButton.<span style="color: #687822">setOnClick</span>(()<span style="color: #BBB"> </span><span style="color: #666">-&gt;</span><span style="color: #BBB"> </span>{
+<span style="color: #BBB">    </span>Session<span style="color: #BBB"> </span>s<span style="color: #BBB"> </span><span style="color: #666">=</span><span style="color: #BBB"> </span>GameManager.<span style="color: #687822">getCurrentSession</span>();
+<span style="color: #BBB">    </span>s.<span style="color: #687822">switchToScene</span>(Id.<span style="color: #687822">of</span>(<span style="color: #BA2121">&quot;caveScene&quot;</span>));
+});
+Ui.<span style="color: #687822">getContainer</span>().<span style="color: #687822">add</span>(caveButton,<span style="color: #BBB"> </span>ConstraintUtils.<span style="color: #687822">alignRight</span>(hotbar,<span style="color: #BBB"> </span><span style="color: #666">8</span>));
+</code></pre></div>
+
+<h3>Phase 6 — Add a Cave Ambient Sound</h3>
+<p>In <code>GameSounds.java</code>:</p>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #008000; font-weight: bold">public</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">static</span><span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">final</span><span style="color: #BBB"> </span>AmbientSound<span style="color: #BBB"> </span>CAVE_AMBIENT<span style="color: #BBB"> </span><span style="color: #666">=</span>
+<span style="color: #BBB">    </span><span style="color: #008000; font-weight: bold">new</span><span style="color: #BBB"> </span>AmbientSound(<span style="color: #BA2121">&quot;sounds/cave_drips.ogg&quot;</span>,<span style="color: #BBB"> </span><span style="color: #666">0.6f</span>,<span style="color: #BBB"> </span><span style="color: #008000; font-weight: bold">true</span>);
+</code></pre></div>
+
+<h3>Phase 7 — Test</h3>
+<ol>
+<li>Run <code>FarmGameApp.main()</code></li>
+<li>Create a new game</li>
+<li>Press your "Enter Cave" button</li>
+<li>The scene transitions to the cave with crystals and dripping sounds</li>
+</ol>
+<hr />
+<h2>Quick Reference Card</h2>
+<div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code>New Entity     → res/entities/&lt;Category&gt;/&lt;name&gt;/EntityInfo_&lt;name&gt;.cba + models
+New Item       → res/items/&lt;Category&gt;/&lt;name&gt;/ItemInfo_&lt;name&gt;.cba + models
+New Scene      → Implement SceneCreator, add to SessionCreator
+New SceneSystem → Extend SceneSystem, scene.addSystem()
+New Component  → Implement ComponentType, ComponentBlueprint, Component
+New Mod        → Extend Mod, add to TempModSetup.getAvailableMods()
+New UI Panel   → new UiBlock(), add to Ui.getContainer() with ConstraintUtils
+New Shop       → ShopBlueprint in Mod.createEmptyShops()
+New Sound      → .ogg in res/sounds/, reference by filename
+New Particle   → .cba in res/particleFx/, ParticleMaster.instance().getGlobalEffect()
+Delta Time     → Always multiply movement by GameManager.getDelta()
+Spawn Entity   → GameManager.getRepository().entitySystem.get(&quot;id&quot;).createInstance(scene, transform)
+Spawn Item     → GameUtils.spawnItem(&quot;itemId&quot;, count)
+Get Money      → GameManager.getCurrentSession().moneyCount
+</code></pre></div>
+
+<hr />
+<p><em>This guide was generated from the full source code of HomeGrown. Last updated: April 2026.</em></p>
+    </article>
+    <div class="page-nav"><a class="nav-btn prev" href="41-toolbox-reference.html"><span>◀</span><span><span class="nav-label">Previous</span>41 — Toolbox Reference</span></a><a class="nav-btn" href="../index.html">🏠 Index</a></div>
+  </main>
+</body>
+</html>

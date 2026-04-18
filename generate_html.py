@@ -61,6 +61,7 @@ PAGES = [
     ("docs/39-3d-models-asset-list.md",        "39 — 3D Models Asset List",     "📖 Reference"),
     ("docs/40-lowpoly-engine-reference.md",    "40 — LowPolyEngine Reference",  "🔧 Engine Dev"),
     ("docs/41-toolbox-reference.md",           "41 — Toolbox Reference",        "🔧 Engine Dev"),
+    ("docs/42-game-development-guide.md",      "42 — Game Development Guide",   "🔧 Engine Dev"),
 ]
 
 # ── Shared CSS ─────────────────────────────────────────────────────────────────
@@ -485,7 +486,7 @@ def build_index():
       <span class="badge">📱 Mobile-first</span>
       <span class="badge">⚡ No Energy System</span>
       <span class="badge">💎 No Paywall</span>
-      <span class="badge">📄 38 Sections</span>
+      <span class="badge">📄 42 Sections</span>
     </div>
   </header>
 
