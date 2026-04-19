@@ -62,6 +62,7 @@ PAGES = [
     ("docs/40-lowpoly-engine-reference.md",    "40 — LowPolyEngine Reference",  "🔧 Engine Dev"),
     ("docs/41-toolbox-reference.md",           "41 — Toolbox Reference",        "🔧 Engine Dev"),
     ("docs/42-game-development-guide.md",      "42 — Game Development Guide",   "🔧 Engine Dev"),
+    ("docs/43-color-theme.md",                 "43 — Color Theme & Visual Identity", "🎨 Design"),
 ]
 
 # ── Shared CSS ─────────────────────────────────────────────────────────────────

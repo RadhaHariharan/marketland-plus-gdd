@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperStoreTycoon</title>
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #07090f;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        /* Radial background glow */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(ellipse 70% 55% at 50% 44%, #111d60 0%, #07090f 70%);
+            z-index: 0;
+        }
+
+        /* Floating coin particles */
+        .coins-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .coin {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 30%, #fff3a0, #f5a623 55%, #9a5c00);
+            border: 1.5px solid #c07800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            color: #7a4800;
+            animation: floatCoin linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes floatCoin {
+            0% {
+                transform: translateY(105vh) rotate(0deg);
+                opacity: 0;
+            }
+
+            8% {
+                opacity: .75;
+            }
+
+            92% {
+                opacity: .5;
+            }
+
+            100% {
+                transform: translateY(-120px) rotate(400deg);
+                opacity: 0;
+            }
+        }
+
+        /* ── Splash wrapper ── */
+        .splash {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0;
+            padding: 2rem;
+        }
+
+        /* ── Logo icon ── */
+        .logo-icon {
+            width: clamp(180px, 38vmin, 280px);
+            height: clamp(180px, 38vmin, 280px);
+            animation: popIn .7s cubic-bezier(0.22, 1, 0.36, 1) both;
+            filter: drop-shadow(0 8px 32px rgba(30, 60, 200, .5)) drop-shadow(0 2px 8px rgba(0, 0, 0, .7));
+        }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.55);
+            }
+
+            70% {
+                transform: scale(1.07);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* ── Game title text below logo ── */
+        .game-title {
+            margin-top: 1.6rem;
+            text-align: center;
+            animation: fadeUp .65s .4s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .game-title .line1 {
+            display: block;
+            font-size: clamp(1.5rem, 5vw, 2.4rem);
+            font-weight: 900;
+            letter-spacing: -.02em;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0, 0, 0, .8);
+        }
+
+        .game-title .line2 {
+            display: block;
+            font-size: clamp(1.1rem, 3.5vw, 1.8rem);
+            font-weight: 900;
+            letter-spacing: .18em;
+            background: linear-gradient(180deg, #ffe97a 0%, #f5a623 50%, #a05c00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, .6));
+        }
+
+        .tagline {
+            margin-top: .55rem;
+            font-size: clamp(.7rem, 2vw, .88rem);
+            color: #5a6888;
+            letter-spacing: .16em;
+            text-transform: uppercase;
+        }
+
+        @keyframes fadeUp {
+            0% {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ── Loading bar ── */
+        .progress-wrap {
+            margin-top: 2.6rem;
+            width: clamp(200px, 55vw, 320px);
+            animation: fadeUp .65s .7s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .progress-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: .75rem;
+            color: #404a66;
+            letter-spacing: .06em;
+            margin-bottom: .45rem;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 6px;
+            background: #12172a;
+            border: 1px solid #1e2540;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #38c172, #4f8ef7);
+            box-shadow: 0 0 10px rgba(79, 142, 247, .65);
+            transition: width .08s linear;
+        }
+
+        /* ── Press any key ── */
+        .press-key {
+            margin-top: 1.8rem;
+            font-size: clamp(.75rem, 2vw, .92rem);
+            color: #4f8ef7;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: none;
+            animation: blink 1.6s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: .25;
+            }
+        }
+
+        /* Corner labels */
+        .corner {
+            position: fixed;
+            font-size: .68rem;
+            color: #252d48;
+            z-index: 20;
+        }
+
+        .corner.br {
+            bottom: 1rem;
+            right: 1.2rem;
+        }
+
+        .corner.bl {
+            bottom: 1rem;
+            left: 1.2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="coins-layer" id="coinsLayer"></div>
+
+    <div class="splash">
+
+        <!-- App-icon style logo -->
+        <img class="logo-icon" src="assets/icon.svg" alt="SuperStoreTycoon Logo">
+
+        <!-- Title -->
+        <div class="game-title">
+            <span class="line1">SuperStore</span>
+            <span class="line2">TYCOON</span>
+            <p class="tagline">Build &bull; Stock &bull; Rule</p>
+        </div>
+
+        <!-- Loading progress -->
+        <div class="progress-wrap">
+            <div class="progress-meta">
+                <span id="loadStatus">Initializing world...</span>
+                <span id="loadPct">0%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <p class="press-key" id="pressKey" onclick="enterGame()">&#9654;&nbsp; Press any key to play</p>
+
+    </div>
+
+    <div class="corner br">v0.1.0-alpha</div>
+    <div class="corner bl">SuperStoreTycoon &copy; 2026</div>
+
+    <script>
+        /* ── Floating coins ── */
+        const layer = document.getElementById('coinsLayer');
+        function spawnCoin() {
+            const el = document.createElement('div');
+            el.className = 'coin';
+            const s = [16, 22, 28, 34][Math.floor(Math.random() * 4)];
+            el.style.cssText = `
+        width:${s}px;height:${s}px;
+        left:${5 + Math.random() * 90}%;
+        bottom:-60px;
+        font-size:${Math.round(s * .48)}px;
+        animation-duration:${9 + Math.random() * 10}s;
+        animation-delay:${Math.random() * 8}s;
+      `;
+            el.textContent = '$';
+            layer.appendChild(el);
+            setTimeout(() => el.remove(), 20000);
+        }
+        for (let i = 0; i < 14; i++) spawnCoin();
+        setInterval(spawnCoin, 2000);
+
+        /* ── Loading progress ── */
+        const bar = document.getElementById('progressBar');
+        const status = document.getElementById('loadStatus');
+        const pct = document.getElementById('loadPct');
+        const pressEl = document.getElementById('pressKey');
+
+        const steps = [
+            { at: 8, msg: 'Initializing world...' },
+            { at: 22, msg: 'Loading store assets...' },
+            { at: 40, msg: 'Setting up the farm...' },
+            { at: 56, msg: 'Stocking shelves...' },
+            { at: 72, msg: 'Hiring staff...' },
+            { at: 86, msg: 'Opening the market...' },
+            { at: 96, msg: 'Almost ready...' },
+            { at: 100, msg: 'Ready!' },
+        ];
+
+        let p = 0, si = 0;
+        function tick() {
+            if (p >= 100) {
+                bar.style.width = '100%';
+                pct.textContent = '100%';
+                status.textContent = 'Ready!';
+                setTimeout(() => pressEl.style.display = 'block', 350);
+                return;
+            }
+            const target = steps[si]?.at ?? 100;
+            p += Math.random() * 2.8 + 0.4;
+            if (p >= target) {
+                p = target;
+                status.textContent = steps[si].msg;
+                si = Math.min(si + 1, steps.length - 1);
+            }
+            bar.style.width = Math.min(p, 100) + '%';
+            pct.textContent = Math.floor(Math.min(p, 100)) + '%';
+            setTimeout(tick, 55 + Math.random() * 90);
+        }
+        setTimeout(tick, 700);
+
+        /* ── Enter game ── */
+        function enterGame() {
+            document.querySelector('.splash').style.transition = 'opacity .5s';
+            document.querySelector('.splash').style.opacity = '0';
+            setTimeout(() => { window.location.href = 'index.html'; }, 520);
+        }
+        document.addEventListener('keydown', () => {
+            if (pressEl.style.display !== 'none') enterGame();
+        });
+    </script>
+</body>
+
+</html>

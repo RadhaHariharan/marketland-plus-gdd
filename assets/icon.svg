@@ -1,0 +1,209 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <defs>
+    <radialGradient id="bg2" cx="50%" cy="40%" r="62%">
+      <stop offset="0%" stop-color="#1b2f8a"/>
+      <stop offset="100%" stop-color="#04061a"/>
+    </radialGradient>
+    <linearGradient id="farmBg2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e7010"/>
+      <stop offset="100%" stop-color="#071506"/>
+    </linearGradient>
+    <linearGradient id="storeBg2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d2490"/>
+      <stop offset="100%" stop-color="#03071e"/>
+    </linearGradient>
+    <linearGradient id="goldBorder" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffacc"/>
+      <stop offset="30%" stop-color="#f7c832"/>
+      <stop offset="65%" stop-color="#da8400"/>
+      <stop offset="100%" stop-color="#8c4a00"/>
+    </linearGradient>
+    <linearGradient id="goldText" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffacc"/>
+      <stop offset="38%" stop-color="#ffca28"/>
+      <stop offset="100%" stop-color="#b86e00"/>
+    </linearGradient>
+    <linearGradient id="crownFill" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffacc"/>
+      <stop offset="30%" stop-color="#f7c832"/>
+      <stop offset="70%" stop-color="#da8400"/>
+      <stop offset="100%" stop-color="#8c4a00"/>
+    </linearGradient>
+    <linearGradient id="barnRed2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f04030"/>
+      <stop offset="100%" stop-color="#801808"/>
+    </linearGradient>
+    <linearGradient id="wheatCol" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#6e4e14"/>
+      <stop offset="50%" stop-color="#c08a18"/>
+      <stop offset="100%" stop-color="#eec038"/>
+    </linearGradient>
+    <linearGradient id="sunCol" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffad0"/>
+      <stop offset="55%" stop-color="#ffd020"/>
+      <stop offset="100%" stop-color="#f07800"/>
+    </linearGradient>
+    <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f8f4ea"/>
+      <stop offset="100%" stop-color="#d0c8b0"/>
+    </linearGradient>
+    <linearGradient id="awningBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#5aa8ff"/>
+      <stop offset="100%" stop-color="#1440c0"/>
+    </linearGradient>
+    <linearGradient id="groundGreen" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#28a84e"/>
+      <stop offset="100%" stop-color="#147030"/>
+    </linearGradient>
+    <clipPath id="roundClip">
+      <rect x="10" y="10" width="660" height="660" rx="120"/>
+    </clipPath>
+  </defs>
+
+  <!-- OUTER GOLD BORDER -->
+  <rect x="0" y="0" width="680" height="680" rx="128" fill="url(#goldBorder)"/>
+  <!-- INNER BG -->
+  <rect x="10" y="10" width="660" height="660" rx="120" fill="url(#bg2)"/>
+  <!-- Inner hairline ring -->
+  <rect x="22" y="22" width="636" height="636" rx="110" fill="none" stroke="#f7c832" stroke-width="2" opacity="0.25"/>
+
+  <!-- SPLIT HALVES clipped -->
+  <g clip-path="url(#roundClip)">
+    <rect x="10" y="10" width="330" height="660" fill="url(#farmBg2)"/>
+    <rect x="340" y="10" width="330" height="660" fill="url(#storeBg2)"/>
+    <rect x="328" y="10" width="24" height="490" fill="url(#goldBorder)"/>
+    <rect x="10" y="490" width="660" height="180" fill="#020510" opacity="0.82"/>
+  </g>
+
+  <!-- SUN -->
+  <g clip-path="url(#roundClip)">
+    <g transform="translate(170,168)" stroke="#f7c832" stroke-linecap="round" fill="none" stroke-width="7">
+      <line x1="0" y1="-80" x2="0" y2="-60"/>
+      <line x1="57" y1="-57" x2="43" y2="-43"/>
+      <line x1="80" y1="0" x2="60" y2="0"/>
+      <line x1="57" y1="57" x2="43" y2="43"/>
+      <line x1="-57" y1="-57" x2="-43" y2="-43"/>
+      <line x1="-80" y1="0" x2="-60" y2="0"/>
+      <line x1="-57" y1="57" x2="-43" y2="43"/>
+    </g>
+    <circle cx="170" cy="168" r="52" fill="url(#sunCol)" stroke="#da8400" stroke-width="5"/>
+    <circle cx="154" cy="154" r="14" fill="white" opacity="0.18"/>
+  </g>
+
+  <!-- BARN -->
+  <g clip-path="url(#roundClip)">
+    <polygon points="50,388 50,308 175,264 300,308 300,388" fill="url(#barnRed2)" stroke="#1c0404" stroke-width="4" stroke-linejoin="round"/>
+    <line x1="175" y1="264" x2="50" y2="308" stroke="#f46050" stroke-width="2" opacity="0.4"/>
+    <line x1="175" y1="264" x2="300" y2="308" stroke="#f46050" stroke-width="2" opacity="0.4"/>
+    <rect x="50" y="386" width="250" height="110" rx="4" fill="url(#barnRed2)" stroke="#1c0404" stroke-width="4"/>
+    <line x1="50" y1="440" x2="300" y2="440" stroke="#1c0404" stroke-width="2" opacity="0.35"/>
+    <rect x="148" y="408" width="54" height="88" rx="27 27 0 0" fill="#1a0404" stroke="#0e0202" stroke-width="2.5"/>
+    <line x1="175" y1="408" x2="175" y2="496" stroke="#2e0808" stroke-width="2"/>
+    <rect x="65" y="400" width="48" height="38" rx="5" fill="#ffd878" stroke="#1c0404" stroke-width="2.5" opacity="0.92"/>
+    <line x1="89" y1="400" x2="89" y2="438" stroke="#1c0404" stroke-width="1.5" opacity="0.5"/>
+    <rect x="237" y="400" width="48" height="38" rx="5" fill="#ffd878" stroke="#1c0404" stroke-width="2.5" opacity="0.92"/>
+    <line x1="261" y1="400" x2="261" y2="438" stroke="#1c0404" stroke-width="1.5" opacity="0.5"/>
+  </g>
+
+  <!-- WHEAT STALK A -->
+  <g transform="translate(280,496)">
+    <line x1="0" y1="0" x2="0" y2="-148" stroke="url(#wheatCol)" stroke-width="6" stroke-linecap="round"/>
+    <path d="M0,-86 C-26,-74 -38,-56 -40,-40" stroke="#907018" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <path d="M0,-112 C26,-100 38,-82 40,-66" stroke="#907018" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-160" rx="13" ry="17" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="2.2"/>
+    <ellipse cx="-14" cy="-152" rx="10" ry="14" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="2" transform="rotate(-26,-14,-152)"/>
+    <ellipse cx="14" cy="-152" rx="10" ry="14" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="2" transform="rotate(22,14,-152)"/>
+    <ellipse cx="-22" cy="-140" rx="8" ry="11" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.8" transform="rotate(-38,-22,-140)"/>
+    <ellipse cx="22" cy="-140" rx="8" ry="11" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.8" transform="rotate(34,22,-140)"/>
+  </g>
+  <!-- WHEAT STALK B -->
+  <g transform="translate(210,496)">
+    <line x1="0" y1="0" x2="0" y2="-112" stroke="url(#wheatCol)" stroke-width="5.5" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-124" rx="11" ry="15" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="2"/>
+    <ellipse cx="-12" cy="-117" rx="9" ry="12" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.8" transform="rotate(-24,-12,-117)"/>
+    <ellipse cx="12" cy="-117" rx="9" ry="12" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.8" transform="rotate(20,12,-117)"/>
+  </g>
+  <!-- WHEAT STALK C -->
+  <g transform="translate(120,496)">
+    <line x1="0" y1="0" x2="0" y2="-88" stroke="url(#wheatCol)" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="0" cy="-98" rx="10" ry="13" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.8"/>
+    <ellipse cx="-10" cy="-92" rx="8" ry="10" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.6" transform="rotate(-22,-10,-92)"/>
+    <ellipse cx="10" cy="-92" rx="8" ry="10" fill="url(#wheatCol)" stroke="#7a5018" stroke-width="1.6" transform="rotate(18,10,-92)"/>
+  </g>
+
+  <!-- GRASS ROW -->
+  <g clip-path="url(#roundClip)">
+    <rect x="10" y="480" width="330" height="18" fill="#050e04" opacity="0.7"/>
+    <g fill="none" stroke="#38c060" stroke-linecap="round" stroke-width="4">
+      <path d="M24,486 Q32,466 40,486"/>
+      <path d="M62,484 Q72,462 82,484"/>
+      <path d="M106,485 Q116,464 126,485"/>
+      <path d="M150,484 Q160,463 170,484"/>
+      <path d="M192,485 Q202,465 212,485"/>
+      <path d="M234,484 Q244,464 254,484"/>
+      <path d="M276,485 Q286,466 296,485"/>
+      <path d="M316,484 Q326,466 336,484"/>
+    </g>
+  </g>
+
+  <!-- STORE SIDE -->
+  <g clip-path="url(#roundClip)">
+    <rect x="360" y="220" width="56" height="42" rx="6" fill="url(#wallGrad)" stroke="#181020" stroke-width="4"/>
+    <rect x="430" y="220" width="56" height="42" rx="6" fill="url(#wallGrad)" stroke="#181020" stroke-width="4"/>
+    <rect x="514" y="220" width="56" height="42" rx="6" fill="url(#wallGrad)" stroke="#181020" stroke-width="4"/>
+    <rect x="584" y="220" width="46" height="42" rx="6" fill="url(#wallGrad)" stroke="#181020" stroke-width="4"/>
+    <rect x="360" y="220" width="56" height="12" rx="4" fill="white" opacity="0.22"/>
+    <rect x="430" y="220" width="56" height="12" rx="4" fill="white" opacity="0.22"/>
+    <rect x="514" y="220" width="56" height="12" rx="4" fill="white" opacity="0.22"/>
+    <rect x="584" y="220" width="46" height="12" rx="4" fill="white" opacity="0.22"/>
+    <rect x="354" y="260" width="296" height="20" rx="5" fill="url(#wallGrad)" stroke="#181020" stroke-width="3.5"/>
+    <rect x="354" y="260" width="296" height="8" rx="4" fill="white" opacity="0.18"/>
+    <rect x="354" y="278" width="296" height="220" rx="5" fill="url(#wallGrad)" stroke="#181020" stroke-width="3.5"/>
+    <rect x="354" y="288" width="296" height="68" fill="url(#awningBlue)" stroke="#181020" stroke-width="2.5"/>
+    <rect x="374" y="288" width="20" height="68" fill="white" opacity="0.12"/>
+    <rect x="414" y="288" width="20" height="68" fill="white" opacity="0.12"/>
+    <rect x="454" y="288" width="20" height="68" fill="white" opacity="0.12"/>
+    <rect x="494" y="288" width="20" height="68" fill="white" opacity="0.12"/>
+    <rect x="534" y="288" width="20" height="68" fill="white" opacity="0.12"/>
+    <rect x="574" y="288" width="20" height="68" fill="white" opacity="0.12"/>
+    <rect x="354" y="288" width="296" height="9" fill="white" opacity="0.16"/>
+    <path d="M354 356 Q367 370 380 356 Q393 370 406 356 Q419 370 432 356 Q445 370 458 356 Q471 370 484 356 Q497 370 510 356 Q523 370 536 356 Q549 370 562 356 Q575 370 588 356 Q601 370 614 356 Q627 370 640 356 L650 356" stroke="#80c0ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <rect x="362" y="366" width="276" height="64" rx="7" fill="#060e28" stroke="#3060e0" stroke-width="3.5"/>
+    <rect x="362" y="366" width="276" height="5" rx="3" fill="#3060e0" opacity="0.7"/>
+    <rect x="362" y="425" width="276" height="5" rx="3" fill="#3060e0" opacity="0.7"/>
+    <text x="500" y="390" font-family="'Arial Black', Impact, Arial, sans-serif" font-size="20" font-weight="900" letter-spacing="8" fill="white" text-anchor="middle">SUPER</text>
+    <text x="500" y="416" font-family="'Arial Black', Impact, Arial, sans-serif" font-size="20" font-weight="900" letter-spacing="8" fill="#ffe870" text-anchor="middle">STORE</text>
+    <path d="M370 498 L370 460 A26 26 0 0 1 422 460 L422 498 Z" fill="#0a1e5e" stroke="#181020" stroke-width="2.5"/>
+    <line x1="396" y1="434" x2="396" y2="498" stroke="#3060c0" stroke-width="2" opacity="0.65"/>
+    <line x1="376" y1="446" x2="390" y2="460" stroke="white" stroke-width="2.5" opacity="0.32"/>
+    <path d="M578 498 L578 460 A26 26 0 0 1 630 460 L630 498 Z" fill="#0a1e5e" stroke="#181020" stroke-width="2.5"/>
+    <line x1="604" y1="434" x2="604" y2="498" stroke="#3060c0" stroke-width="2" opacity="0.65"/>
+    <line x1="584" y1="446" x2="598" y2="460" stroke="white" stroke-width="2.5" opacity="0.32"/>
+    <path d="M464 498 L464 456 A36 36 0 0 1 536 456 L536 498 Z" fill="#03091a" stroke="#2450b0" stroke-width="3.5"/>
+    <line x1="500" y1="420" x2="500" y2="498" stroke="#3060c0" stroke-width="2" opacity="0.55"/>
+    <circle cx="492" cy="478" r="6" fill="#4080f8"/>
+    <circle cx="508" cy="478" r="6" fill="#4080f8"/>
+    <rect x="346" y="496" width="308" height="14" rx="6" fill="#1a2272" stroke="#181020" stroke-width="2.5"/>
+  </g>
+
+  <!-- CROWN -->
+  <g transform="translate(340,116)">
+    <ellipse cx="2" cy="62" rx="90" ry="16" fill="#000" opacity="0.38"/>
+    <path d="M-90 52 L-90 -18 L-56 16 L0 -70 L56 16 L90 -18 L90 52 Z" fill="url(#crownFill)" stroke="#6c3600" stroke-width="5.5" stroke-linejoin="round"/>
+    <path d="M-84 -16 L-56 14 L0 -64 L56 14 L84 -16" stroke="white" stroke-width="2.5" fill="none" opacity="0.3"/>
+    <rect x="-90" y="38" width="180" height="18" rx="7" fill="#f7c832" opacity="0.78"/>
+    <rect x="-90" y="38" width="180" height="8" rx="6" fill="white" opacity="0.2"/>
+    <circle cx="0" cy="-32" r="18" fill="#ff1e38" stroke="#60000e" stroke-width="3"/>
+    <circle cx="-6" cy="-38" r="7" fill="white" opacity="0.35"/>
+    <circle cx="-56" cy="12" r="13" fill="#18c85a" stroke="#065220" stroke-width="2.5"/>
+    <circle cx="-61" cy="7" r="5" fill="white" opacity="0.35"/>
+    <circle cx="56" cy="12" r="13" fill="#1e5ef8" stroke="#051e78" stroke-width="2.5"/>
+    <circle cx="51" cy="7" r="5" fill="white" opacity="0.35"/>
+  </g>
+
+  <!-- TEXT AREA -->
+  <text x="340" y="553" font-family="'Arial Black', Impact, Arial, sans-serif" font-size="44" font-weight="900" letter-spacing="1" fill="white" text-anchor="middle" opacity="0.92">SuperStore</text>
+  <text x="341" y="638" font-family="'Arial Black', Impact, Arial, sans-serif" font-size="90" font-weight="900" letter-spacing="6" fill="#06091e" text-anchor="middle" opacity="0.55">TYCOON</text>
+  <text x="340" y="634" font-family="'Arial Black', Impact, Arial, sans-serif" font-size="90" font-weight="900" letter-spacing="6" fill="url(#goldText)" text-anchor="middle">TYCOON</text>
+  <rect x="122" y="648" width="436" height="9" rx="4.5" fill="url(#groundGreen)" opacity="0.95"/>
+</svg>

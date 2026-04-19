@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Farm Scene UI · SuperStoreTycoon</title>
+<style>
+:root{
+  --bg:#04061A;--surface:#0d1024;--s2:#151929;--s3:#1e2540;
+  --gold:#F7C832;--gold2:#e6b020;--em:#22C55E;--sap:#4F8EF7;--ruby:#EF4444;
+  --text:#F1F5F9;--muted:#64748B;--border:#1E2860;--r:12px;
+  --soil:#2d1a0a;--soil2:#3d2410;--grass:#1a3d12;--path-c:#4a3820;
+  --T:50px;--gap:3px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);
+  padding:.5rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-size:.88rem}
+.topbar a{color:var(--text);text-decoration:none;font-weight:700}.topbar a:hover{color:var(--gold)}
+.topbar .spacer{flex:1}
+.topbar .badge-link{background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);
+  color:var(--sap);border-radius:20px;padding:.25rem .8rem;font-size:.78rem;font-weight:600;text-decoration:none}
+.topbar .badge-link:hover{background:rgba(79,142,247,.25);color:var(--sap)}
+.topbar .badge-em{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);
+  color:var(--em);border-radius:20px;padding:.25rem .8rem;font-size:.78rem;font-weight:600}
+
+/* ── Page layout ── */
+.layout{display:grid;grid-template-columns:420px 1fr;gap:2.5rem;max-width:1200px;margin:2rem auto;padding:0 1.5rem 4rem}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* ── Phone frame ── */
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.phone-hint{font-size:.72rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;text-align:center}
+.phone-frame{
+  width:390px;height:800px;background:#06080f;
+  border-radius:46px;border:10px solid #111;
+  box-shadow:0 0 0 2px #222,0 24px 80px rgba(0,0,0,.85),0 0 80px rgba(34,197,94,.06);
+  overflow:hidden;display:flex;flex-direction:column;position:relative
+}
+.scene-links{display:flex;gap:.6rem}
+.scene-link{padding:.4rem 1rem;border-radius:20px;font-size:.8rem;font-weight:700;text-decoration:none;border:1px solid var(--border);color:var(--muted)}
+.scene-link.active{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.4);color:var(--em)}
+.scene-link:hover{border-color:var(--sap);color:var(--sap)}
+
+/* ── Status bar ── */
+.status-bar{background:#000;display:flex;justify-content:space-between;align-items:center;
+  padding:.42rem 1.4rem .25rem;font-size:.7rem;font-weight:600;flex-shrink:0;color:#ccc}
+
+/* ── HUD ── */
+.hud{padding:.45rem .65rem;display:flex;align-items:center;gap:.4rem;flex-shrink:0;
+  background:linear-gradient(180deg,#07090f 0%,rgba(7,9,15,0) 100%);position:relative;z-index:10}
+.hud-lv{background:var(--gold);color:#1a0e00;font-weight:900;font-size:.75rem;border-radius:16px;padding:.2rem .55rem}
+.hud-xp-wrap{flex:1;max-width:60px;height:5px;background:#1e2540;border-radius:3px;overflow:hidden}
+.hud-xp-fill{height:100%;width:68%;background:linear-gradient(90deg,var(--gold),#f5a623);border-radius:3px}
+.pill{display:flex;align-items:center;gap:.28rem;background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:.18rem .5rem;font-size:.75rem;font-weight:700}
+.pill .ico{font-size:.85rem}
+.pill.coins{border-color:rgba(247,200,50,.2)}
+.pill.ft{border-color:rgba(34,197,94,.2);color:var(--em)}
+.pill.season{border-color:rgba(255,165,0,.2);color:#f5a623;font-size:.7rem}
+.hud-right{display:flex;gap:.3rem;margin-left:auto}
+.hud-ico-btn{width:28px;height:28px;background:rgba(255,255,255,.06);border:1px solid var(--border);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer}
+
+/* ── Zone tabs ── */
+.zone-tabs{display:flex;gap:.3rem;padding:.3rem .65rem;background:rgba(0,0,0,.45);flex-shrink:0;overflow-x:auto;scrollbar-width:none}
+.zone-tabs::-webkit-scrollbar{display:none}
+.ztab{font-size:.68rem;font-weight:700;padding:.2rem .65rem;border-radius:12px;
+  border:1px solid var(--border);background:var(--s2);color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:.15s}
+.ztab.active{background:var(--em);color:#fff;border-color:var(--em)}
+.ztab.locked{opacity:.38;cursor:not-allowed}
+.ztab:hover:not(.locked):not(.active){border-color:var(--em);color:var(--em)}
+
+/* ── Farm viewport & grid ── */
+.farm-viewport{flex:1;overflow:auto;position:relative;scrollbar-width:thin;
+  background:var(--soil);background-image:
+    repeating-linear-gradient(0deg,transparent,transparent calc(var(--T) + var(--gap) - 1px),rgba(0,0,0,.1) calc(var(--T) + var(--gap) - 1px),rgba(0,0,0,.1) calc(var(--T) + var(--gap))),
+    repeating-linear-gradient(90deg,transparent,transparent calc(var(--T) + var(--gap) - 1px),rgba(0,0,0,.1) calc(var(--T) + var(--gap) - 1px),rgba(0,0,0,.1) calc(var(--T) + var(--gap)))}
+
+.farm-grid{display:grid;grid-template-columns:repeat(6,var(--T));grid-template-rows:repeat(6,var(--T));
+  gap:var(--gap);padding:8px;width:fit-content}
+
+/* ── Tiles ── */
+.tile{width:var(--T);height:var(--T);border-radius:7px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;position:relative;
+  transition:transform .12s,box-shadow .12s;border:1.5px solid transparent;user-select:none}
+.tile:hover{transform:scale(1.06);z-index:5}
+.tile:active{transform:scale(.96)}
+.tile .tic{font-size:1.4rem;line-height:1}
+.tile .tlbl{font-size:.44rem;color:rgba(255,255,255,.5);font-weight:700;letter-spacing:.04em;margin-top:1px;text-align:center}
+
+/* Tile states */
+.tile.empty{background:var(--soil2);border-color:#52341a;color:#6a4520;font-size:1.2rem}
+.tile.empty:hover{border-color:#8a6030}
+.tile.path-t{background:var(--path-c);border-color:#6a5428;cursor:default}
+.tile.path-t:hover{transform:none}
+.tile.planted{background:linear-gradient(180deg,#1a2d0a,var(--soil2));border-color:#2d5a10}
+.tile.growing{background:linear-gradient(180deg,#1e3d10,#1a2d0a);border-color:var(--em)}
+.tile.ready{background:linear-gradient(180deg,#1a3d10,#0d2005);border-color:var(--gold);
+  box-shadow:0 0 14px rgba(247,200,50,.38),inset 0 0 8px rgba(247,200,50,.1);
+  animation:rpulse 2.2s ease-in-out infinite}
+.tile.wilting{background:linear-gradient(180deg,#2d1010,#1a0808);border-color:var(--ruby);
+  animation:wpulse 1s ease-in-out infinite}
+.tile.selected{border-color:var(--sap)!important;
+  box-shadow:0 0 0 2px rgba(79,142,247,.4),0 0 18px rgba(79,142,247,.3)!important;animation:none!important}
+.tile.building-barn{background:linear-gradient(135deg,#3d1a0a,#1a0a00);border-color:#8a3a10}
+.tile.building-proc{background:linear-gradient(135deg,#1a2d40,#0d1828);border-color:#2d5a80}
+.tile.building-animal{background:linear-gradient(135deg,#1a3a10,#0d2208);border-color:#2d6a18}
+
+@keyframes rpulse{0%,100%{box-shadow:0 0 10px rgba(247,200,50,.3),inset 0 0 6px rgba(247,200,50,.08)}
+  50%{box-shadow:0 0 22px rgba(247,200,50,.6),inset 0 0 14px rgba(247,200,50,.2)}}
+@keyframes wpulse{0%,100%{box-shadow:0 0 6px rgba(239,68,68,.15)}50%{box-shadow:0 0 18px rgba(239,68,68,.55)}}
+
+/* Tile progress */
+.tprog{position:absolute;bottom:4px;left:4px;right:4px;height:3px;background:rgba(0,0,0,.4);border-radius:2px;overflow:hidden}
+.tprog-fill{height:100%;border-radius:2px;background:var(--em);transition:width .3s}
+.tprog-fill.near{background:var(--gold)}.tprog-fill.done{background:#fff}
+
+/* Tile badges */
+.tbadge{position:absolute;top:2px;right:2px;font-size:.48rem;background:rgba(0,0,0,.72);
+  border-radius:4px;padding:1px 3px;font-weight:700;line-height:1.3;white-space:nowrap}
+.tbadge.water{color:var(--sap)}.tbadge.worker{color:var(--gold)}.tbadge.wilt{color:var(--ruby)}
+.tbadge.barn-fill{top:2px;left:2px;right:auto;color:var(--gold)}
+.tbadge.proc-active{top:2px;left:2px;right:auto;color:var(--em)}
+
+/* Worker dot */
+.worker-dot{position:absolute;width:14px;height:14px;background:var(--gold);border:2px solid #fff;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.52rem;
+  z-index:20;animation:ww 8s linear infinite;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.5)}
+@keyframes ww{
+  0%  {left:12px;top:12px}
+  20% {left:116px;top:12px}
+  40% {left:116px;top:66px}
+  60% {left:12px;top:66px}
+  80% {left:12px;top:12px}
+  100%{left:12px;top:12px}}
+
+/* ── Wilt warning banner ── */
+.wilt-banner{background:rgba(239,68,68,.15);border-top:1px solid rgba(239,68,68,.4);
+  border-bottom:1px solid rgba(239,68,68,.4);padding:.3rem .65rem;
+  display:flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;color:var(--ruby);flex-shrink:0}
+.wilt-banner button{margin-left:auto;background:var(--ruby);color:#fff;border:none;border-radius:8px;
+  padding:.2rem .6rem;font-size:.7rem;font-weight:700;cursor:pointer}
+
+/* ── Tooltip overlay ── */
+.tt-overlay{position:absolute;bottom:0;left:0;right:0;z-index:30;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.65) 35%);
+  display:none;flex-direction:column;pointer-events:none}
+.tt-overlay.vis{display:flex}
+.tt-panel{background:var(--surface);border-top:1px solid var(--border);border-radius:22px 22px 0 0;
+  padding:.9rem;pointer-events:all;box-shadow:0 -8px 40px rgba(0,0,0,.7);max-height:320px;overflow-y:auto}
+.tt-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.6rem}
+.tt-ico{font-size:1.5rem}.tt-title{font-size:.95rem;font-weight:800}
+.tt-sub{font-size:.7rem;color:var(--muted);margin-top:1px}
+.tt-close{margin-left:auto;width:26px;height:26px;background:var(--s2);border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;flex-shrink:0}
+.tt-tags{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.6rem}
+.tag{font-size:.66rem;padding:.18rem .5rem;border-radius:10px;font-weight:600;border:1px solid}
+.tag.water{background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.3);color:var(--sap)}
+.tag.fert{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--em)}
+.tag.worker{background:rgba(247,200,50,.1);border-color:rgba(247,200,50,.3);color:var(--gold)}
+.tt-stats{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin-bottom:.6rem}
+.stat{background:var(--s2);border-radius:8px;padding:.38rem .55rem}
+.stat-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat-val{font-size:.85rem;font-weight:700;margin-top:1px}
+.stat-val.g{color:var(--gold)}.stat-val.em{color:var(--em)}.stat-val.r{color:var(--ruby)}.stat-val.b{color:var(--sap)}
+.tt-acts{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.act-btn{padding:.55rem .5rem;border-radius:9px;border:none;font-size:.76rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:.35rem;transition:filter .15s,transform .1s}
+.act-btn:hover{filter:brightness(1.12)}.act-btn:active{transform:scale(.96)}
+.act-btn.prim{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0e00;grid-column:span 2}
+.act-btn.sec{background:var(--s2);border:1px solid var(--border);color:var(--text)}
+.act-btn.dis{background:var(--s2);border:1px solid var(--border);color:var(--muted);cursor:not-allowed}
+.tt-divider{border:none;border-top:1px solid var(--border);margin:.55rem 0}
+
+/* ── Toolbar ── */
+.farm-tb{background:linear-gradient(0deg,#07090f,rgba(7,9,15,.95));border-top:1px solid var(--border);
+  display:flex;padding:.45rem .35rem .75rem;gap:.25rem;flex-shrink:0;z-index:20}
+.tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.4rem .15rem;
+  border-radius:9px;border:1px solid transparent;background:none;cursor:pointer;
+  transition:.15s;color:var(--muted);font-size:.6rem;font-weight:600;position:relative}
+.tb-btn .tb-ico{font-size:1.15rem}
+.tb-btn:hover{background:var(--s2);border-color:var(--border);color:var(--text)}
+.tb-btn.active{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.35);color:var(--em)}
+.tb-badge{position:absolute;top:-3px;right:2px;background:var(--ruby);color:#fff;
+  font-size:.52rem;font-weight:900;border-radius:7px;padding:1px 4px;border:1.5px solid #000}
+.tb-badge.blue{background:var(--sap)}
+
+/* ── Slide panels ── */
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:45;display:none}
+.backdrop.vis{display:block}
+.spanel{position:absolute;bottom:0;left:0;right:0;background:var(--surface);
+  border-radius:22px 22px 0 0;border-top:1px solid var(--border);z-index:50;
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.22,1,.36,1);
+  max-height:78%;display:flex;flex-direction:column}
+.spanel.open{transform:translateY(0)}
+.spanel-handle{width:36px;height:4px;background:#2a2a2a;border-radius:2px;margin:.65rem auto .2rem;flex-shrink:0}
+.spanel-title{font-size:.92rem;font-weight:800;padding:.2rem 1rem .65rem;
+  border-bottom:1px solid var(--border);flex-shrink:0}
+.spanel-body{padding:.75rem;flex:1;overflow-y:auto}
+
+/* Panel content */
+.worker-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:.6rem .75rem;display:flex;align-items:center;gap:.65rem;margin-bottom:.45rem}
+.w-ico{font-size:1.3rem}.w-info{flex:1}
+.w-name{font-size:.82rem;font-weight:700}
+.w-task{font-size:.68rem;color:var(--muted);margin-top:2px;display:flex;align-items:center;gap:.3rem}
+.w-dot{width:5px;height:5px;border-radius:50%;background:var(--em);animation:blink 1.6s ease-in-out infinite;flex-shrink:0}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.w-zone{font-size:.62rem;background:rgba(247,200,50,.1);border:1px solid rgba(247,200,50,.25);
+  color:var(--gold);border-radius:7px;padding:.12rem .42rem;font-weight:700}
+
+.barn-cap-bar{height:5px;background:#1e2540;border-radius:3px;overflow:hidden;margin-bottom:.7rem}
+.barn-cap-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--em),var(--sap))}
+.barn-row{display:flex;align-items:center;gap:.55rem;padding:.42rem 0;border-bottom:1px solid var(--border)}
+.barn-row:last-of-type{border-bottom:none}
+.barn-ico{font-size:1rem;width:26px;text-align:center}
+.barn-name{flex:1;font-size:.8rem}
+.barn-qty{font-size:.8rem;font-weight:700;color:var(--gold);background:rgba(247,200,50,.1);
+  border:1px solid rgba(247,200,50,.2);border-radius:7px;padding:.08rem .45rem}
+.big-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0e00;
+  border:none;border-radius:11px;padding:.65rem;font-size:.88rem;font-weight:800;cursor:pointer;margin-top:.75rem}
+.big-btn.green{background:linear-gradient(135deg,var(--em),#16a34a);color:#fff}
+
+/* Processing panel */
+.proc-job{background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:.65rem .8rem;margin-bottom:.5rem}
+.proc-name{font-size:.82rem;font-weight:700;display:flex;align-items:center;justify-content:space-between;margin-bottom:.4rem}
+.proc-pbar{height:4px;background:#1e2540;border-radius:2px;overflow:hidden;margin-bottom:.3rem}
+.proc-pfill{height:100%;border-radius:2px;background:linear-gradient(90deg,var(--sap),var(--em))}
+.proc-meta{font-size:.68rem;color:var(--muted)}
+
+/* ── Design notes ── */
+.notes{padding-top:.4rem}
+.notes-title{font-size:1.5rem;font-weight:900;margin-bottom:.3rem}
+.notes-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem;line-height:1.5}
+.sec-hd{font-size:.95rem;font-weight:800;color:var(--gold);margin:1.4rem 0 .65rem;
+  padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+.callout{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--em);
+  border-radius:0 var(--r) var(--r) 0;padding:.75rem 1rem;margin-bottom:.85rem}
+.callout.gold{border-left-color:var(--gold)}.callout.blue{border-left-color:var(--sap)}.callout.red{border-left-color:var(--ruby)}
+.callout-title{font-size:.82rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.35rem}
+.callout-body{font-size:.78rem;color:#a0aec0;line-height:1.65}
+.callout-body code{background:var(--s2);border:1px solid var(--border);border-radius:4px;
+  padding:.04rem .28rem;font-size:.76rem;font-family:monospace;color:var(--gold)}
+.chip{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:middle}
+.dtable{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:1rem}
+.dtable th{background:var(--s2);text-align:left;padding:.38rem .6rem;border:1px solid var(--border);color:var(--sap);font-weight:700}
+.dtable td{padding:.38rem .6rem;border:1px solid var(--border);vertical-align:top}
+.dtable tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a href="../index.html">🏪🌾 SuperStoreTycoon GDD</a>
+  <span style="color:var(--muted)">›</span>
+  <span style="font-weight:700;color:var(--em)">🌾 Farm Scene UI</span>
+  <span class="spacer"></span>
+  <a class="badge-link" href="ui-store-scene.html">🏪 Store Scene →</a>
+</nav>
+
+<div class="layout">
+
+<!-- ════════════════ PHONE MOCKUP ════════════════ -->
+<div class="phone-col">
+  <div class="phone-hint">Interactive · tap tiles to see tooltips</div>
+
+  <div class="phone-frame">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="letter-spacing:.04em">◾◾◾ WiFi 🔋 84%</span>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-lv">Lv.22</div>
+      <div class="hud-xp-wrap"><div class="hud-xp-fill"></div></div>
+      <div class="pill coins"><span class="ico">💰</span>8,420</div>
+      <div class="pill ft"><span class="ico">🌾</span>62</div>
+      <div class="pill season">🍂 Autumn</div>
+      <div class="hud-right">
+        <div class="hud-ico-btn" title="Settings">⚙️</div>
+        <div class="hud-ico-btn" title="Map">🗺️</div>
+      </div>
+    </div>
+
+    <!-- Zone tabs -->
+    <div class="zone-tabs">
+      <div class="ztab active">Zone 0</div>
+      <div class="ztab">Zone 1</div>
+      <div class="ztab">Zone 2</div>
+      <div class="ztab">Zone 3</div>
+      <div class="ztab" style="color:var(--gold);border-color:rgba(247,200,50,.35)">✨ Zone 4 New!</div>
+      <div class="ztab locked">🔒 Zone 5 · Lv.30</div>
+    </div>
+
+    <!-- Wilt banner -->
+    <div class="wilt-banner">
+      ⚠️ 1 crop wilting! Carrot Plot — 7 min
+      <button onclick="harvestWilt()">Harvest</button>
+    </div>
+
+    <!-- Farm viewport -->
+    <div class="farm-viewport" id="farmViewport">
+      <!-- Worker animation -->
+      <div class="worker-dot">👷</div>
+
+      <div class="farm-grid">
+        <!-- ROW 1 -->
+        <div class="tile ready" style="grid-column:1;grid-row:1"
+          onclick="tt('🌾','Wheat Plot','1×1 · Zone 0','READY ✓','10–12','5 min ago','23 min',true,false,true)">
+          <span class="tic">🌾</span><span class="tlbl">READY</span>
+          <div class="tprog"><div class="tprog-fill done" style="width:100%"></div></div>
+          <span class="tbadge water">💧</span>
+        </div>
+        <div class="tile growing" style="grid-column:2;grid-row:1"
+          onclick="tt('🌾','Wheat Plot','1×1 · Zone 0','GROWING 75%','8–12 wheat','2 min left','25 min',true,false,false)">
+          <span class="tic">🌿</span><span class="tlbl">75%</span>
+          <div class="tprog"><div class="tprog-fill near" style="width:75%"></div></div>
+          <span class="tbadge water">💧</span>
+        </div>
+        <div class="tile planted" style="grid-column:3;grid-row:1"
+          onclick="tt('🌾','Wheat Plot','1×1 · Zone 0','GROWING 30%','8–12 wheat','4 min left','27 min',false,false,false)">
+          <span class="tic">🌱</span><span class="tlbl">30%</span>
+          <div class="tprog"><div class="tprog-fill" style="width:30%"></div></div>
+        </div>
+        <div class="tile path-t" style="grid-column:4;grid-row:1"></div>
+        <div class="tile path-t" style="grid-column:5;grid-row:1"></div>
+        <!-- BARN 2×2 at col 5-6, row 1-2 — use col 5/6/row 1/2 below -->
+        <div class="tile building-barn" style="grid-column:5/7;grid-row:1/3;font-size:.85rem"
+          onclick="openPanel('barnPanel')">
+          <span class="tic">🏚️</span><span class="tlbl">BARN · Lv.2</span>
+          <span class="tbadge barn-fill">47/100</span>
+        </div>
+
+        <!-- ROW 2 -->
+        <div class="tile ready" style="grid-column:1;grid-row:2"
+          onclick="tt('🍅','Tomato Plot','1×1 · Zone 0','READY ✓','8 tomatoes','8 min ago','37 min',true,false,false)">
+          <span class="tic">🍅</span><span class="tlbl">READY</span>
+          <div class="tprog"><div class="tprog-fill done" style="width:100%"></div></div>
+          <span class="tbadge water">💧</span>
+        </div>
+        <div class="tile growing" style="grid-column:2;grid-row:2"
+          onclick="tt('🍅','Tomato Plot','1×1 · Zone 0','GROWING 50%','6–10 tomatoes','4 min left','41 min',true,false,true)">
+          <span class="tic">🍅</span><span class="tlbl">50%</span>
+          <div class="tprog"><div class="tprog-fill" style="width:50%"></div></div>
+          <span class="tbadge worker">👷</span>
+        </div>
+        <div class="tile planted" style="grid-column:3;grid-row:2"
+          onclick="tt('🍅','Tomato Plot','1×1 · Zone 0','GROWING 15%','6–10 tomatoes','7 min left','45 min',false,false,false)">
+          <span class="tic">🌱</span><span class="tlbl">15%</span>
+          <div class="tprog"><div class="tprog-fill" style="width:15%"></div></div>
+        </div>
+        <div class="tile path-t" style="grid-column:4;grid-row:2"></div>
+        <!-- barn continues -->
+
+        <!-- ROW 3 -->
+        <div class="tile wilting" style="grid-column:1;grid-row:3"
+          onclick="ttWilt()">
+          <span class="tic">🥕</span><span class="tlbl">⚠️ WILT</span>
+          <div class="tprog"><div class="tprog-fill" style="width:45%;background:var(--ruby)"></div></div>
+          <span class="tbadge wilt">7m</span>
+        </div>
+        <div class="tile growing" style="grid-column:2;grid-row:3"
+          onclick="tt('🥕','Carrot Plot','1×1 · Zone 0','GROWING 60%','6–10 carrots','4 min left','56 min',true,true,false)">
+          <span class="tic">🥕</span><span class="tlbl">60%</span>
+          <div class="tprog"><div class="tprog-fill" style="width:60%"></div></div>
+          <span class="tbadge water">💧</span>
+        </div>
+        <div class="tile empty" style="grid-column:3;grid-row:3" onclick="ttEmpty(this)">+</div>
+        <div class="tile path-t" style="grid-column:4;grid-row:3"></div>
+        <!-- BAKERY 2×2 at col 5-6, row 3-4 -->
+        <div class="tile building-proc" style="grid-column:5/7;grid-row:3/5;font-size:.85rem"
+          onclick="ttBuilding('🍞','Bakery Oven','2×2 · Processing Building','PROCESSING','Bread','3 min left','Queue: 2 jobs')">
+          <span class="tic">🏭</span><span class="tlbl" style="text-align:center">BAKERY</span>
+          <span class="tbadge proc-active">▶ 3m</span>
+        </div>
+
+        <!-- ROW 4 — cow pen col 1-3, rows 4-5 -->
+        <div class="tile building-animal" style="grid-column:1/4;grid-row:4/6;font-size:.85rem"
+          onclick="ttAnimal('🐄','Cow Pen','3×2 · Animal Pen · 3/4 cows','FED · Producing','🥛 Milk ×3','14 min','Happy 😊')">
+          <span class="tic" style="font-size:1.6rem">🐄</span>
+          <span class="tlbl" style="font-size:.5rem">COW PEN · 3 cows</span>
+          <span class="tbadge worker" style="top:4px;right:4px">🐄 Keeper</span>
+          <span class="tbadge" style="bottom:4px;right:auto;left:4px;top:auto;color:var(--gold)">14m ⏱</span>
+        </div>
+        <div class="tile path-t" style="grid-column:4;grid-row:4"></div>
+        <!-- bakery continues -->
+
+        <!-- ROW 5 (cols 1-3 = cow, col 4 = path, 5-6 = empty) -->
+        <div class="tile path-t" style="grid-column:4;grid-row:5"></div>
+        <div class="tile empty" style="grid-column:5;grid-row:5" onclick="ttEmpty(this)">+</div>
+        <div class="tile empty" style="grid-column:6;grid-row:5" onclick="ttEmpty(this)">+</div>
+
+        <!-- ROW 6 — all path -->
+        <div class="tile path-t" style="grid-column:1;grid-row:6">
+          <span style="font-size:.55rem;color:#6a5428">───</span>
+        </div>
+        <div class="tile path-t" style="grid-column:2;grid-row:6"></div>
+        <div class="tile path-t" style="grid-column:3;grid-row:6"></div>
+        <div class="tile path-t" style="grid-column:4;grid-row:6"></div>
+        <div class="tile path-t" style="grid-column:5;grid-row:6"></div>
+        <div class="tile path-t" style="grid-column:6;grid-row:6"></div>
+      </div>
+
+      <!-- Tile tooltip -->
+      <div class="tt-overlay" id="tileTooltip">
+        <div class="tt-panel">
+          <div class="tt-hdr">
+            <div class="tt-ico" id="ttIco">🌾</div>
+            <div>
+              <div class="tt-title" id="ttTitle">Wheat Plot</div>
+              <div class="tt-sub" id="ttSub">1×1 Crop Plot</div>
+            </div>
+            <div class="tt-close" onclick="closeTT()">✕</div>
+          </div>
+          <div class="tt-tags" id="ttTags"></div>
+          <div class="tt-stats">
+            <div class="stat"><div class="stat-lbl">Status</div><div class="stat-val em" id="ttStatus">READY ✓</div></div>
+            <div class="stat"><div class="stat-lbl">Yield</div><div class="stat-val g" id="ttYield">10 wheat</div></div>
+            <div class="stat"><div class="stat-lbl">Grown</div><div class="stat-val" id="ttGrew">5 min ago</div></div>
+            <div class="stat"><div class="stat-lbl">Wilt in</div><div class="stat-val r" id="ttWilt">23 min</div></div>
+          </div>
+          <div class="tt-acts" id="ttActs"></div>
+        </div>
+      </div>
+    </div><!-- farm-viewport -->
+
+    <!-- Bottom toolbar -->
+    <div class="farm-tb">
+      <button class="tb-btn active">
+        <span class="tb-ico">🌱</span>Plant
+      </button>
+      <button class="tb-btn" onclick="harvestAll()">
+        <span class="tb-ico">🌾</span>Harvest All
+        <span class="tb-badge" id="harvestBadge">2</span>
+      </button>
+      <button class="tb-btn" onclick="openPanel('workerPanel')">
+        <span class="tb-ico">👷</span>Workers
+      </button>
+      <button class="tb-btn" onclick="openPanel('barnPanel')">
+        <span class="tb-ico">🏚️</span>Barn
+        <span class="tb-badge blue">47</span>
+      </button>
+      <button class="tb-btn" onclick="openPanel('supplyPanel')">
+        <span class="tb-ico">🚚</span>Supply
+      </button>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="backdrop" id="backdrop" onclick="closeAllPanels()"></div>
+
+    <!-- Workers panel -->
+    <div class="spanel" id="workerPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">👷 Farm Workers</div>
+      <div class="spanel-body">
+        <div class="worker-card">
+          <div class="w-ico">🧑‍🌾</div>
+          <div class="w-info">
+            <div class="w-name">Field Hand #1</div>
+            <div class="w-task"><span class="w-dot"></span>Watering crop plots · Zone 0</div>
+          </div>
+          <div class="w-zone">Zone 0</div>
+        </div>
+        <div class="worker-card">
+          <div class="w-ico">🧑‍🌾</div>
+          <div class="w-info">
+            <div class="w-name">Field Hand #2</div>
+            <div class="w-task"><span class="w-dot"></span>Harvesting wheat · Zone 0</div>
+          </div>
+          <div class="w-zone">Zone 0</div>
+        </div>
+        <div class="worker-card">
+          <div class="w-ico">🐄</div>
+          <div class="w-info">
+            <div class="w-name">Animal Keeper</div>
+            <div class="w-task"><span class="w-dot"></span>Collecting milk · Cow Pen</div>
+          </div>
+          <div class="w-zone">Zone 0</div>
+        </div>
+        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:10px;
+          padding:.6rem .75rem;text-align:center;color:var(--muted);font-size:.78rem">
+          🧑‍🍳 Kitchen Hand · Unlocks at Lv.25 (3 levels away)
+        </div>
+        <button class="big-btn green" style="margin-top:.7rem">+ Hire Field Hand #3 · 500 💰</button>
+      </div>
+    </div>
+
+    <!-- Barn panel -->
+    <div class="spanel" id="barnPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">🏚️ Barn Storage · Lv.2</div>
+      <div class="spanel-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
+          <span style="font-size:.76rem;color:var(--muted)">47 / 100 slots used</span>
+          <span style="font-size:.76rem;color:var(--gold);font-weight:700">47%</span>
+        </div>
+        <div class="barn-cap-bar"><div class="barn-cap-fill" style="width:47%"></div></div>
+        <div class="barn-row"><span class="barn-ico">🌾</span><span class="barn-name">Wheat</span><span class="barn-qty">×12</span></div>
+        <div class="barn-row"><span class="barn-ico">🍅</span><span class="barn-name">Tomato</span><span class="barn-qty">×8</span></div>
+        <div class="barn-row"><span class="barn-ico">🥕</span><span class="barn-name">Carrot</span><span class="barn-qty">×6</span></div>
+        <div class="barn-row"><span class="barn-ico">🥛</span><span class="barn-name">Milk</span><span class="barn-qty">×5</span></div>
+        <div class="barn-row"><span class="barn-ico">🥚</span><span class="barn-name">Eggs</span><span class="barn-qty">×9</span></div>
+        <div class="barn-row"><span class="barn-ico">🍞</span><span class="barn-name">Bread</span><span class="barn-qty">×4</span></div>
+        <div class="barn-row"><span class="barn-ico">🧀</span><span class="barn-name">Cheese</span><span class="barn-qty">×3</span></div>
+        <button class="big-btn">🚚 Send All to Store</button>
+        <button class="big-btn" style="margin-top:.45rem;background:var(--s2);border:1px solid var(--border);color:var(--text)">⬆️ Upgrade Barn · 800 💰</button>
+      </div>
+    </div>
+
+    <!-- Supply lane panel -->
+    <div class="spanel" id="supplyPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">🚚 Supply Lane</div>
+      <div class="spanel-body">
+        <div class="proc-job">
+          <div class="proc-name">Delivery Runner #1 <span style="color:var(--em);font-size:.7rem">● On route</span></div>
+          <div class="proc-pbar"><div class="proc-pfill" style="width:65%"></div></div>
+          <div class="proc-meta">Carrying: 🍞×4, 🧀×3 → Store Stockroom · ETA 2 min</div>
+        </div>
+        <div class="proc-job">
+          <div class="proc-name">Delivery Runner #2 <span style="color:var(--muted);font-size:.7rem">● Idle</span></div>
+          <div class="proc-meta" style="margin-bottom:.45rem">Waiting at Barn — ready for dispatch</div>
+          <button class="big-btn" style="padding:.4rem;font-size:.78rem;border-radius:8px">🚚 Dispatch Now</button>
+        </div>
+        <div style="font-size:.72rem;color:var(--muted);margin-top:.5rem;text-align:center">
+          Max capacity: 20 items/run · 4 runs/hour<br>
+          <span style="color:var(--gold)">Upgrade carrier at Lv.30 → 40 items/run</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- phone-frame -->
+
+  <div class="scene-links">
+    <span class="scene-link active">🌾 Farm Scene</span>
+    <a class="scene-link" href="ui-store-scene.html">🏪 Store Scene</a>
+  </div>
+</div><!-- phone-col -->
+
+<!-- ════════════════ DESIGN NOTES ════════════════ -->
+<div class="notes">
+  <div class="notes-title">🌾 Farm Scene UI Design</div>
+  <div class="notes-sub">Full interactive mockup based on GDD docs 06 · 07 · 08 · 09 · 11 · 12<br>
+    Click any tile in the mockup to see the tooltip system.</div>
+
+  <div class="sec-hd">Tile State System</div>
+  <table class="dtable">
+    <tr><th>State</th><th>Visual Cue</th><th>Tap Action</th><th>Source</th></tr>
+    <tr><td><span class="chip" style="background:#3d2410"></span>Empty</td>
+      <td>Dark soil + <code>+</code></td><td>Open plant menu</td><td>Doc 07</td></tr>
+    <tr><td><span class="chip" style="background:#1a2d0a"></span>Planted</td>
+      <td>🌱 seedling, thin bar 0–50%</td><td>Info + water option</td><td>Doc 07</td></tr>
+    <tr><td><span class="chip" style="background:#22C55E"></span>Growing</td>
+      <td>Crop icon, emerald bar 50–99%</td><td>Info + fertilise</td><td>Doc 07</td></tr>
+    <tr><td><span class="chip" style="background:#F7C832"></span>Ready</td>
+      <td>Gold pulse glow · <code>READY</code></td><td>Harvest (coin pop + FT)</td><td>Doc 07</td></tr>
+    <tr><td><span class="chip" style="background:#EF4444"></span>Wilting</td>
+      <td>Red pulse · wilt countdown badge</td><td>Emergency harvest</td><td>Doc 07</td></tr>
+    <tr><td><span class="chip" style="background:#3d1a0a"></span>Building</td>
+      <td>Icon + name label + status badge</td><td>Open building UI</td><td>Doc 09</td></tr>
+  </table>
+
+  <div class="sec-hd">HUD Bar</div>
+  <div class="callout blue">
+    <div class="callout-title">💰 Currency Pills</div>
+    <div class="callout-body">
+      Coins and Farm Tokens shown as compact pills. Farm Tokens (<code>🌾 FT</code>) are earned on every harvest — amount depends on crop rarity (Lv.1 crops = 1 FT, premium crops = 10–15 FT). The season badge affects which crops are available and their yield multipliers. Tapping the season badge opens the seasonal calendar.
+    </div>
+  </div>
+  <div class="callout gold">
+    <div class="callout-title">🗺️ Zone Tabs</div>
+    <div class="callout-body">
+      Scrollable horizontal tab strip. Active zone highlighted emerald. Locked zones show level requirement greyed out. A newly-unlocked zone gets a <code>✨ New!</code> gold highlight until first visited. Tapping a zone smoothly pans the grid camera to that zone.
+    </div>
+  </div>
+
+  <div class="sec-hd">Overlay Badge System</div>
+  <div class="callout">
+    <div class="callout-title">📍 Four Badge Types per Tile</div>
+    <div class="callout-body">
+      <strong style="color:var(--sap)">💧 Water (blue, top-right)</strong> — crop was watered this cycle; yields max output<br>
+      <strong style="color:var(--gold)">👷 Worker (gold, top-right)</strong> — a Field Hand is currently tending this plot<br>
+      <strong style="color:var(--ruby)">7m Wilt (red, top-right)</strong> — countdown to total yield loss; blinks when &lt;5 min<br>
+      <strong style="color:var(--gold)">47/100 Fill (gold, top-left)</strong> — barn or building capacity indicator
+    </div>
+  </div>
+
+  <div class="sec-hd">Wilt Warning System</div>
+  <div class="callout red">
+    <div class="callout-title">⚠️ Persistent Wilt Banner</div>
+    <div class="callout-body">
+      Appears above the toolbar whenever any crop enters the wilt window. Shows crop name and exact minutes remaining. Direct <code>Harvest</code> button — tapping also zooms the grid to the wilting tile. If multiple crops are wilting, the banner shows "3 crops wilting!" and tapping cycles through them. Banner disappears once all wilting crops are cleared.
+    </div>
+  </div>
+
+  <div class="sec-hd">Slide-Up Tooltip Design</div>
+  <div class="callout blue">
+    <div class="callout-title">Tile Tooltip — Four Stat Grid</div>
+    <div class="callout-body">
+      Tapping any non-path tile slides up a context sheet from the bottom. The four stats shown are always: <strong>Status · Yield · Grow time · Wilt timer</strong>. Tags (💧 Watered, 🌿 Fertilised, 👷 Worker) show at a glance. The primary action button (gold, full-width) is always the single most important thing to do: Harvest, Plant, Add to Queue, or Collect.
+    </div>
+  </div>
+  <div class="callout">
+    <div class="callout-title">Processing Building Tooltip</div>
+    <div class="callout-body">
+      Shows active recipe with progress bar, queue depth, inputs consumed, expected output, and time remaining. <code>Set Priority</code> button lets the player reorder queued jobs. Kitchen Hand badge shown when assigned (unlocks at Lv.25).
+    </div>
+  </div>
+
+  <div class="sec-hd">Bottom Toolbar (left → right)</div>
+  <table class="dtable">
+    <tr><th>Button</th><th>Action</th><th>Badge</th></tr>
+    <tr><td>🌱 Plant</td><td>Opens crop picker sheet sorted by grow time</td><td>—</td></tr>
+    <tr><td>🌾 Harvest All</td><td>One-tap harvest of all ready tiles</td><td>Red count of ready tiles</td></tr>
+    <tr><td>👷 Workers</td><td>Panel: worker status, assign, hire</td><td>—</td></tr>
+    <tr><td>🏚️ Barn</td><td>Panel: inventory, send to store</td><td>Blue: total item count</td></tr>
+    <tr><td>🚚 Supply</td><td>Panel: delivery runner status + dispatch</td><td>—</td></tr>
+  </table>
+
+  <div class="sec-hd">Worker Dot</div>
+  <div class="callout">
+    <div class="callout-title">👷 Animated Worker Patrol</div>
+    <div class="callout-body">
+      A small gold avatar walks a looping patrol path across the grid, representing the active Field Hand. Multiple workers show multiple dots with different paths and animation offsets. Tapping the dot opens the Workers panel pre-scrolled to that worker. The dot never overlaps building tiles.
+    </div>
+  </div>
+</div><!-- notes -->
+
+</div><!-- layout -->
+
+<script>
+let selTile = null;
+
+function tt(ico,title,sub,status,yield_,grew,wilt,watered,fert,worker){
+  if(selTile) selTile.classList.remove('selected');
+  const tile = event.currentTarget;
+  tile.classList.add('selected'); selTile = tile;
+
+  document.getElementById('ttIco').textContent = ico;
+  document.getElementById('ttTitle').textContent = title;
+  document.getElementById('ttSub').textContent = sub;
+
+  const sv = document.getElementById('ttStatus');
+  sv.textContent = status;
+  sv.className = 'stat-val ' + (status.includes('READY')?'em':status.includes('WILT')?'r':'');
+
+  document.getElementById('ttYield').textContent = yield_;
+  document.getElementById('ttGrew').textContent = grew;
+  document.getElementById('ttWilt').textContent = wilt;
+
+  const tags = document.getElementById('ttTags');
+  tags.innerHTML = (watered?'<span class="tag water">💧 Watered</span>':'') +
+    (fert?'<span class="tag fert">🌿 Fertilised</span>':'') +
+    (worker?'<span class="tag worker">👷 Worker</span>':'');
+
+  const acts = document.getElementById('ttActs');
+  if(status.includes('READY')||status.includes('WILT')){
+    acts.innerHTML = `<button class="act-btn prim" onclick="doHarvest()">🌾 Harvest Now</button>
+      <button class="act-btn sec">${fert?'✅ Fertilised':'🌿 Fertilise'}</button>
+      <button class="act-btn sec">📊 Plot History</button>`;
+  } else {
+    acts.innerHTML = `<button class="act-btn ${watered?'dis':'sec'}">${watered?'✅ Watered':'💧 Water Now'}</button>
+      <button class="act-btn ${fert?'dis':'sec'}">${fert?'✅ Fertilised':'🌿 Fertilise'}</button>
+      <button class="act-btn sec">📊 History</button>`;
+  }
+  document.getElementById('tileTooltip').classList.add('vis');
+}
+
+function ttWilt(){
+  if(selTile) selTile.classList.remove('selected');
+  const tile = event.currentTarget;
+  tile.classList.add('selected'); selTile = tile;
+  document.getElementById('ttIco').textContent = '🥕';
+  document.getElementById('ttTitle').textContent = 'Carrot Plot — WILTING!';
+  document.getElementById('ttSub').textContent = '1×1 · Zone 0 · Harvest immediately!';
+  const sv = document.getElementById('ttStatus'); sv.textContent = 'WILTING ⚠️'; sv.className = 'stat-val r';
+  document.getElementById('ttYield').textContent = '3 carrots (−50%)';
+  document.getElementById('ttGrew').textContent = '1 hr ago';
+  document.getElementById('ttWilt').textContent = '7 min → 0 yield';
+  document.getElementById('ttTags').innerHTML = '<span class="tag" style="color:var(--ruby);border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)">⚠️ Wilting — harvest now!</span>';
+  document.getElementById('ttActs').innerHTML = `<button class="act-btn prim" onclick="doHarvest()" style="background:linear-gradient(135deg,var(--ruby),#b91c1c);color:#fff">🚨 Emergency Harvest</button>
+    <button class="act-btn sec">📊 History</button>`;
+  document.getElementById('tileTooltip').classList.add('vis');
+}
+
+function ttEmpty(tile){
+  if(selTile) selTile.classList.remove('selected');
+  tile.classList.add('selected'); selTile = tile;
+  document.getElementById('ttIco').textContent = '🌱';
+  document.getElementById('ttTitle').textContent = 'Empty Plot';
+  document.getElementById('ttSub').textContent = '1×1 · Ready to plant';
+  const sv = document.getElementById('ttStatus'); sv.textContent = 'EMPTY'; sv.className = 'stat-val';
+  document.getElementById('ttYield').textContent = '—';
+  document.getElementById('ttGrew').textContent = '—';
+  document.getElementById('ttWilt').textContent = '—';
+  document.getElementById('ttTags').innerHTML = '';
+  document.getElementById('ttActs').innerHTML = `<button class="act-btn prim">🌱 Plant Crop</button>
+    <button class="act-btn sec">🌿 Add Fertiliser</button>
+    <button class="act-btn sec">📐 Expand Plot</button>`;
+  document.getElementById('tileTooltip').classList.add('vis');
+}
+
+function ttBuilding(ico,title,sub,status,output,time,queue){
+  if(selTile) selTile.classList.remove('selected');
+  const tile = event.currentTarget;
+  tile.classList.add('selected'); selTile = tile;
+  document.getElementById('ttIco').textContent = ico;
+  document.getElementById('ttTitle').textContent = title;
+  document.getElementById('ttSub').textContent = sub;
+  const sv = document.getElementById('ttStatus'); sv.textContent = status; sv.className = 'stat-val em';
+  document.getElementById('ttYield').textContent = output;
+  document.getElementById('ttGrew').textContent = time;
+  document.getElementById('ttWilt').textContent = queue;
+  document.getElementById('ttTags').innerHTML = '<span class="tag worker">🧑‍🍳 Kitchen Hand Lv.25</span>';
+  document.getElementById('ttActs').innerHTML = `<button class="act-btn prim">⬆️ Add to Queue</button>
+    <button class="act-btn sec">📋 Set Priority</button>
+    <button class="act-btn sec">🔧 Upgrade · 800 💰</button>`;
+  document.getElementById('tileTooltip').classList.add('vis');
+}
+
+function ttAnimal(ico,title,sub,status,yield_,time,mood){
+  if(selTile) selTile.classList.remove('selected');
+  const tile = event.currentTarget;
+  tile.classList.add('selected'); selTile = tile;
+  document.getElementById('ttIco').textContent = ico;
+  document.getElementById('ttTitle').textContent = title;
+  document.getElementById('ttSub').textContent = sub;
+  const sv = document.getElementById('ttStatus'); sv.textContent = status; sv.className = 'stat-val em';
+  document.getElementById('ttYield').textContent = yield_;
+  document.getElementById('ttGrew').textContent = time;
+  document.getElementById('ttWilt').textContent = mood;
+  document.getElementById('ttTags').innerHTML = '<span class="tag worker">🐄 Keeper Assigned</span>';
+  document.getElementById('ttActs').innerHTML = `<button class="act-btn prim">🥛 Collect Milk</button>
+    <button class="act-btn sec">🌾 Feed Animals</button>
+    <button class="act-btn sec">+ Buy Cow · 400 💰</button>`;
+  document.getElementById('tileTooltip').classList.add('vis');
+}
+
+function closeTT(){
+  document.getElementById('tileTooltip').classList.remove('vis');
+  if(selTile){selTile.classList.remove('selected');selTile=null;}
+}
+
+function doHarvest(){
+  if(!selTile) return;
+  const ico = selTile.querySelector('.tic');
+  const lbl = selTile.querySelector('.tlbl');
+  const prog = selTile.querySelector('.tprog');
+  const badge = selTile.querySelector('.tbadge');
+  selTile.classList.remove('ready','wilting','growing','planted','selected');
+  selTile.classList.add('empty');
+  if(ico) ico.textContent='+';
+  if(lbl) lbl.textContent='';
+  if(prog) prog.remove();
+  if(badge) badge.remove();
+  selTile.onclick = ()=>ttEmpty(selTile);
+  coinPop(selTile,'+10 🌾');
+  // update badge
+  const hb = document.getElementById('harvestBadge');
+  if(hb){const v=parseInt(hb.textContent)-1;hb.textContent=v;if(v<=0)hb.remove();}
+  closeTT();
+}
+
+function harvestWilt(){
+  const wt = document.querySelector('.tile.wilting');
+  if(wt){
+    wt.classList.remove('wilting','selected');
+    wt.classList.add('empty');
+    const i=wt.querySelector('.tic'); if(i) i.textContent='+';
+    const l=wt.querySelector('.tlbl'); if(l) l.textContent='';
+    const p=wt.querySelector('.tprog'); if(p) p.remove();
+    const b=wt.querySelector('.tbadge'); if(b) b.remove();
+    wt.onclick=()=>ttEmpty(wt);
+    coinPop(wt,'+3 🥕');
+  }
+  document.querySelector('.wilt-banner').style.display='none';
+  closeTT();
+}
+
+function harvestAll(){
+  document.querySelectorAll('.tile.ready').forEach(t=>{
+    t.classList.remove('ready','selected');
+    t.classList.add('empty');
+    const i=t.querySelector('.tic'); if(i) i.textContent='+';
+    const l=t.querySelector('.tlbl'); if(l) l.textContent='';
+    const p=t.querySelector('.tprog'); if(p) p.remove();
+    const b=t.querySelector('.tbadge'); if(b) b.remove();
+    t.onclick=()=>ttEmpty(t);
+    coinPop(t,'+10');
+  });
+  const hb=document.getElementById('harvestBadge'); if(hb) hb.remove();
+  closeTT();
+}
+
+function coinPop(el, txt){
+  const r = el.getBoundingClientRect();
+  const pop = document.createElement('div');
+  pop.textContent = txt;
+  pop.style.cssText=`position:fixed;left:${r.left+r.width/2}px;top:${r.top}px;
+    transform:translateX(-50%);color:#F7C832;font-weight:900;font-size:.95rem;
+    text-shadow:0 2px 8px rgba(0,0,0,.9);pointer-events:none;z-index:9999;
+    animation:cpop .75s ease-out forwards`;
+  document.body.appendChild(pop);
+  setTimeout(()=>pop.remove(),800);
+}
+const ps=document.createElement('style');
+ps.textContent='@keyframes cpop{0%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-38px)}}';
+document.head.appendChild(ps);
+
+function openPanel(id){
+  closeAllPanels();
+  document.getElementById(id).classList.add('open');
+  document.getElementById('backdrop').classList.add('vis');
+  closeTT();
+}
+function closeAllPanels(){
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('open'));
+  document.getElementById('backdrop').classList.remove('vis');
+}
+</script>
+</body>
+</html>

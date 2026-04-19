@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>43 — Color Theme & Visual Identity — SuperStoreTycoon GDD</title>
+  <style>
+  :root{--bg:#0f1117;--surface:#1a1d27;--surface2:#22263a;--accent:#4f8ef7;--accent2:#38c172;--text:#e2e8f0;--muted:#8892a4;--border:#2d3348;--radius:10px;--max-w:860px}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;padding:0 1rem 3rem}
+  a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+  .topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);padding:.6rem 1rem;display:flex;align-items:center;gap:.8rem;font-size:.88rem}
+  .topbar .home-link{font-weight:700;font-size:1rem;color:var(--text)}.topbar .home-link:hover{color:var(--accent);text-decoration:none}
+  .topbar .spacer{flex:1}.topbar .group-badge{background:var(--surface2);border:1px solid var(--border);border-radius:20px;padding:.2rem .7rem;font-size:.78rem;color:var(--muted)}
+  .page-wrap{max-width:var(--max-w);margin:2.5rem auto 0}
+  .md-body h1{font-size:2rem;font-weight:800;margin-bottom:1rem}
+  .md-body h2{font-size:1.4rem;font-weight:700;margin:2rem 0 .6rem;border-bottom:1px solid var(--border);padding-bottom:.3rem}
+  .md-body h3{font-size:1.1rem;font-weight:600;margin:1.4rem 0 .4rem;color:var(--accent)}
+  .md-body h4{font-size:1rem;font-weight:600;margin:1rem 0 .3rem;color:var(--accent2)}
+  .md-body p{margin:.6rem 0}.md-body ul,.md-body ol{margin:.5rem 0 .5rem 1.5rem}.md-body li{margin:.25rem 0}
+  .md-body strong{color:#fff}.md-body em{color:#cbd5e1}
+  .md-body blockquote{border-left:3px solid var(--accent);padding:.5rem 1rem;margin:1rem 0;background:var(--surface2);border-radius:0 var(--radius) var(--radius) 0;color:var(--muted)}
+  .md-body code{background:var(--surface2);border:1px solid var(--border);border-radius:4px;padding:.1rem .35rem;font-size:.88em;font-family:'Fira Code',Consolas,monospace}
+  .md-body pre{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.2rem;overflow-x:auto;margin:.8rem 0}
+  .md-body pre code{background:none;border:none;padding:0;font-size:.85em}
+  .md-body hr{border:none;border-top:1px solid var(--border);margin:1.5rem 0}
+  .md-body table{border-collapse:collapse;width:100%;margin:1rem 0;font-size:.9rem}
+  .md-body th{background:var(--surface2);text-align:left;padding:.5rem .8rem;border:1px solid var(--border);color:var(--accent);font-weight:600}
+  .md-body td{padding:.45rem .8rem;border:1px solid var(--border);vertical-align:top}
+  .md-body tr:nth-child(even) td{background:rgba(255,255,255,.03)}
+  .page-nav{display:flex;justify-content:space-between;gap:1rem;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--border)}
+  .nav-btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:.6rem 1rem;color:var(--text);font-size:.9rem;transition:border-color .2s,background .2s;max-width:48%}
+  .nav-btn:hover{border-color:var(--accent);background:var(--surface2);text-decoration:none}
+  .nav-btn.next{margin-left:auto;text-align:right}
+  .nav-label{font-size:.72rem;color:var(--muted);display:block}
+  @media(max-width:600px){.nav-btn{max-width:100%}.page-nav{flex-direction:column}}
+</style>
+</head>
+<body>
+  <nav class="topbar">
+    <a class="home-link" href="../index.html">&#x1F3EA;&#x1F33E; SuperStoreTycoon GDD</a>
+    <span class="spacer"></span>
+    <span class="group-badge">&#x1F3A8; Design</span>
+  </nav>
+  <main class="page-wrap">
+    <article class="md-body">
+<h1>43 — Color Theme &amp; Visual Identity</h1>
+<blockquote>
+<p><strong>SuperStoreTycoon</strong> — "One Empire, Two Worlds"
+Premium dark mobile game palette derived directly from the game icon and world design.</p>
+</blockquote>
+<hr />
+<h2>Design Philosophy</h2>
+<p>The color system is built around three core feelings:</p>
+<table>
+<thead>
+<tr>
+<th>Feeling</th>
+<th>How it's achieved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Premium</strong></td>
+<td>Deep navy-black backgrounds; nothing feels washed-out or cheap</td>
+</tr>
+<tr>
+<td><strong>Fresh</strong></td>
+<td>High-saturation Farm Emerald and Tycoon Gold as energy colors</td>
+</tr>
+<tr>
+<td><strong>Trustworthy</strong></td>
+<td>Consistent use of Store Sapphire for interactive / navigational elements</td>
+</tr>
+</tbody>
+</table>
+<p>The two game worlds have their own tones but share a unified dark foundation so the UI never feels jarring when switching between farm and store.</p>
+<hr />
+<h2>1. Brand Foundation</h2>
+<p>These are the four anchor colors everything else is derived from.</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Preview</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--brand-gold</code></td>
+<td><code>#F7C832</code></td>
+<td>🟡</td>
+<td>Crown, rewards, CTAs, prestige</td>
+</tr>
+<tr>
+<td><code>--brand-emerald</code></td>
+<td><code>#22C55E</code></td>
+<td>🟢</td>
+<td>Farm world, growth, XP bar, success</td>
+</tr>
+<tr>
+<td><code>--brand-sapphire</code></td>
+<td><code>#4F8EF7</code></td>
+<td>🔵</td>
+<td>Store world, links, info, interactive</td>
+</tr>
+<tr>
+<td><code>--brand-ruby</code></td>
+<td><code>#EF4444</code></td>
+<td>🔴</td>
+<td>Danger, barn red, urgent alerts</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>2. Background &amp; Surface Scale</h2>
+<p>Dark from deepest to highest elevation. Each step is roughly +8 lightness in HSL.</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--bg-void</code></td>
+<td><code>#04061A</code></td>
+<td>App root background</td>
+</tr>
+<tr>
+<td><code>--bg-deep</code></td>
+<td><code>#080D28</code></td>
+<td>Behind panels, behind modals</td>
+</tr>
+<tr>
+<td><code>--bg-base</code></td>
+<td><code>#0D1235</code></td>
+<td>Main page / screen surface</td>
+</tr>
+<tr>
+<td><code>--bg-raised</code></td>
+<td><code>#141B42</code></td>
+<td>Cards, tab bars, list items</td>
+</tr>
+<tr>
+<td><code>--bg-elevated</code></td>
+<td><code>#1C2550</code></td>
+<td>Hover state, highlighted cards</td>
+</tr>
+<tr>
+<td><code>--bg-overlay</code></td>
+<td><code>#283580</code></td>
+<td>Tooltip background, sheet overlay</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>3. Border Scale</h2>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--border-subtle</code></td>
+<td><code>#1E2860</code></td>
+<td>Dividers inside cards</td>
+</tr>
+<tr>
+<td><code>--border-default</code></td>
+<td><code>#283585</code></td>
+<td>Default card borders</td>
+</tr>
+<tr>
+<td><code>--border-strong</code></td>
+<td><code>#3B4EA0</code></td>
+<td>Active/focused borders</td>
+</tr>
+<tr>
+<td><code>--border-gold</code></td>
+<td><code>#F7C832</code></td>
+<td>Premium / selected item ring</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>4. Text Scale</h2>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--text-primary</code></td>
+<td><code>#F1F5F9</code></td>
+<td>Headings, primary labels</td>
+</tr>
+<tr>
+<td><code>--text-secondary</code></td>
+<td><code>#94A3B8</code></td>
+<td>Sub-labels, descriptions</td>
+</tr>
+<tr>
+<td><code>--text-muted</code></td>
+<td><code>#64748B</code></td>
+<td>Timestamps, metadata</td>
+</tr>
+<tr>
+<td><code>--text-disabled</code></td>
+<td><code>#334155</code></td>
+<td>Disabled states</td>
+</tr>
+<tr>
+<td><code>--text-on-gold</code></td>
+<td><code>#1A0E00</code></td>
+<td>Text placed on gold backgrounds</td>
+</tr>
+<tr>
+<td><code>--text-on-green</code></td>
+<td><code>#0A1F0D</code></td>
+<td>Text placed on emerald backgrounds</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>5. Farm World Palette</h2>
+<p>Used in the farm half of the UI, crop cards, weather overlays, and field HUD.</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--farm-bg-top</code></td>
+<td><code>#1E7010</code></td>
+<td>Farm sky/background gradient start</td>
+</tr>
+<tr>
+<td><code>--farm-bg-bottom</code></td>
+<td><code>#071506</code></td>
+<td>Farm background gradient end</td>
+</tr>
+<tr>
+<td><code>--farm-emerald</code></td>
+<td><code>#22C55E</code></td>
+<td>Crop health, growth bars</td>
+</tr>
+<tr>
+<td><code>--farm-emerald-dark</code></td>
+<td><code>#15803D</code></td>
+<td>Pressed state, deep grass</td>
+</tr>
+<tr>
+<td><code>--farm-grass</code></td>
+<td><code>#28A84E</code></td>
+<td>Ground / grass texture tint</td>
+</tr>
+<tr>
+<td><code>--farm-soil</code></td>
+<td><code>#6E4E14</code></td>
+<td>Soil / tilled land</td>
+</tr>
+<tr>
+<td><code>--farm-wheat</code></td>
+<td><code>#EEC038</code></td>
+<td>Wheat, harvest highlight</td>
+</tr>
+<tr>
+<td><code>--farm-wheat-dark</code></td>
+<td><code>#C08A18</code></td>
+<td>Wheat shadow, dried stalk</td>
+</tr>
+<tr>
+<td><code>--farm-sun</code></td>
+<td><code>#FFD020</code></td>
+<td>Sun glow, daylight warmth</td>
+</tr>
+<tr>
+<td><code>--farm-barn-red</code></td>
+<td><code>#F04030</code></td>
+<td>Barn walls, farm buildings</td>
+</tr>
+<tr>
+<td><code>--farm-barn-dark</code></td>
+<td><code>#801808</code></td>
+<td>Barn shadow, roof trim</td>
+</tr>
+<tr>
+<td><code>--farm-window</code></td>
+<td><code>#FFD878</code></td>
+<td>Lit barn windows, warm light</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>6. Store World Palette</h2>
+<p>Used in the store half of the UI, shelving cards, customer HUD, and inventory.</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--store-bg-top</code></td>
+<td><code>#0D2490</code></td>
+<td>Store sky/background gradient start</td>
+</tr>
+<tr>
+<td><code>--store-bg-bottom</code></td>
+<td><code>#03071E</code></td>
+<td>Store background gradient end</td>
+</tr>
+<tr>
+<td><code>--store-sapphire</code></td>
+<td><code>#4F8EF7</code></td>
+<td>Interactive elements, links</td>
+</tr>
+<tr>
+<td><code>--store-sapphire-dark</code></td>
+<td><code>#1D4ED8</code></td>
+<td>Pressed state, deep navy</td>
+</tr>
+<tr>
+<td><code>--store-awning</code></td>
+<td><code>#5AA8FF</code></td>
+<td>Awning, store accents</td>
+</tr>
+<tr>
+<td><code>--store-wall</code></td>
+<td><code>#F8F4EA</code></td>
+<td>Building wall, cream</td>
+</tr>
+<tr>
+<td><code>--store-wall-dark</code></td>
+<td><code>#D0C8B0</code></td>
+<td>Wall shadow, aged cream</td>
+</tr>
+<tr>
+<td><code>--store-sign-bg</code></td>
+<td><code>#060E28</code></td>
+<td>Neon sign background</td>
+</tr>
+<tr>
+<td><code>--store-sign-ring</code></td>
+<td><code>#3060E0</code></td>
+<td>Neon sign border glow</td>
+</tr>
+<tr>
+<td><code>--store-pavement</code></td>
+<td><code>#1A2272</code></td>
+<td>Pavement, step, floor</td>
+</tr>
+<tr>
+<td><code>--store-door</code></td>
+<td><code>#03091A</code></td>
+<td>Door / entrance darkness</td>
+</tr>
+<tr>
+<td><code>--store-handle</code></td>
+<td><code>#4080F8</code></td>
+<td>Door handles, fixtures</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>7. Supply Lane</h2>
+<p>The gold vertical divider connecting farm → store is a core visual motif.</p>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--lane-gold-top</code></td>
+<td><code>#FFFACC</code></td>
+<td>Supply lane gradient top</td>
+</tr>
+<tr>
+<td><code>--lane-gold-mid</code></td>
+<td><code>#F7C832</code></td>
+<td>Supply lane gradient middle</td>
+</tr>
+<tr>
+<td><code>--lane-gold-dark</code></td>
+<td><code>#DA8400</code></td>
+<td>Supply lane gradient bottom</td>
+</tr>
+<tr>
+<td><code>--lane-gold-deep</code></td>
+<td><code>#8C4A00</code></td>
+<td>Supply lane deepest shadow</td>
+</tr>
+<tr>
+<td><code>--lane-arrow</code></td>
+<td><code>#0C1A40</code></td>
+<td>Directional arrow on lane</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>8. Semantic Colors</h2>
+<table>
+<thead>
+<tr>
+<th>Token</th>
+<th>Hex</th>
+<th>Dark muted bg</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--success</code></td>
+<td><code>#22C55E</code></td>
+<td><code>#14532D</code></td>
+<td>Harvest complete, sale success</td>
+</tr>
+<tr>
+<td><code>--success-light</code></td>
+<td><code>#86EFAC</code></td>
+<td>—</td>
+<td>Success text on dark bg</td>
+</tr>
+<tr>
+<td><code>--warning</code></td>
+<td><code>#F7C832</code></td>
+<td><code>#713F12</code></td>
+<td>Crop needs water, low stock</td>
+</tr>
+<tr>
+<td><code>--warning-light</code></td>
+<td><code>#FDE68A</code></td>
+<td>—</td>
+<td>Warning text</td>
+</tr>
+<tr>
+<td><code>--error</code></td>
+<td><code>#EF4444</code></td>
+<td><code>#7F1D1D</code></td>
+<td>Spoiled crop, payment failure</td>
+</tr>
+<tr>
+<td><code>--error-light</code></td>
+<td><code>#FCA5A5</code></td>
+<td>—</td>
+<td>Error text</td>
+</tr>
+<tr>
+<td><code>--info</code></td>
+<td><code>#4F8EF7</code></td>
+<td><code>#1E3A8A</code></td>
+<td>Tips, tutorials, notifications</td>
+</tr>
+<tr>
+<td><code>--info-light</code></td>
+<td><code>#BAD1FD</code></td>
+<td>—</td>
+<td>Info text on dark bg</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>9. Currency &amp; Reward Colors</h2>
+<p>Each currency has a distinct signature color so players immediately know what they earned.</p>
+<table>
+<thead>
+<tr>
+<th>Currency</th>
+<th>Token</th>
+<th>Hex</th>
+<th>Icon tint</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Coins</strong> (main)</td>
+<td><code>--coin-gold</code></td>
+<td><code>#F7C832</code></td>
+<td>🪙 Gold coin</td>
+</tr>
+<tr>
+<td><strong>Farm Coins</strong></td>
+<td><code>--coin-farm</code></td>
+<td><code>#22C55E</code></td>
+<td>🌿 Green coin (Fresh badge)</td>
+</tr>
+<tr>
+<td><strong>Luxury Points</strong></td>
+<td><code>--luxury</code></td>
+<td><code>#A855F7</code></td>
+<td>💎 Purple gem</td>
+</tr>
+<tr>
+<td><strong>Gems</strong> (premium)</td>
+<td><code>--gem</code></td>
+<td><code>#E879F9</code></td>
+<td>✨ Magenta gem</td>
+</tr>
+<tr>
+<td><strong>XP</strong></td>
+<td><code>--xp</code></td>
+<td><code>#4F8EF7</code></td>
+<td>⭐ Blue star</td>
+</tr>
+<tr>
+<td><strong>Mastery Stars</strong></td>
+<td><code>--mastery</code></td>
+<td><code>#F59E0B</code></td>
+<td>⭐ Amber star</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>10. Rarity Tiers</h2>
+<p>Used for item cards, collection slots, supplier quality, and crop seeds.</p>
+<table>
+<thead>
+<tr>
+<th>Tier</th>
+<th>Token</th>
+<th>Hex</th>
+<th>Glow</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Common</td>
+<td><code>--rarity-common</code></td>
+<td><code>#94A3B8</code></td>
+<td>none</td>
+<td>Basic seeds, starter items</td>
+</tr>
+<tr>
+<td>Uncommon</td>
+<td><code>--rarity-uncommon</code></td>
+<td><code>#22C55E</code></td>
+<td>soft green</td>
+<td>Better yield crops</td>
+</tr>
+<tr>
+<td>Rare</td>
+<td><code>--rarity-rare</code></td>
+<td><code>#4F8EF7</code></td>
+<td>soft blue</td>
+<td>Imported goods</td>
+</tr>
+<tr>
+<td>Epic</td>
+<td><code>--rarity-epic</code></td>
+<td><code>#A855F7</code></td>
+<td>purple glow</td>
+<td>Limited season crops</td>
+</tr>
+<tr>
+<td>Legendary</td>
+<td><code>--rarity-legendary</code></td>
+<td><code>#F7C832</code></td>
+<td>gold glow</td>
+<td>Heirloom seeds, crown items</td>
+</tr>
+<tr>
+<td>Mythic</td>
+<td><code>--rarity-mythic</code></td>
+<td><code>#EF4444</code></td>
+<td>red pulse</td>
+<td>Festival exclusives</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>11. UI Component Tokens</h2>
+<h3>Buttons</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Background</th>
+<th>Text</th>
+<th>Border</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Primary (CTA)</td>
+<td><code>#F7C832</code></td>
+<td><code>#1A0E00</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>Primary hover</td>
+<td><code>#FDE68A</code></td>
+<td><code>#1A0E00</code></td>
+<td>none</td>
+</tr>
+<tr>
+<td>Secondary</td>
+<td><code>#141B42</code></td>
+<td><code>#F1F5F9</code></td>
+<td><code>#283585</code></td>
+</tr>
+<tr>
+<td>Secondary hover</td>
+<td><code>#1C2550</code></td>
+<td><code>#F1F5F9</code></td>
+<td><code>#3B4EA0</code></td>
+</tr>
+<tr>
+<td>Danger</td>
+<td><code>#7F1D1D</code></td>
+<td><code>#FCA5A5</code></td>
+<td><code>#EF4444</code></td>
+</tr>
+<tr>
+<td>Disabled</td>
+<td><code>#1C2550</code></td>
+<td><code>#334155</code></td>
+<td><code>#1E2860</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Cards</h3>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Background</td>
+<td><code>#141B42</code></td>
+</tr>
+<tr>
+<td>Border</td>
+<td><code>#283585</code></td>
+</tr>
+<tr>
+<td>Border radius</td>
+<td><code>12px</code></td>
+</tr>
+<tr>
+<td>Hover border</td>
+<td><code>#F7C832</code></td>
+</tr>
+<tr>
+<td>Shadow</td>
+<td><code>0 4px 24px rgba(0,0,0,0.5)</code></td>
+</tr>
+<tr>
+<td>Selected ring</td>
+<td><code>2px solid #F7C832</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Progress Bars</h3>
+<table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Fill</th>
+<th>Track</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>XP</td>
+<td><code>#4F8EF7</code></td>
+<td><code>#1E2860</code></td>
+</tr>
+<tr>
+<td>Crop growth</td>
+<td><code>#22C55E</code></td>
+<td><code>#1E2860</code></td>
+</tr>
+<tr>
+<td>Harvest timer</td>
+<td><code>#F7C832</code></td>
+<td><code>#1E2860</code></td>
+</tr>
+<tr>
+<td>Health / spoil</td>
+<td><code>#EF4444</code></td>
+<td><code>#1E2860</code></td>
+</tr>
+<tr>
+<td>Mastery</td>
+<td><code>#F59E0B</code></td>
+<td><code>#1E2860</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>12. Typography</h2>
+<h3>Font Stack</h3>
+<pre><code>Primary UI:   'Segoe UI', system-ui, -apple-system, sans-serif
+Display/Logo: 'Arial Black', Impact, Arial, sans-serif
+Monospace:    'Fira Code', 'Consolas', monospace
+</code></pre>
+<h3>Type Scale</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Size</th>
+<th>Weight</th>
+<th>Color token</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hero title</td>
+<td><code>2.6rem</code></td>
+<td>900</td>
+<td><code>--text-primary</code></td>
+</tr>
+<tr>
+<td>Section heading</td>
+<td><code>1.4rem</code></td>
+<td>700</td>
+<td><code>--text-primary</code></td>
+</tr>
+<tr>
+<td>Card title</td>
+<td><code>1rem</code></td>
+<td>600</td>
+<td><code>--text-primary</code></td>
+</tr>
+<tr>
+<td>Body</td>
+<td><code>1rem</code></td>
+<td>400</td>
+<td><code>--text-primary</code></td>
+</tr>
+<tr>
+<td>Label</td>
+<td><code>0.875rem</code></td>
+<td>500</td>
+<td><code>--text-secondary</code></td>
+</tr>
+<tr>
+<td>Caption / meta</td>
+<td><code>0.78rem</code></td>
+<td>400</td>
+<td><code>--text-muted</code></td>
+</tr>
+<tr>
+<td>Monospace</td>
+<td><code>0.85em</code></td>
+<td>400</td>
+<td><code>--text-secondary</code></td>
+</tr>
+</tbody>
+</table>
+<h3>Letter Spacing</h3>
+<table>
+<thead>
+<tr>
+<th>Context</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>All-caps section labels</td>
+<td><code>0.08em</code></td>
+</tr>
+<tr>
+<td>"TYCOON" display text</td>
+<td><code>6px</code></td>
+</tr>
+<tr>
+<td>Button labels</td>
+<td><code>0.04em</code></td>
+</tr>
+<tr>
+<td>Body text</td>
+<td><code>0</code> (default)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>13. Gradients &amp; Overlays</h2>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Definition</th>
+<th>Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Gold shimmer</td>
+<td><code>linear-gradient(180deg, #FFFACC 0%, #F7C832 35%, #DA8400 65%, #8C4A00 100%)</code></td>
+<td>Border ring, crown, divider</td>
+</tr>
+<tr>
+<td>Farm sky</td>
+<td><code>linear-gradient(180deg, #1E7010 0%, #071506 100%)</code></td>
+<td>Farm background</td>
+</tr>
+<tr>
+<td>Store sky</td>
+<td><code>linear-gradient(180deg, #0D2490 0%, #03071E 100%)</code></td>
+<td>Store background</td>
+</tr>
+<tr>
+<td>Dark overlay</td>
+<td><code>linear-gradient(180deg, transparent 60%, #020510 100%)</code></td>
+<td>Text legibility at bottom of panels</td>
+</tr>
+<tr>
+<td>Coin burst</td>
+<td><code>radial-gradient(circle, #FDE68A 0%, #F7C832 50%, transparent 100%)</code></td>
+<td>Coin collect effect</td>
+</tr>
+<tr>
+<td>XP burst</td>
+<td><code>radial-gradient(circle, #BAD1FD 0%, #4F8EF7 50%, transparent 100%)</code></td>
+<td>XP collect effect</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>14. Shadows &amp; Depth</h2>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Box shadow</th>
+<th>Used on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 — Subtle</td>
+<td><code>0 2px 8px rgba(0,0,0,0.3)</code></td>
+<td>List items</td>
+</tr>
+<tr>
+<td>2 — Card</td>
+<td><code>0 4px 24px rgba(0,0,0,0.5)</code></td>
+<td>Cards, panels</td>
+</tr>
+<tr>
+<td>3 — Float</td>
+<td><code>0 8px 40px rgba(0,0,0,0.65)</code></td>
+<td>Modals, dropdowns</td>
+</tr>
+<tr>
+<td>4 — Glow Gold</td>
+<td><code>0 0 20px rgba(247,200,50,0.4)</code></td>
+<td>Selected legendary items</td>
+</tr>
+<tr>
+<td>5 — Glow Emerald</td>
+<td><code>0 0 16px rgba(34,197,94,0.35)</code></td>
+<td>Crop-ready badge</td>
+</tr>
+<tr>
+<td>6 — Glow Ruby</td>
+<td><code>0 0 16px rgba(239,68,68,0.4)</code></td>
+<td>Urgent alerts</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>15. CSS Custom Properties — Full Reference</h2>
+<p>Paste this <code>:root</code> block into any stylesheet or Unity TextMeshPro theme to apply the full system.</p>
+<pre><code class="language-css">:root {
+  /* ── Brand ── */
+  --brand-gold:       #F7C832;
+  --brand-emerald:    #22C55E;
+  --brand-sapphire:   #4F8EF7;
+  --brand-ruby:       #EF4444;
+
+  /* ── Backgrounds ── */
+  --bg-void:          #04061A;
+  --bg-deep:          #080D28;
+  --bg-base:          #0D1235;
+  --bg-raised:        #141B42;
+  --bg-elevated:      #1C2550;
+  --bg-overlay:       #283580;
+
+  /* ── Borders ── */
+  --border-subtle:    #1E2860;
+  --border-default:   #283585;
+  --border-strong:    #3B4EA0;
+  --border-gold:      #F7C832;
+
+  /* ── Text ── */
+  --text-primary:     #F1F5F9;
+  --text-secondary:   #94A3B8;
+  --text-muted:       #64748B;
+  --text-disabled:    #334155;
+  --text-on-gold:     #1A0E00;
+  --text-on-green:    #0A1F0D;
+
+  /* ── Farm World ── */
+  --farm-bg-top:      #1E7010;
+  --farm-bg-bottom:   #071506;
+  --farm-emerald:     #22C55E;
+  --farm-emerald-dark:#15803D;
+  --farm-grass:       #28A84E;
+  --farm-soil:        #6E4E14;
+  --farm-wheat:       #EEC038;
+  --farm-wheat-dark:  #C08A18;
+  --farm-sun:         #FFD020;
+  --farm-barn-red:    #F04030;
+  --farm-barn-dark:   #801808;
+  --farm-window:      #FFD878;
+
+  /* ── Store World ── */
+  --store-bg-top:     #0D2490;
+  --store-bg-bottom:  #03071E;
+  --store-sapphire:   #4F8EF7;
+  --store-sapphire-dark: #1D4ED8;
+  --store-awning:     #5AA8FF;
+  --store-wall:       #F8F4EA;
+  --store-wall-dark:  #D0C8B0;
+  --store-sign-bg:    #060E28;
+  --store-sign-ring:  #3060E0;
+  --store-pavement:   #1A2272;
+  --store-door:       #03091A;
+  --store-handle:     #4080F8;
+
+  /* ── Supply Lane ── */
+  --lane-gold-top:    #FFFACC;
+  --lane-gold-mid:    #F7C832;
+  --lane-gold-dark:   #DA8400;
+  --lane-gold-deep:   #8C4A00;
+  --lane-arrow:       #0C1A40;
+
+  /* ── Semantic ── */
+  --success:          #22C55E;
+  --success-muted:    #14532D;
+  --success-light:    #86EFAC;
+  --warning:          #F7C832;
+  --warning-muted:    #713F12;
+  --warning-light:    #FDE68A;
+  --error:            #EF4444;
+  --error-muted:      #7F1D1D;
+  --error-light:      #FCA5A5;
+  --info:             #4F8EF7;
+  --info-muted:       #1E3A8A;
+  --info-light:       #BAD1FD;
+
+  /* ── Currency ── */
+  --coin-gold:        #F7C832;
+  --coin-farm:        #22C55E;
+  --luxury:           #A855F7;
+  --gem:              #E879F9;
+  --xp:               #4F8EF7;
+  --mastery:          #F59E0B;
+
+  /* ── Rarity ── */
+  --rarity-common:    #94A3B8;
+  --rarity-uncommon:  #22C55E;
+  --rarity-rare:      #4F8EF7;
+  --rarity-epic:      #A855F7;
+  --rarity-legendary: #F7C832;
+  --rarity-mythic:    #EF4444;
+
+  /* ── Radius ── */
+  --radius-sm:        6px;
+  --radius-md:        12px;
+  --radius-lg:        20px;
+  --radius-pill:      999px;
+}
+</code></pre>
+<hr />
+<h2>16. Unity TextMeshPro Mapping</h2>
+<table>
+<thead>
+<tr>
+<th>TMP Role</th>
+<th>Color Hex</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal text</td>
+<td><code>#F1F5F9</code></td>
+</tr>
+<tr>
+<td>Highlighted text</td>
+<td><code>#F7C832</code></td>
+</tr>
+<tr>
+<td>Link color</td>
+<td><code>#4F8EF7</code></td>
+</tr>
+<tr>
+<td>Selected color</td>
+<td><code>#1C2550</code></td>
+</tr>
+<tr>
+<td>Disabled color</td>
+<td><code>#334155</code></td>
+</tr>
+<tr>
+<td>Panel background</td>
+<td><code>#141B42</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Last updated: April 2026 — aligned with icon.svg v1.0 color anchors.</em></p>
+    </article>
+    <div class="page-nav">
+      <a class="nav-btn prev" href="42-game-development-guide.html"><span>&#9664;</span><span><span class="nav-label">Previous</span>42 &mdash; Game Development Guide</span></a>
+      <a class="nav-btn" href="../index.html">&#x1F3E0; Index</a>
+    </div>
+  </main>
+</body>
+</html>

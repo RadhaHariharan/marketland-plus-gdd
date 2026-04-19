@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Store Scene UI · SuperStoreTycoon</title>
+<style>
+:root{
+  --bg:#04061A;--surface:#0d1024;--s2:#151929;--s3:#1e2540;
+  --gold:#F7C832;--gold2:#e6b020;--em:#22C55E;--sap:#4F8EF7;--ruby:#EF4444;
+  --text:#F1F5F9;--muted:#64748B;--border:#1E2860;--r:12px;
+  --navy:#0d1840;--store-blue:#1e3a8a;--awning:#1d4ed8;--floor:#1a1e30;
+  --TW:58px;--TH:52px;--gap:3px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* ── Topbar ── */
+.topbar{position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);
+  padding:.5rem 1.2rem;display:flex;align-items:center;gap:.8rem;font-size:.88rem}
+.topbar a{color:var(--text);text-decoration:none;font-weight:700}.topbar a:hover{color:var(--gold)}
+.topbar .spacer{flex:1}
+.topbar .badge-link{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);
+  color:var(--em);border-radius:20px;padding:.25rem .8rem;font-size:.78rem;font-weight:600;text-decoration:none}
+.topbar .badge-link:hover{background:rgba(34,197,94,.22);color:var(--em)}
+
+/* ── Page layout ── */
+.layout{display:grid;grid-template-columns:420px 1fr;gap:2.5rem;max-width:1200px;margin:2rem auto;padding:0 1.5rem 4rem}
+@media(max-width:900px){.layout{grid-template-columns:1fr}}
+
+/* ── Phone frame ── */
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.phone-hint{font-size:.72rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;text-align:center}
+.phone-frame{
+  width:390px;height:800px;background:#06080f;
+  border-radius:46px;border:10px solid #111;
+  box-shadow:0 0 0 2px #222,0 24px 80px rgba(0,0,0,.85),0 0 80px rgba(79,142,247,.06);
+  overflow:hidden;display:flex;flex-direction:column;position:relative
+}
+.scene-links{display:flex;gap:.6rem}
+.scene-link{padding:.4rem 1rem;border-radius:20px;font-size:.8rem;font-weight:700;text-decoration:none;border:1px solid var(--border);color:var(--muted)}
+.scene-link.active{background:rgba(79,142,247,.12);border-color:rgba(79,142,247,.4);color:var(--sap)}
+.scene-link:hover{border-color:var(--em);color:var(--em)}
+
+/* ── Status bar ── */
+.status-bar{background:#000;display:flex;justify-content:space-between;align-items:center;
+  padding:.42rem 1.4rem .25rem;font-size:.7rem;font-weight:600;flex-shrink:0;color:#ccc}
+
+/* ── HUD ── */
+.hud{padding:.4rem .65rem .35rem;display:flex;align-items:center;gap:.4rem;flex-shrink:0;
+  background:linear-gradient(180deg,#07090f,rgba(7,9,15,0));position:relative;z-index:10}
+.hud-lv{background:var(--gold);color:#1a0e00;font-weight:900;font-size:.75rem;border-radius:16px;padding:.2rem .55rem;white-space:nowrap}
+.hud-xp-wrap{flex:1;max-width:55px;height:5px;background:#1e2540;border-radius:3px;overflow:hidden}
+.hud-xp-fill{height:100%;width:68%;background:linear-gradient(90deg,var(--gold),#f5a623);border-radius:3px}
+.pill{display:flex;align-items:center;gap:.28rem;background:rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:.18rem .5rem;font-size:.75rem;font-weight:700}
+.pill .ico{font-size:.85rem}
+.pill.coins{border-color:rgba(247,200,50,.2)}
+.pill.cust{border-color:rgba(79,142,247,.2);color:var(--sap);font-size:.72rem}
+.hud-right{display:flex;gap:.3rem;margin-left:auto}
+.hud-ico-btn{width:28px;height:28px;background:rgba(255,255,255,.06);border:1px solid var(--border);
+  border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:.85rem;cursor:pointer}
+
+/* ── LP Bar ── */
+.lp-bar-wrap{flex-shrink:0;background:rgba(0,0,0,.5);border-bottom:1px solid var(--border);padding:.4rem .65rem}
+.lp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem}
+.lp-tier{font-size:.7rem;font-weight:800;color:var(--gold)}
+.lp-score{font-size:.68rem;color:var(--muted)}
+.lp-next{font-size:.62rem;color:var(--sap)}
+.lp-track{height:7px;background:#1e2540;border-radius:4px;overflow:hidden;position:relative}
+.lp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#7c3aed,var(--sap),var(--gold));
+  transition:width .4s ease}
+.lp-milestone{position:absolute;top:0;bottom:0;width:2px;background:rgba(255,255,255,.15)}
+.lp-unlocks{font-size:.62rem;color:var(--muted);margin-top:.25rem;
+  display:flex;align-items:center;gap:.3rem;flex-wrap:wrap}
+.lp-cust-badge{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);
+  color:var(--em);border-radius:8px;padding:1px 5px;font-size:.6rem;font-weight:700}
+
+/* ── Store viewport & grid ── */
+.store-viewport{flex:1;overflow:auto;position:relative;scrollbar-width:thin;
+  background:var(--floor);
+  background-image:
+    repeating-linear-gradient(0deg,transparent,transparent calc(var(--TH)+var(--gap)-1px),rgba(255,255,255,.025) calc(var(--TH)+var(--gap)-1px),rgba(255,255,255,.025) calc(var(--TH)+var(--gap))),
+    repeating-linear-gradient(90deg,transparent,transparent calc(var(--TW)+var(--gap)-1px),rgba(255,255,255,.025) calc(var(--TW)+var(--gap)-1px),rgba(255,255,255,.025) calc(var(--TW)+var(--gap)))}
+.store-grid{display:grid;grid-template-columns:repeat(6,var(--TW));grid-template-rows:repeat(7,var(--TH));
+  gap:var(--gap);padding:8px;width:fit-content;position:relative}
+
+/* ── Display tiles ── */
+.tile{width:var(--TW);height:var(--TH);border-radius:7px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;cursor:pointer;position:relative;
+  transition:transform .12s,box-shadow .12s;border:1.5px solid transparent;user-select:none}
+.tile:hover{transform:scale(1.05);z-index:5}
+.tile:active{transform:scale(.96)}
+.tile .tic{font-size:1.25rem;line-height:1}
+.tile .tlbl{font-size:.44rem;font-weight:700;letter-spacing:.04em;margin-top:1px;text-align:center}
+
+/* Tile types */
+.tile.empty-floor{background:var(--floor);border-color:rgba(255,255,255,.04);cursor:default}
+.tile.empty-floor:hover{transform:none}
+.tile.display-full{background:linear-gradient(135deg,#1a2540,#0d1628);border-color:var(--sap);
+  box-shadow:0 0 10px rgba(79,142,247,.15)}
+.tile.display-full .tlbl{color:#94a3b8}
+.tile.display-fresh{background:linear-gradient(135deg,#0d2a1a,#061410);border-color:var(--em);
+  box-shadow:0 0 12px rgba(34,197,94,.2),inset 0 0 8px rgba(34,197,94,.06);
+  animation:fpulse 3s ease-in-out infinite}
+.tile.display-fresh .tlbl{color:#86efac}
+.tile.display-low{background:linear-gradient(135deg,#2a2010,#1a1408);border-color:#d97706}
+.tile.display-empty{background:linear-gradient(135deg,#2a1010,#1a0808);border-color:var(--ruby);
+  animation:epulse 1.4s ease-in-out infinite}
+.tile.display-empty .tlbl{color:var(--ruby)}
+.tile.floor-t{background:var(--floor);border-color:rgba(255,255,255,.04);cursor:default}
+.tile.floor-t:hover{transform:none}
+.tile.aisle{background:rgba(255,255,255,.015);border-color:rgba(255,255,255,.04);cursor:default}
+.tile.aisle:hover{transform:none}
+.tile.entrance{background:linear-gradient(180deg,rgba(79,142,247,.06),rgba(79,142,247,.02));
+  border-color:rgba(79,142,247,.25);cursor:default}
+.tile.entrance:hover{transform:none}
+.tile.selected{border-color:var(--gold)!important;
+  box-shadow:0 0 0 2px rgba(247,200,50,.35),0 0 16px rgba(247,200,50,.25)!important;animation:none!important}
+
+@keyframes fpulse{0%,100%{box-shadow:0 0 10px rgba(34,197,94,.18),inset 0 0 6px rgba(34,197,94,.05)}
+  50%{box-shadow:0 0 20px rgba(34,197,94,.35),inset 0 0 12px rgba(34,197,94,.1)}}
+@keyframes epulse{0%,100%{box-shadow:0 0 6px rgba(239,68,68,.12)}50%{box-shadow:0 0 16px rgba(239,68,68,.45)}}
+
+/* Stock indicator bar (bottom of display tile) */
+.stock-bar{position:absolute;bottom:3px;left:4px;right:4px;height:3px;
+  background:rgba(0,0,0,.4);border-radius:2px;overflow:hidden}
+.stock-fill{height:100%;border-radius:2px}
+.stock-fill.full{background:var(--em)}.stock-fill.low{background:#d97706}.stock-fill.empty{background:var(--ruby)}
+
+/* Display badges */
+.dbadge{position:absolute;font-size:.48rem;background:rgba(0,0,0,.8);
+  border-radius:4px;padding:1px 3px;font-weight:700;line-height:1.3;white-space:nowrap}
+.dbadge.fresh{top:2px;left:2px;color:var(--em);background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.25)}
+.dbadge.qty{top:2px;right:2px;color:var(--text)}
+.dbadge.restock{bottom:2px;left:50%;transform:translateX(-50%);color:var(--ruby);
+  background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);
+  animation:rblink 1s ease-in-out infinite}
+@keyframes rblink{0%,100%{opacity:1}50%{opacity:.35}}
+
+/* Revenue ticker */
+.rev-ticker{display:flex;align-items:center;gap:.5rem;padding:.28rem .65rem;
+  background:rgba(0,0,0,.45);border-bottom:1px solid var(--border);flex-shrink:0}
+.rev-label{font-size:.65rem;color:var(--muted)}
+.rev-val{font-size:.72rem;font-weight:800;color:var(--gold)}
+.rev-rate{font-size:.65rem;color:var(--em);margin-left:.2rem}
+.campaign-badge{margin-left:auto;background:rgba(124,58,237,.15);border:1px solid rgba(124,58,237,.35);
+  color:#c4b5fd;border-radius:10px;padding:.15rem .55rem;font-size:.65rem;font-weight:700;cursor:pointer}
+.campaign-badge:hover{background:rgba(124,58,237,.25)}
+
+/* ── Customer avatars ── */
+.customer{position:absolute;z-index:15;display:flex;flex-direction:column;align-items:center;gap:1px;cursor:pointer;pointer-events:all}
+.cust-bubble{background:rgba(13,16,36,.9);border:1px solid var(--border);border-radius:8px;
+  padding:2px 6px;font-size:.58rem;font-weight:700;white-space:nowrap;color:var(--text)}
+.cust-bubble.buying{color:var(--gold);border-color:rgba(247,200,50,.3);background:rgba(247,200,50,.08)}
+.cust-avatar{font-size:1.1rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+
+/* Customer tooltip (inline above customer) */
+.cust-tt{position:absolute;background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:.55rem .7rem;width:190px;z-index:40;
+  box-shadow:0 8px 32px rgba(0,0,0,.7);display:none;pointer-events:none}
+.cust-tt.vis{display:block}
+.cust-tt-title{font-size:.82rem;font-weight:800;margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
+.cust-stat-row{display:flex;justify-content:space-between;font-size:.68rem;
+  padding:.18rem 0;border-bottom:1px solid var(--border)}
+.cust-stat-row:last-child{border-bottom:none}
+.cust-stat-row .lbl{color:var(--muted)}.cust-stat-row .val{font-weight:700}
+
+/* Customer animations */
+.c1{animation:cust1 12s linear infinite}
+.c2{animation:cust2 15s linear infinite;animation-delay:-5s}
+.c3{animation:cust3 18s linear infinite;animation-delay:-9s}
+@keyframes cust1{
+  0%  {left:8px;top:240px;opacity:0}
+  5%  {opacity:1}
+  25% {left:120px;top:180px}
+  50% {left:60px;top:130px}
+  75% {left:180px;top:130px}
+  95% {opacity:1}
+  100%{left:250px;top:240px;opacity:0}
+}
+@keyframes cust2{
+  0%  {left:60px;top:260px;opacity:0}
+  5%  {opacity:1}
+  30% {left:60px;top:180px}
+  60% {left:120px;top:120px}
+  90% {opacity:1}
+  100%{left:60px;top:260px;opacity:0}
+}
+@keyframes cust3{
+  0%  {left:200px;top:260px;opacity:0}
+  5%  {opacity:1}
+  40% {left:200px;top:170px}
+  70% {left:140px;top:120px}
+  95% {opacity:1}
+  100%{left:200px;top:260px;opacity:0}
+}
+
+/* ── Tooltip overlay ── */
+.tt-overlay{position:absolute;bottom:0;left:0;right:0;z-index:30;
+  background:linear-gradient(180deg,transparent,rgba(0,0,0,.65) 35%);
+  display:none;flex-direction:column;pointer-events:none}
+.tt-overlay.vis{display:flex}
+.tt-panel{background:var(--surface);border-top:1px solid var(--border);border-radius:22px 22px 0 0;
+  padding:.9rem;pointer-events:all;box-shadow:0 -8px 40px rgba(0,0,0,.7);max-height:340px;overflow-y:auto}
+.tt-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.55rem}
+.tt-ico{font-size:1.5rem}.tt-title{font-size:.92rem;font-weight:800}
+.tt-sub{font-size:.68rem;color:var(--muted);margin-top:1px}
+.tt-close{margin-left:auto;width:26px;height:26px;background:var(--s2);border:1px solid var(--border);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;flex-shrink:0}
+.tt-tags{display:flex;flex-wrap:wrap;gap:.28rem;margin-bottom:.55rem}
+.tag{font-size:.66rem;padding:.18rem .5rem;border-radius:10px;font-weight:600;border:1px solid}
+.tag.fresh{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--em)}
+.tag.farm{background:rgba(247,200,50,.1);border-color:rgba(247,200,50,.3);color:var(--gold)}
+.tag.supplier{background:rgba(100,116,139,.1);border-color:rgba(100,116,139,.3);color:var(--muted)}
+.tag.low{background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3);color:#d97706}
+.tag.empty-t{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:var(--ruby)}
+.tt-stats{display:grid;grid-template-columns:1fr 1fr;gap:.35rem;margin-bottom:.55rem}
+.stat{background:var(--s2);border-radius:8px;padding:.38rem .55rem}
+.stat-lbl{font-size:.6rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.stat-val{font-size:.85rem;font-weight:700;margin-top:1px}
+.stat-val.g{color:var(--gold)}.stat-val.em{color:var(--em)}.stat-val.r{color:var(--ruby)}.stat-val.b{color:var(--sap)}
+.tt-cust-row{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.55rem}
+.tt-cust-pill{font-size:.64rem;background:rgba(79,142,247,.08);border:1px solid rgba(79,142,247,.2);
+  color:var(--sap);border-radius:8px;padding:.15rem .45rem;font-weight:600}
+.tt-acts{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+.act-btn{padding:.55rem .5rem;border-radius:9px;border:none;font-size:.76rem;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:.35rem;transition:filter .15s,transform .1s}
+.act-btn:hover{filter:brightness(1.12)}.act-btn:active{transform:scale(.96)}
+.act-btn.prim{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0e00;grid-column:span 2}
+.act-btn.sec{background:var(--s2);border:1px solid var(--border);color:var(--text)}
+.tt-divider{border:none;border-top:1px solid var(--border);margin:.5rem 0}
+.tt-earning{font-size:.7rem;color:var(--muted);text-align:center;margin-top:.4rem}
+.tt-earning strong{color:var(--gold)}
+
+/* ── Toolbar ── */
+.store-tb{background:linear-gradient(0deg,#07090f,rgba(7,9,15,.95));border-top:1px solid var(--border);
+  display:flex;padding:.45rem .35rem .75rem;gap:.25rem;flex-shrink:0;z-index:20}
+.tb-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:.2rem;padding:.4rem .15rem;
+  border-radius:9px;border:1px solid transparent;background:none;cursor:pointer;
+  transition:.15s;color:var(--muted);font-size:.6rem;font-weight:600;position:relative}
+.tb-btn .tb-ico{font-size:1.15rem}
+.tb-btn:hover{background:var(--s2);border-color:var(--border);color:var(--text)}
+.tb-btn.active{background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.35);color:var(--sap)}
+.tb-badge{position:absolute;top:-3px;right:2px;background:var(--ruby);color:#fff;
+  font-size:.52rem;font-weight:900;border-radius:7px;padding:1px 4px;border:1.5px solid #000}
+
+/* ── Slide panels ── */
+.backdrop{position:absolute;inset:0;background:rgba(0,0,0,.55);z-index:45;display:none}
+.backdrop.vis{display:block}
+.spanel{position:absolute;bottom:0;left:0;right:0;background:var(--surface);
+  border-radius:22px 22px 0 0;border-top:1px solid var(--border);z-index:50;
+  transform:translateY(100%);transition:transform .32s cubic-bezier(.22,1,.36,1);
+  max-height:80%;display:flex;flex-direction:column}
+.spanel.open{transform:translateY(0)}
+.spanel-handle{width:36px;height:4px;background:#2a2a2a;border-radius:2px;margin:.65rem auto .2rem;flex-shrink:0}
+.spanel-title{font-size:.92rem;font-weight:800;padding:.2rem 1rem .65rem;
+  border-bottom:1px solid var(--border);flex-shrink:0}
+.spanel-body{padding:.75rem;flex:1;overflow-y:auto}
+
+/* Panel content */
+.stock-item{background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:.55rem .75rem;display:flex;align-items:center;gap:.65rem;margin-bottom:.4rem}
+.si-ico{font-size:1.1rem;width:26px;text-align:center}
+.si-info{flex:1}
+.si-name{font-size:.8rem;font-weight:700}
+.si-meta{font-size:.66rem;color:var(--muted);margin-top:2px}
+.si-qty{font-size:.8rem;font-weight:700;color:var(--gold);background:rgba(247,200,50,.1);
+  border:1px solid rgba(247,200,50,.2);border-radius:7px;padding:.08rem .45rem}
+.si-drag{font-size:.7rem;color:var(--sap);cursor:grab;padding:.2rem .5rem;
+  background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.25);border-radius:7px;font-weight:700}
+
+.cust-type-card{background:var(--s2);border:1px solid var(--border);border-radius:10px;
+  padding:.5rem .7rem;display:flex;align-items:center;gap:.6rem;margin-bottom:.4rem}
+.ctc-ico{font-size:1.2rem}
+.ctc-info{flex:1}
+.ctc-name{font-size:.8rem;font-weight:700}
+.ctc-meta{font-size:.66rem;color:var(--muted);margin-top:2px}
+.ctc-budget{font-size:.72rem;font-weight:700;color:var(--gold);background:rgba(247,200,50,.1);
+  border:1px solid rgba(247,200,50,.2);border-radius:7px;padding:.08rem .45rem}
+
+.campaign-card{background:linear-gradient(135deg,rgba(124,58,237,.15),rgba(79,142,247,.1));
+  border:1px solid rgba(124,58,237,.3);border-radius:10px;padding:.7rem .8rem;margin-bottom:.5rem}
+.camp-name{font-size:.85rem;font-weight:800;color:#c4b5fd;margin-bottom:.3rem}
+.camp-meta{font-size:.7rem;color:var(--muted);margin-bottom:.4rem}
+.camp-bar{height:4px;background:#1e2540;border-radius:2px;overflow:hidden}
+.camp-fill{height:100%;border-radius:2px;background:linear-gradient(90deg,#7c3aed,var(--sap))}
+
+.big-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a0e00;
+  border:none;border-radius:11px;padding:.65rem;font-size:.88rem;font-weight:800;cursor:pointer;margin-top:.75rem}
+.big-btn.blue{background:linear-gradient(135deg,var(--sap),#3a5ecf);color:#fff}
+
+/* ── Design notes ── */
+.notes{padding-top:.4rem}
+.notes-title{font-size:1.5rem;font-weight:900;margin-bottom:.3rem}
+.notes-sub{font-size:.85rem;color:var(--muted);margin-bottom:1.4rem;line-height:1.5}
+.sec-hd{font-size:.95rem;font-weight:800;color:var(--gold);margin:1.4rem 0 .65rem;
+  padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+.callout{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--sap);
+  border-radius:0 var(--r) var(--r) 0;padding:.75rem 1rem;margin-bottom:.85rem}
+.callout.gold{border-left-color:var(--gold)}.callout.green{border-left-color:var(--em)}.callout.red{border-left-color:var(--ruby)}.callout.purple{border-left-color:#7c3aed}
+.callout-title{font-size:.82rem;font-weight:700;margin-bottom:.3rem;display:flex;align-items:center;gap:.35rem}
+.callout-body{font-size:.78rem;color:#a0aec0;line-height:1.65}
+.callout-body code{background:var(--s2);border:1px solid var(--border);border-radius:4px;
+  padding:.04rem .28rem;font-size:.76rem;font-family:monospace;color:var(--gold)}
+.chip{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:middle}
+.dtable{width:100%;border-collapse:collapse;font-size:.78rem;margin-bottom:1rem}
+.dtable th{background:var(--s2);text-align:left;padding:.38rem .6rem;border:1px solid var(--border);color:var(--sap);font-weight:700}
+.dtable td{padding:.38rem .6rem;border:1px solid var(--border);vertical-align:top}
+.dtable tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <a href="../index.html">🏪🌾 SuperStoreTycoon GDD</a>
+  <span style="color:var(--muted)">›</span>
+  <span style="font-weight:700;color:var(--sap)">🏪 Store Scene UI</span>
+  <span class="spacer"></span>
+  <a class="badge-link" href="ui-farm-scene.html">← 🌾 Farm Scene</a>
+</nav>
+
+<div class="layout">
+
+<!-- ════════════════ PHONE MOCKUP ════════════════ -->
+<div class="phone-col">
+  <div class="phone-hint">Interactive · tap displays or customers to see info</div>
+
+  <div class="phone-frame">
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <span style="letter-spacing:.04em">◾◾◾ WiFi 🔋 84%</span>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+      <div class="hud-lv">Lv.22</div>
+      <div class="hud-xp-wrap"><div class="hud-xp-fill"></div></div>
+      <div class="pill coins"><span class="ico">💰</span>8,420</div>
+      <div class="pill cust"><span class="ico">👥</span>6 customers</div>
+      <div class="hud-right">
+        <div class="hud-ico-btn">⚙️</div>
+        <div class="hud-ico-btn">📊</div>
+      </div>
+    </div>
+
+    <!-- LP Bar -->
+    <div class="lp-bar-wrap">
+      <div class="lp-top">
+        <div>
+          <div class="lp-tier">💎 Town Centre Shop</div>
+          <div class="lp-score">1,234 LP</div>
+        </div>
+        <div style="text-align:right">
+          <div class="lp-next">Next: City Store (2,000 LP)</div>
+          <div class="lp-score">Unlocks: Office Worker</div>
+        </div>
+      </div>
+      <div class="lp-track">
+        <div class="lp-fill" style="width:61.7%"></div>
+        <div class="lp-milestone" style="left:50%"></div>
+      </div>
+      <div class="lp-unlocks">
+        Active customers:
+        <span class="lp-cust-badge">Bargain Hunter</span>
+        <span class="lp-cust-badge">Daily Shopper</span>
+        <span class="lp-cust-badge">Family Shopper</span>
+        <span class="lp-cust-badge">Health Nut</span>
+        <span class="lp-cust-badge">Foodie</span>
+      </div>
+    </div>
+
+    <!-- Revenue ticker -->
+    <div class="rev-ticker">
+      <div class="rev-label">Today's Revenue:</div>
+      <div class="rev-val">💰 2,840</div>
+      <div class="rev-rate">+42/min</div>
+      <div class="campaign-badge" onclick="openPanel('campPanel')">⚡ Flash Sale 18m</div>
+    </div>
+
+    <!-- Store viewport -->
+    <div class="store-viewport" id="storeViewport">
+
+      <!-- Customer avatars -->
+      <div class="customer c1" onclick="showCustTT(event,'👨 Daily Shopper','80–150 coins','100 LP','Variety, daily staples',4.2,'★★★★ 4.2 avg')">
+        <div class="cust-bubble buying">+30 💰</div>
+        <div class="cust-avatar">👨</div>
+      </div>
+      <div class="customer c2" onclick="showCustTT(event,'👩 Health Nut','150–250 coins','600 LP','Organic, fresh produce',4.5,'★★★★½ 4.5 avg')">
+        <div class="cust-bubble">Browsing...</div>
+        <div class="cust-avatar">👩</div>
+      </div>
+      <div class="customer c3" onclick="showCustTT(event,'🧑 Foodie','200–350 coins','1,000 LP','Food & beverage, fresh only',5,'★★★★★ 5.0 avg')">
+        <div class="cust-bubble buying">+25 💰</div>
+        <div class="cust-avatar">🧑</div>
+      </div>
+
+      <div class="store-grid">
+        <!-- ── ROW 1 — Food section header ── -->
+        <div class="tile floor-t" style="grid-column:1/3;grid-row:1" onclick="closeTT()">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.2);letter-spacing:.12em;font-weight:700">🥖 FOOD &amp; GROCERY</span>
+        </div>
+        <div class="tile floor-t" style="grid-column:3/5;grid-row:1" onclick="closeTT()">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.2);letter-spacing:.12em;font-weight:700">🥛 DAIRY &amp; CHILLED</span>
+        </div>
+        <div class="tile floor-t" style="grid-column:5/7;grid-row:1" onclick="closeTT()">
+          <span style="font-size:.6rem;color:rgba(255,255,255,.2);letter-spacing:.12em;font-weight:700">☕ BEVERAGES</span>
+        </div>
+
+        <!-- ── ROW 2 — Displays row 1 ── -->
+        <!-- Bread Shelf 2×1: full, fresh (farm) -->
+        <div class="tile display-fresh" style="grid-column:1/3;grid-row:2"
+          onclick="ttDisplay('🍞','Bread Shelf','2×1 · Food &amp; Grocery · Lv.1','Full Stock','12/12','30 coins','Farm Mode','Bread, Muffins, Croissants',['Daily Shopper','Family Shopper','Foodie'],'480',true,false)">
+          <span class="tic">🍞</span><span class="tlbl">BREAD SHELF</span>
+          <div class="stock-bar"><div class="stock-fill full" style="width:100%"></div></div>
+          <span class="dbadge fresh">🌾 Fresh +40%</span>
+          <span class="dbadge qty">12/12</span>
+        </div>
+        <!-- Dairy Fridge 2×2: full, fresh -->
+        <div class="tile display-fresh" style="grid-column:3/5;grid-row:2/4"
+          onclick="ttDisplay('🧀','Dairy Fridge','2×2 · Dairy &amp; Chilled · Lv.12','Full Stock','12/12','60 coins','Farm Mode','Cheese, Milk, Yoghurt',['Daily Shopper','Health Nut','Foodie','Family Shopper'],'720',true,false)">
+          <span class="tic" style="font-size:1.5rem">🧀</span><span class="tlbl">DAIRY FRIDGE</span>
+          <div class="stock-bar"><div class="stock-fill full" style="width:100%"></div></div>
+          <span class="dbadge fresh">🌾 Fresh +50%</span>
+          <span class="dbadge qty">12/12</span>
+        </div>
+        <!-- Hot Drinks 2×2: low stock -->
+        <div class="tile display-low" style="grid-column:5/7;grid-row:2/4"
+          onclick="ttDisplay('☕','Hot Drinks Corner','2×2 · Beverages · Lv.18','Low Stock','4/12','55 coins','Farm Mode','Coffee, Tea, Hot Chocolate',['Daily Shopper','Office Worker','Foodie'],'220',true,true)">
+          <span class="tic" style="font-size:1.5rem">☕</span><span class="tlbl">HOT DRINKS</span>
+          <div class="stock-bar"><div class="stock-fill low" style="width:33%"></div></div>
+          <span class="dbadge fresh">🌾 Fresh +60%</span>
+          <span class="dbadge qty" style="color:#d97706">4/12 ⚠️</span>
+        </div>
+
+        <!-- ── ROW 3 ── -->
+        <!-- Fruit Stand 2×1: low stock, fresh -->
+        <div class="tile display-low" style="grid-column:1/3;grid-row:3"
+          onclick="ttDisplay('🍓','Fruit Stand','2×1 · Food &amp; Grocery · Lv.1','Low Stock ⚠️','2/12','25 coins','Farm Mode','Strawberries, Apples, Oranges',['Health Nut','Foodie','Daily Shopper'],'50',true,true)">
+          <span class="tic">🍓</span><span class="tlbl">FRUIT STAND</span>
+          <div class="stock-bar"><div class="stock-fill low" style="width:17%"></div></div>
+          <span class="dbadge fresh">🌾 Fresh +30%</span>
+          <span class="dbadge qty" style="color:#d97706">2/12 ⚠️</span>
+        </div>
+        <!-- dairy continues -->
+        <!-- hot drinks continues -->
+
+        <!-- ── ROW 4 ── -->
+        <!-- Veg Rack 2×1: empty! -->
+        <div class="tile display-empty" style="grid-column:1/3;grid-row:4"
+          onclick="ttDisplay('🥦','Vegetable Rack','2×1 · Food &amp; Grocery · Lv.2','EMPTY — Restock now','0/12','22 coins','Farm Mode','Carrots, Broccoli, Spinach',['Health Nut','Family Shopper','Daily Shopper'],'0',true,false)">
+          <span class="tic">🥦</span><span class="tlbl">EMPTY — RESTOCK</span>
+          <div class="stock-bar"><div class="stock-fill empty" style="width:0%"></div></div>
+          <span class="dbadge restock">📦 Restock!</span>
+        </div>
+        <!-- Egg Display 1×1: full, fresh -->
+        <div class="tile display-fresh" style="grid-column:3;grid-row:4"
+          onclick="ttDisplay('🥚','Egg Display','1×1 · Food &amp; Grocery · Lv.5','Full Stock','12/12','35 coins','Farm Mode','Fresh eggs from Barn',['Health Nut','Daily Shopper','Foodie'],'420',true,false)">
+          <span class="tic" style="font-size:1rem">🥚</span><span class="tlbl">EGGS</span>
+          <div class="stock-bar"><div class="stock-fill full" style="width:100%"></div></div>
+          <span class="dbadge fresh" style="font-size:.42rem">🌾</span>
+        </div>
+        <!-- Cereal Shelf 2×1: full, supplier -->
+        <div class="tile display-full" style="grid-column:4/6;grid-row:4"
+          onclick="ttDisplay('🥣','Cereal Shelf','2×1 · Food &amp; Grocery · Lv.15','Full Stock','12/12','40 coins','Supplier Mode','Cornflakes, Granola, Oats',['Daily Shopper','Family Shopper'],'480',false,false)">
+          <span class="tic">🥣</span><span class="tlbl">CEREAL SHELF</span>
+          <div class="stock-bar"><div class="stock-fill full" style="width:100%"></div></div>
+          <span class="dbadge qty">12/12</span>
+        </div>
+        <div class="tile empty-floor" style="grid-column:6;grid-row:4">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.08)">+</span>
+        </div>
+
+        <!-- ── ROW 5 — Aisle (customer walking area) ── -->
+        <div class="tile aisle" style="grid-column:1/7;grid-row:5">
+          <span style="font-size:.55rem;color:rgba(255,255,255,.12);letter-spacing:.15em">AISLE · 2 TILES WIDE</span>
+        </div>
+
+        <!-- ── ROW 6 — More displays ── -->
+        <!-- Soda Machine 1×1 -->
+        <div class="tile display-full" style="grid-column:1;grid-row:6"
+          onclick="ttDisplay('🥤','Soda Machine','1×1 · Beverages · Lv.5','Full Stock','12/12','20 coins','Supplier Mode','Cola, Lemonade, Root Beer',['Bargain Hunter','Daily Shopper'],'240',false,false)">
+          <span class="tic" style="font-size:1rem">🥤</span><span class="tlbl">SODA</span>
+          <div class="stock-bar"><div class="stock-fill full" style="width:100%"></div></div>
+        </div>
+        <!-- Smoothie Bar 2×2 -->
+        <div class="tile display-fresh" style="grid-column:2/4;grid-row:6/8"
+          onclick="ttDisplay('🥤','Smoothie Bar','2×2 · Beverages · Lv.25','Full Stock','10/12','65 coins','Farm Mode','Strawberry, Mango, Green Smoothie',['Health Nut','Foodie','Socialite'],'650',true,false)">
+          <span class="tic" style="font-size:1.3rem">🥤</span><span class="tlbl">SMOOTHIE BAR</span>
+          <div class="stock-bar"><div class="stock-fill full" style="width:83%"></div></div>
+          <span class="dbadge fresh">🌾 Fresh +55%</span>
+          <span class="dbadge qty">10/12</span>
+        </div>
+        <div class="tile empty-floor" style="grid-column:4;grid-row:6">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.08)">+</span>
+        </div>
+        <div class="tile empty-floor" style="grid-column:5;grid-row:6">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.08)">+</span>
+        </div>
+        <div class="tile empty-floor" style="grid-column:6;grid-row:6">
+          <span style="font-size:.7rem;color:rgba(255,255,255,.08)">+</span>
+        </div>
+
+        <!-- ── ROW 7 — Entrance ── -->
+        <div class="tile entrance" style="grid-column:1;grid-row:7">
+          <span style="font-size:.6rem;color:rgba(79,142,247,.5);font-weight:700">IN</span>
+          <span style="font-size:.55rem;color:rgba(79,142,247,.4)">↑↑</span>
+        </div>
+        <!-- smoothie bar row 2 -->
+        <div class="tile entrance" style="grid-column:4;grid-row:7">
+          <span style="font-size:.6rem;color:rgba(79,142,247,.5);font-weight:700">IN</span>
+          <span style="font-size:.55rem;color:rgba(79,142,247,.4)">↑↑</span>
+        </div>
+        <div class="tile floor-t" style="grid-column:5;grid-row:7"></div>
+        <div class="tile entrance" style="grid-column:6;grid-row:7">
+          <span style="font-size:.6rem;color:rgba(79,142,247,.5);font-weight:700">OUT</span>
+          <span style="font-size:.55rem;color:rgba(79,142,247,.4)">↓↓</span>
+        </div>
+      </div>
+
+      <!-- Display tooltip -->
+      <div class="tt-overlay" id="tileTooltip">
+        <div class="tt-panel">
+          <div class="tt-hdr">
+            <div class="tt-ico" id="ttIco">🍞</div>
+            <div>
+              <div class="tt-title" id="ttTitle">Bread Shelf</div>
+              <div class="tt-sub" id="ttSub">2×1 · Food & Grocery · Lv.1</div>
+            </div>
+            <div class="tt-close" onclick="closeTT()">✕</div>
+          </div>
+          <div class="tt-tags" id="ttTags"></div>
+          <div class="tt-stats">
+            <div class="stat"><div class="stat-lbl">Stock</div><div class="stat-val em" id="ttStock">12/12</div></div>
+            <div class="stat"><div class="stat-lbl">Value</div><div class="stat-val g" id="ttVal">30 coins/item</div></div>
+            <div class="stat"><div class="stat-lbl">Supply Mode</div><div class="stat-val b" id="ttMode">Farm</div></div>
+            <div class="stat"><div class="stat-lbl">Today Earned</div><div class="stat-val g" id="ttEarned">480 💰</div></div>
+          </div>
+          <div style="font-size:.7rem;color:var(--muted);margin-bottom:.4rem">Buys this display:</div>
+          <div class="tt-cust-row" id="ttCusts"></div>
+          <div class="tt-acts" id="ttActs"></div>
+          <div class="tt-earning">Items sold today: <strong id="ttSold">16</strong> · Fresh bonus: <strong id="ttFresh">+40%</strong></div>
+        </div>
+      </div>
+
+    </div><!-- store-viewport -->
+
+    <!-- Bottom toolbar -->
+    <div class="store-tb">
+      <button class="tb-btn active">
+        <span class="tb-ico">🛒</span>Displays
+      </button>
+      <button class="tb-btn" onclick="openPanel('decorPanel')">
+        <span class="tb-ico">🪴</span>Decorate
+      </button>
+      <button class="tb-btn" onclick="openPanel('stockroomPanel')">
+        <span class="tb-ico">📦</span>Stockroom
+        <span class="tb-badge">3</span>
+      </button>
+      <button class="tb-btn" onclick="openPanel('custPanel')">
+        <span class="tb-ico">👥</span>Customers
+      </button>
+      <button class="tb-btn" onclick="openPanel('statsPanel')">
+        <span class="tb-ico">📊</span>Stats
+      </button>
+    </div>
+
+    <!-- Backdrop -->
+    <div class="backdrop" id="backdrop" onclick="closeAllPanels()"></div>
+
+    <!-- Stockroom panel -->
+    <div class="spanel" id="stockroomPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">📦 Stockroom · Needs Restocking</div>
+      <div class="spanel-body">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.6rem">
+          Tap an item, then tap an empty display to restock it
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">🥦</div>
+          <div class="si-info">
+            <div class="si-name">Carrot (Farm)</div>
+            <div class="si-meta">6 units · For: Vegetable Rack</div>
+          </div>
+          <span class="si-qty">×6</span>
+          <span class="si-drag">Restock →</span>
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">🍓</div>
+          <div class="si-info">
+            <div class="si-name">Strawberry (Farm · Fresh)</div>
+            <div class="si-meta">10 units · For: Fruit Stand</div>
+          </div>
+          <span class="si-qty">×10</span>
+          <span class="si-drag">Restock →</span>
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">☕</div>
+          <div class="si-info">
+            <div class="si-name">Roasted Coffee (Processed)</div>
+            <div class="si-meta">8 units · For: Hot Drinks Corner</div>
+          </div>
+          <span class="si-qty">×8</span>
+          <span class="si-drag">Restock →</span>
+        </div>
+        <div class="stock-item" style="opacity:.5">
+          <div class="si-ico">📦</div>
+          <div class="si-info">
+            <div class="si-name">Cereal (Supplier)</div>
+            <div class="si-meta">12 units · Auto-stocked</div>
+          </div>
+          <span class="si-qty">×12</span>
+          <span style="font-size:.68rem;color:var(--muted)">Auto ✓</span>
+        </div>
+        <button class="big-btn">📦 Restock All Displays</button>
+      </div>
+    </div>
+
+    <!-- Customers panel -->
+    <div class="spanel" id="custPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">👥 Active Customers (6)</div>
+      <div class="spanel-body">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.6rem">
+          LP Tier: Town Centre Shop (1,234 LP). Next unlock: Office Worker at 2,000 LP.
+        </div>
+        <div class="cust-type-card">
+          <div class="ctc-ico">👨</div>
+          <div class="ctc-info">
+            <div class="ctc-name">Daily Shopper ×2</div>
+            <div class="ctc-meta">Buys variety · 2–3 visits/day</div>
+          </div>
+          <div class="ctc-budget">80–150 💰</div>
+        </div>
+        <div class="cust-type-card">
+          <div class="ctc-ico">👩</div>
+          <div class="ctc-info">
+            <div class="ctc-name">Health Nut ×2</div>
+            <div class="ctc-meta">Prefers Fresh · +25% Fresh bonus</div>
+          </div>
+          <div class="ctc-budget">150–250 💰</div>
+        </div>
+        <div class="cust-type-card">
+          <div class="ctc-ico">🧑</div>
+          <div class="ctc-info">
+            <div class="ctc-name">Foodie ×1</div>
+            <div class="ctc-meta">Food &amp; bev only · Leaves 5★ review</div>
+          </div>
+          <div class="ctc-budget">200–350 💰</div>
+        </div>
+        <div class="cust-type-card">
+          <div class="ctc-ico">👦</div>
+          <div class="ctc-info">
+            <div class="ctc-name">Bargain Hunter ×1</div>
+            <div class="ctc-meta">Buys cheapest items only (&lt;50 coins)</div>
+          </div>
+          <div class="ctc-budget">50–100 💰</div>
+        </div>
+        <div style="background:var(--s2);border:1px dashed var(--border);border-radius:10px;
+          padding:.6rem .75rem;text-align:center;color:var(--muted);font-size:.76rem;margin-top:.3rem">
+          🏢 Office Worker unlocks at 2,000 LP — only 766 LP away!<br>
+          <span style="color:var(--gold)">Add Marble Floor (+30 LP/tile) to reach faster</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decor panel -->
+    <div class="spanel" id="decorPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">🪴 Decorations & LP</div>
+      <div class="spanel-body">
+        <div style="font-size:.72rem;color:var(--muted);margin-bottom:.6rem">
+          Every decoration permanently adds LP. LP never decreases.
+        </div>
+        <div class="campaign-card">
+          <div class="camp-name">💎 LP Progress: 1,234 / 2,000</div>
+          <div class="camp-meta">766 LP to unlock City Store tier (+ Office Worker)</div>
+          <div class="camp-bar"><div class="camp-fill" style="width:61.7%"></div></div>
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">🌿</div>
+          <div class="si-info">
+            <div class="si-name">Ficus Plant</div>
+            <div class="si-meta">+8 LP · 1×1 · 80 coins</div>
+          </div>
+          <span class="si-qty">+8 LP</span>
+          <span class="si-drag">Place</span>
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">🖼️</div>
+          <div class="si-info">
+            <div class="si-name">Art Display</div>
+            <div class="si-meta">+30 LP · 1×2 · 500 coins</div>
+          </div>
+          <span class="si-qty">+30 LP</span>
+          <span class="si-drag">Place</span>
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">⛲</div>
+          <div class="si-info">
+            <div class="si-name">Fountain</div>
+            <div class="si-meta">+80 LP · 3×3 · 2,000 coins</div>
+          </div>
+          <span class="si-qty">+80 LP</span>
+          <span class="si-drag">Place</span>
+        </div>
+        <button class="big-btn blue">Upgrade to Marble Floor (+30 LP/tile)</button>
+      </div>
+    </div>
+
+    <!-- Campaign panel -->
+    <div class="spanel" id="campPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">⚡ Active Campaign</div>
+      <div class="spanel-body">
+        <div class="campaign-card">
+          <div class="camp-name">⚡ Flash Sale</div>
+          <div class="camp-meta">All customer budgets +50% · 18 minutes remaining</div>
+          <div class="camp-bar"><div class="camp-fill" style="width:40%"></div></div>
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);margin:.5rem 0">
+          During Flash Sale: Daily Shopper budget 80–225 coins · Health Nut 150–375 coins
+        </div>
+        <div class="campaign-card" style="opacity:.6">
+          <div class="camp-name">🎯 Fresh Frenzy (Ready to launch)</div>
+          <div class="camp-meta">Fresh displays sell 3× faster · Costs 10 Shopper Cards · 30 min</div>
+          <div class="camp-bar"><div class="camp-fill" style="width:0%"></div></div>
+        </div>
+        <button class="big-btn">▶ Launch Fresh Frenzy Campaign</button>
+      </div>
+    </div>
+
+    <!-- Stats panel -->
+    <div class="spanel" id="statsPanel">
+      <div class="spanel-handle"></div>
+      <div class="spanel-title">📊 Store Stats</div>
+      <div class="spanel-body">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;margin-bottom:.7rem">
+          <div class="stat" style="background:var(--s2);border-radius:8px;padding:.4rem .55rem">
+            <div class="stat-lbl" style="font-size:.6rem;color:var(--muted);text-transform:uppercase">Today Revenue</div>
+            <div style="font-size:.95rem;font-weight:800;color:var(--gold)">💰 2,840</div>
+          </div>
+          <div class="stat" style="background:var(--s2);border-radius:8px;padding:.4rem .55rem">
+            <div class="stat-lbl" style="font-size:.6rem;color:var(--muted);text-transform:uppercase">Avg Satisfaction</div>
+            <div style="font-size:.95rem;font-weight:800;color:var(--em)">⭐ 4.2</div>
+          </div>
+          <div class="stat" style="background:var(--s2);border-radius:8px;padding:.4rem .55rem">
+            <div class="stat-lbl" style="font-size:.6rem;color:var(--muted);text-transform:uppercase">Customers Today</div>
+            <div style="font-size:.95rem;font-weight:800;color:var(--sap)">👥 48</div>
+          </div>
+          <div class="stat" style="background:var(--s2);border-radius:8px;padding:.4rem .55rem">
+            <div class="stat-lbl" style="font-size:.6rem;color:var(--muted);text-transform:uppercase">LP Total</div>
+            <div style="font-size:.95rem;font-weight:800;color:#c4b5fd">💎 1,234</div>
+          </div>
+        </div>
+        <div style="font-size:.76rem;color:var(--muted);font-weight:700;margin-bottom:.4rem">Top Display Today:</div>
+        <div class="stock-item">
+          <div class="si-ico">🧀</div>
+          <div class="si-info">
+            <div class="si-name">Dairy Fridge</div>
+            <div class="si-meta">22 sales · Fresh · 720 coins</div>
+          </div>
+          <span class="si-qty" style="color:var(--em)">🥇 Best</span>
+        </div>
+        <div class="stock-item">
+          <div class="si-ico">🍞</div>
+          <div class="si-info">
+            <div class="si-name">Bread Shelf</div>
+            <div class="si-meta">16 sales · Fresh · 480 coins</div>
+          </div>
+          <span class="si-qty">2nd</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- phone-frame -->
+
+  <div class="scene-links">
+    <a class="scene-link" href="ui-farm-scene.html">🌾 Farm Scene</a>
+    <span class="scene-link active">🏪 Store Scene</span>
+  </div>
+</div><!-- phone-col -->
+
+<!-- ════════════════ DESIGN NOTES ════════════════ -->
+<div class="notes">
+  <div class="notes-title">🏪 Store Scene UI Design</div>
+  <div class="notes-sub">Interactive mockup based on GDD docs 15 · 17 · 25 · 26 · 29 · 30<br>
+    Click any display tile or customer avatar to see the tooltip system.</div>
+
+  <div class="sec-hd">LP Meter — The Core Prestige Bar</div>
+  <div class="callout gold">
+    <div class="callout-title">💎 Luxury Points are always visible</div>
+    <div class="callout-body">
+      The LP bar lives permanently below the HUD. It shows current tier name, exact LP score, and next tier with the customer type it unlocks. This keeps the LP grind meaningful — players always know how close they are to a new customer tier. The gradient fill (purple → blue → gold) feels premium and unique vs. standard XP bars. LP never decreases, so the bar only ever grows.
+    </div>
+  </div>
+
+  <div class="sec-hd">Display Tile States</div>
+  <table class="dtable">
+    <tr><th>State</th><th>Visual</th><th>Tap Action</th><th>Source</th></tr>
+    <tr><td><span class="chip" style="background:#0d2a1a;border:1px solid #22C55E"></span>Full · Fresh</td>
+      <td>Emerald glow pulse, 🌾 badge, green stock bar</td>
+      <td>Info + upgrade</td><td>Doc 17</td></tr>
+    <tr><td><span class="chip" style="background:#1a2540;border:1px solid #4F8EF7"></span>Full · Supplier</td>
+      <td>Blue border, no Fresh badge, solid bar</td>
+      <td>Info + switch to Farm</td><td>Doc 16</td></tr>
+    <tr><td><span class="chip" style="background:#2a2010;border:1px solid #d97706"></span>Low Stock</td>
+      <td>Amber border, depleted bar, ⚠️ qty badge</td>
+      <td>Info + quick restock</td><td>Doc 24</td></tr>
+    <tr><td><span class="chip" style="background:#2a1010;border:1px solid #EF4444"></span>Empty</td>
+      <td>Red pulse, "RESTOCK!" blinking badge</td>
+      <td>Direct restock from stockroom</td><td>Doc 24</td></tr>
+  </table>
+
+  <div class="sec-hd">Display Tooltip (4 key stats)</div>
+  <div class="callout">
+    <div class="callout-title">📦 What the tooltip shows</div>
+    <div class="callout-body">
+      <strong>Stock</strong> (units remaining) · <strong>Value</strong> (coins/item + Fresh multiplier) · <strong>Supply Mode</strong> (Farm vs Supplier) · <strong>Today Earned</strong> (running total for that display). Below: which customer types will buy this display, and the item count sold today with the Fresh bonus percentage. Primary CTA is always <code>Restock</code> or <code>Switch to Farm Mode</code> depending on state.
+    </div>
+  </div>
+
+  <div class="sec-hd">LP Bar — Customer Unlock Badges</div>
+  <div class="callout blue">
+    <div class="callout-title">🏷️ Active Customer Type Badges</div>
+    <div class="callout-body">
+      Small emerald pills below the LP bar show every customer tier currently visiting. This teaches players which customers they have (and which they don't). Locked tiers are shown greyed out with their LP requirement. Tapping any badge opens the Customers panel filtered to that type.
+    </div>
+  </div>
+
+  <div class="sec-hd">Customer Avatars</div>
+  <div class="callout green">
+    <div class="callout-title">🚶 Real-time customer movement</div>
+    <div class="callout-body">
+      Customers animate continuously across the store grid. A speech bubble shows their current action: <code>Browsing...</code> when looking, <code>+30 💰</code> when purchasing (gold bubble), or <code>⭐⭐⭐⭐ Satisfied</code> when leaving. Tapping a customer avatar shows their type, budget range, preference, and satisfaction history. Customers walk around blocked paths — dead-end aisles trap them.
+    </div>
+  </div>
+
+  <div class="sec-hd">Revenue Ticker</div>
+  <div class="callout gold">
+    <div class="callout-title">💰 Persistent earnings at a glance</div>
+    <div class="callout-body">
+      A thin bar below the LP section shows today's total revenue and the current coins-per-minute rate. This rate updates live as customers buy items. A coin pop floats up from the display tile whenever a sale happens. The <code>⚡ Flash Sale 18m</code> campaign badge shows active campaigns with a countdown.
+    </div>
+  </div>
+
+  <div class="sec-hd">Bottom Toolbar (left → right)</div>
+  <table class="dtable">
+    <tr><th>Button</th><th>Action</th><th>Badge</th></tr>
+    <tr><td>🛒 Displays</td><td>Browse display catalogue to add new displays</td><td>—</td></tr>
+    <tr><td>🪴 Decorate</td><td>LP-earning decorations, floor/wall upgrades</td><td>—</td></tr>
+    <tr><td>📦 Stockroom</td><td>Inventory from Barn; drag-to-restock displays</td><td>Red: displays needing restock</td></tr>
+    <tr><td>👥 Customers</td><td>Active types, LP progress, next unlock</td><td>—</td></tr>
+    <tr><td>📊 Stats</td><td>Revenue, satisfaction, top displays, history</td><td>—</td></tr>
+  </table>
+
+  <div class="sec-hd">Stockroom Panel</div>
+  <div class="callout">
+    <div class="callout-title">📦 Drag-to-restock UX</div>
+    <div class="callout-body">
+      The stockroom panel shows items delivered by the Supply Lane runner. Each item card has a <code>Restock →</code> button. Tapping it highlights compatible empty/low displays on the grid. Tapping the highlighted display completes the restock. A one-tap <code>Restock All</code> button fills every display from available inventory automatically.
+    </div>
+  </div>
+
+  <div class="sec-hd">Campaign System</div>
+  <div class="callout purple">
+    <div class="callout-title">⚡ Campaign banner = action trigger</div>
+    <div class="callout-body">
+      The campaign badge in the revenue ticker acts as a persistent reminder of the active campaign timer. Tapping opens the Campaign panel showing: active campaign progress bar + time left, and queued campaigns ready to launch. Campaigns are launched with Shopper Cards (earned via daily quests). Examples: Flash Sale (+50% budgets), Fresh Frenzy (Fresh displays sell 3× faster), Double LP (all LP gains doubled for 1 hour).
+    </div>
+  </div>
+
+  <div class="sec-hd">Aisle & Grid Layout Logic</div>
+  <div class="callout red">
+    <div class="callout-title">🚶 Aisle width matters</div>
+    <div class="callout-body">
+      The store grid shows a dedicated 1-tile-wide aisle row (grey) separating display sections. Customers enter from the bottom-left entrance tiles and exit at the right. A 2-tile-wide aisle is the recommended minimum — it allows 2 customers simultaneously with no throughput penalty. The entrance/exit indicators (↑↑/↓↓) show actual pathfinding. Players who block entrances see fewer customers visiting deeper displays.
+    </div>
+  </div>
+</div><!-- notes -->
+
+</div><!-- layout -->
+
+<script>
+let selTile = null;
+
+function ttDisplay(ico,title,sub,stockStatus,stock,val,mode,products,custs,earned,isFresh,isLow){
+  if(selTile) selTile.classList.remove('selected');
+  const tile = event.currentTarget;
+  tile.classList.add('selected'); selTile = tile;
+
+  document.getElementById('ttIco').textContent = ico;
+  document.getElementById('ttTitle').textContent = title;
+  document.getElementById('ttSub').textContent = sub;
+
+  const sv = document.getElementById('ttStock');
+  sv.textContent = stock;
+  sv.className = 'stat-val ' + (stockStatus.includes('Full')?'em':stockStatus.includes('Low')?'':'r');
+
+  document.getElementById('ttVal').textContent = val + (isFresh?' · Fresh bonus':' · Supplier');
+  document.getElementById('ttMode').textContent = mode;
+  document.getElementById('ttMode').className = 'stat-val ' + (mode.includes('Farm')?'em':'b');
+  document.getElementById('ttEarned').textContent = earned + ' 💰';
+
+  const tags = document.getElementById('ttTags');
+  tags.innerHTML = (isFresh?'<span class="tag fresh">🌾 Farm Fresh +bonus</span>':'<span class="tag supplier">📦 Supplier Mode</span>') +
+    (isLow?'<span class="tag low">⚠️ Low Stock</span>':'') +
+    (!stock.startsWith('0') && !isLow?'':'') +
+    (stock.startsWith('0')?'<span class="tag empty-t">❌ Empty — Restock now</span>':'');
+
+  const custsEl = document.getElementById('ttCusts');
+  custsEl.innerHTML = custs.map(c=>`<span class="tt-cust-pill">${c}</span>`).join('');
+
+  document.getElementById('ttSold').textContent = Math.floor(parseInt(earned)/parseInt(val));
+  document.getElementById('ttFresh').textContent = isFresh ? (val.includes('60')?'+60%':val.includes('50')?'+50%':val.includes('55')?'+55%':'+40%') : 'None';
+
+  const acts = document.getElementById('ttActs');
+  if(stock.startsWith('0')){
+    acts.innerHTML = `<button class="act-btn prim">📦 Restock from Stockroom</button>
+      <button class="act-btn sec">⬆️ Upgrade Display</button>`;
+  } else if(isLow){
+    acts.innerHTML = `<button class="act-btn prim">📦 Restock · Add Items</button>
+      <button class="act-btn sec">${isFresh?'✅ Farm Mode':'🌾 Switch to Farm'}</button>
+      <button class="act-btn sec">⬆️ Upgrade</button>`;
+  } else {
+    acts.innerHTML = `<button class="act-btn prim">${isFresh?'🌾 Farm Fresh Active':'🌾 Switch to Farm Mode'}</button>
+      <button class="act-btn sec">⬆️ Upgrade Display</button>
+      <button class="act-btn sec">📊 Display History</button>`;
+  }
+
+  document.getElementById('tileTooltip').classList.add('vis');
+}
+
+function closeTT(){
+  document.getElementById('tileTooltip').classList.remove('vis');
+  if(selTile){selTile.classList.remove('selected');selTile=null;}
+}
+
+let custTTVisible = false;
+function showCustTT(e, name, budget, lpReq, pref, sat, satStr){
+  e.stopPropagation();
+  closeTT();
+  // create or update a floating tooltip near click
+  let el = document.getElementById('custPopup');
+  if(!el){
+    el = document.createElement('div');
+    el.id = 'custPopup';
+    el.style.cssText = `position:fixed;background:#0d1024;border:1px solid #1E2860;
+      border-radius:12px;padding:.65rem .8rem;width:200px;z-index:9999;
+      box-shadow:0 8px 32px rgba(0,0,0,.8);font-family:'Segoe UI',system-ui,sans-serif;
+      font-size:.75rem;color:#F1F5F9`;
+    document.body.appendChild(el);
+    document.addEventListener('click', ()=>{ if(el) el.style.display='none'; }, {once:true});
+  }
+  const x = Math.min(e.clientX + 10, window.innerWidth - 215);
+  const y = Math.min(e.clientY - 80, window.innerHeight - 220);
+  el.style.display = 'block';
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  el.innerHTML = `
+    <div style="font-weight:800;font-size:.85rem;margin-bottom:.45rem">${name}</div>
+    <div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px solid #1E2860">
+      <span style="color:#64748B">Budget</span><span style="font-weight:700;color:#F7C832">${budget}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px solid #1E2860">
+      <span style="color:#64748B">LP Required</span><span style="font-weight:700;color:#22C55E">${lpReq} ✓</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:.2rem 0;border-bottom:1px solid #1E2860">
+      <span style="color:#64748B">Prefers</span><span style="font-weight:700;max-width:110px;text-align:right;font-size:.68rem">${pref}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding:.2rem 0">
+      <span style="color:#64748B">Satisfaction</span><span style="font-weight:700;color:#F7C832">${satStr}</span>
+    </div>`;
+}
+
+function openPanel(id){
+  closeAllPanels(); closeTT();
+  document.getElementById(id).classList.add('open');
+  document.getElementById('backdrop').classList.add('vis');
+}
+function closeAllPanels(){
+  document.querySelectorAll('.spanel').forEach(p=>p.classList.remove('open'));
+  document.getElementById('backdrop').classList.remove('vis');
+}
+</script>
+</body>
+</html>
