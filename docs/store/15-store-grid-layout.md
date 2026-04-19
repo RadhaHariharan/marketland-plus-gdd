@@ -1,6 +1,6 @@
 # 🏪 15 — Store Grid & Layout
 
-The store in Marketland+ is a tile-based grid that players build, decorate, and optimise. Every placement decision affects customer flow, LP score, and overall revenue.
+The store in SuperStoreTycoon is a tile-based grid that players build, decorate, and optimise. Every placement decision affects customer flow, LP score, and overall revenue.
 
 ---
 

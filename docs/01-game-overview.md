@@ -1,6 +1,6 @@
 # 🎮 01 — Game Overview
 
-Marketland+ is a mobile-first casual simulation game that uniquely combines supermarket management with full-scale farm simulation into a single, interconnected business empire. Unlike games that treat these two ideas separately, Marketland+ makes them inseparable: your farm *is* your supply chain, and your store *is* your revenue engine.
+SuperStoreTycoon is a mobile-first casual simulation game that uniquely combines supermarket management with full-scale farm simulation into a single, interconnected business empire. Unlike games that treat these two ideas separately, SuperStoreTycoon makes them inseparable: your farm *is* your supply chain, and your store *is* your revenue engine.
 
 ---
 

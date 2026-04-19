@@ -1,6 +1,6 @@
 # 🌸 12 — Seasons & Weather
 
-The living world of Marketland+ changes with seasons and weather, creating a dynamic environment that rewards planning and adds surprise to every play session. Seasons rotate every 4 real-world days; weather events occur randomly within each season.
+The living world of SuperStoreTycoon changes with seasons and weather, creating a dynamic environment that rewards planning and adds surprise to every play session. Seasons rotate every 4 real-world days; weather events occur randomly within each season.
 
 ---
 

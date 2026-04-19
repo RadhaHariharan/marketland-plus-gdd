@@ -1,6 +1,6 @@
 # 🔄 16 — Supply Modes
 
-Every display in Marketland+ supports three supply modes, giving players direct control over whether their shelves are stocked from the farm or from external suppliers. This is the central mechanic that connects the two halves of the game.
+Every display in SuperStoreTycoon supports three supply modes, giving players direct control over whether their shelves are stocked from the farm or from external suppliers. This is the central mechanic that connects the two halves of the game.
 
 ---
 

@@ -1,6 +1,6 @@
 # 🎴 26 — Card System
 
-Cards are the tactical layer of Marketland+. Four card types let players manipulate customer behaviour, deliveries, products, and harvests in strategic ways. Cards are earned through play and spent for powerful short-term effects.
+Cards are the tactical layer of SuperStoreTycoon. Four card types let players manipulate customer behaviour, deliveries, products, and harvests in strategic ways. Cards are earned through play and spent for powerful short-term effects.
 
 ---
 

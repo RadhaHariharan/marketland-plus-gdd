@@ -1,5 +1,5 @@
 """
-Blender script: Farming Plot generator for Marketland+.
+Blender script: Farming Plot generator for SuperStoreTycoon.
 
 Creates a low-poly modular farming plot kit aligned to the game's tile system.
 Tile convention:
@@ -94,7 +94,7 @@ def build_farming_plot_kit():
     for size in (1, 2, 3, 4):
         create_base_plot(size=size, collection=collection, materials=materials)
 
-    print("Marketland+ farming plot kit generated: 1x1, 2x2, 3x3, 4x4")
+    print("SuperStoreTycoon farming plot kit generated: 1x1, 2x2, 3x3, 4x4")
 
 
 if __name__ == "__main__":

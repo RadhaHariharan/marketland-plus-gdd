@@ -1,6 +1,6 @@
 # 📈 34 — Level Unlock Table
 
-This is the master reference for what unlocks at every key level in Marketland+. It governs both store and farm progression simultaneously.
+This is the master reference for what unlocks at every key level in SuperStoreTycoon. It governs both store and farm progression simultaneously.
 
 ---
 

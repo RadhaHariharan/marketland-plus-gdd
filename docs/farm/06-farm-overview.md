@@ -1,6 +1,6 @@
 # 🌾 06 — Farm Overview
 
-The farm in Marketland+ is a fully-featured production facility, not a decorative side feature. It is your primary source of premium goods, your most strategic long-term investment, and the heart of what makes Marketland+ unique among supermarket games.
+The farm in SuperStoreTycoon is a fully-featured production facility, not a decorative side feature. It is your primary source of premium goods, your most strategic long-term investment, and the heart of what makes SuperStoreTycoon unique among supermarket games.
 
 ---
 

@@ -1,6 +1,6 @@
 # 💳 35 — Monetization
 
-Marketland+ is built on a player-first monetization philosophy. Every design decision regarding monetization is tested against a single question: **"Does this respect the player's time and make the game better?"**
+SuperStoreTycoon is built on a player-first monetization philosophy. Every design decision regarding monetization is tested against a single question: **"Does this respect the player's time and make the game better?"**
 
 ---
 

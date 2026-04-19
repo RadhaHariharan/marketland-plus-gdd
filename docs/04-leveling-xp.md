@@ -1,6 +1,6 @@
 # ⭐ 04 — Leveling & XP System
 
-The leveling system is the backbone of progression in Marketland+. Every meaningful action earns XP, and every level unlocked opens new content across both the farm and the store. With 200+ levels, there is always something just ahead on the horizon.
+The leveling system is the backbone of progression in SuperStoreTycoon. Every meaningful action earns XP, and every level unlocked opens new content across both the farm and the store. With 200+ levels, there is always something just ahead on the horizon.
 
 ---
 

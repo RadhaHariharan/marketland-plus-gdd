@@ -416,12 +416,12 @@ def build_page(md_rel, title, group, prev_entry, next_entry, index_rel_path):
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{title} — Marketland+ GDD</title>
+  <title>{title} — SuperStoreTycoon GDD</title>
   <style>{CSS}</style>
 </head>
 <body>
   <nav class="topbar">
-    <a class="home-link" href="{index_url}">🏪🌾 Marketland+</a>
+    <a class="home-link" href="{index_url}">🏪🌾 SuperStoreTycoon</a>
     <span class="spacer"></span>
     <span class="group-badge">{group}</span>
   </nav>
@@ -474,12 +474,12 @@ def build_index():
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Marketland+ — Game Design Document</title>
+  <title>SuperStoreTycoon — Game Design Document</title>
   <style>{CSS}</style>
 </head>
 <body>
   <header class="hero">
-    <h1>🏪🌾 Marketland+</h1>
+    <h1>🏪🌾 SuperStoreTycoon</h1>
     <p class="sub">Farm &amp; Supermarket Empire — Complete Game Design Document v3.0</p>
     <div class="badges">
       <span class="badge">🎮 Unity · 3D</span>

@@ -1,6 +1,6 @@
 # 🌐 05 — Unified Game World
 
-The defining feature of Marketland+ is that the farm and the store are not separate modes or mini-games — they exist as **one continuous world**, visible at the same time, connected by a real supply lane. This document explains how the two worlds are designed to feel like a single, unified empire.
+The defining feature of SuperStoreTycoon is that the farm and the store are not separate modes or mini-games — they exist as **one continuous world**, visible at the same time, connected by a real supply lane. This document explains how the two worlds are designed to feel like a single, unified empire.
 
 ---
 

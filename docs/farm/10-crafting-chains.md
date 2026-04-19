@@ -1,6 +1,6 @@
 # ⛓️ 10 — Crafting Chains
 
-Multi-step crafting chains are the most profitable — and most complex — production paths in Marketland+. They require coordinating multiple buildings, crop types, and animal products across several processing steps. The payoff is enormous: chain-end products sell for **3–10× the base value** of their raw ingredients.
+Multi-step crafting chains are the most profitable — and most complex — production paths in SuperStoreTycoon. They require coordinating multiple buildings, crop types, and animal products across several processing steps. The payoff is enormous: chain-end products sell for **3–10× the base value** of their raw ingredients.
 
 ---
 

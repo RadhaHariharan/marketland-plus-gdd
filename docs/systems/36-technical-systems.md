@@ -1,12 +1,12 @@
 # ⚙️ 36 — Technical Systems
 
-This document describes the technical architecture of Marketland+, covering the data, logic, and view layers for every major system in the game.
+This document describes the technical architecture of SuperStoreTycoon, covering the data, logic, and view layers for every major system in the game.
 
 ---
 
 ## 🏗️ Architecture Overview
 
-Marketland+ follows an **MVC-inspired layered architecture**:
+SuperStoreTycoon follows an **MVC-inspired layered architecture**:
 - **Data Layer** — Plain data classes (serialisable to JSON for save/load)
 - **Logic Layer** — Manager classes that own state and enforce rules
 - **View Layer** — Unity MonoBehaviour/UI components that display state

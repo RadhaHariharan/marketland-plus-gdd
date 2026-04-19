@@ -1,4 +1,4 @@
-# 🏪🌾 Marketland+ — Farm & Supermarket Empire
+# 🏪🌾 SuperStoreTycoon — Farm & Supermarket Empire
 
 > **Complete Game Design Document** — Version 3.0
 
@@ -12,9 +12,9 @@
 
 ## 🎮 About the Game
 
-**Marketland+** is a single unified casual simulation game where you own both a **supermarket** AND a **farm** as one connected business empire. Grow crops, raise animals, and process raw goods in factory buildings on your farm — then watch them travel via a visible Supply Lane to your store's stockroom. Stock shelves, serve customers, run marketing campaigns, and reinvest profits to expand both sides of your empire. Farm goods sell for **30–90% more** than supplier goods and display a 🌿 **Fresh badge**, rewarding players who invest in farming. Everything earned in the store funds the farm; everything grown on the farm enriches the store.
+**SuperStoreTycoon** is a single unified casual simulation game where you own both a **supermarket** AND a **farm** as one connected business empire. Grow crops, raise animals, and process raw goods in factory buildings on your farm — then watch them travel via a visible Supply Lane to your store's stockroom. Stock shelves, serve customers, run marketing campaigns, and reinvest profits to expand both sides of your empire. Farm goods sell for **30–90% more** than supplier goods and display a 🌿 **Fresh badge**, rewarding players who invest in farming. Everything earned in the store funds the farm; everything grown on the farm enriches the store.
 
-📄 **[View the Live GDD on GitHub Pages](https://radhahariharan.github.io/marketland-plus-gdd/)**
+📄 **[View the Live GDD on GitHub Pages](https://radhahariharan.github.io/superstoretycoon-plus-gdd/)**
 
 ---
 
@@ -77,7 +77,7 @@
 
 ## 🚀 Quick Start
 
-1. **Browse online** → [GitHub Pages GDD](https://radhahariharan.github.io/marketland-plus-gdd/) — each section is its own page.
+1. **Browse online** → [GitHub Pages GDD](https://radhahariharan.github.io/superstoretycoon-plus-gdd/) — each section is its own page.
 2. **Browse by topic** → Use the Table of Contents above to jump to any section.
 3. **Start here** → Read [01-game-overview.md](docs/01-game-overview.md) then [02-core-game-loop.md](docs/02-core-game-loop.md).
 4. **Farm systems** → Explore the [farm/](docs/farm/) folder.
@@ -112,7 +112,7 @@
 ## 🗺️ Repository Layout
 
 ```
-marketland-plus-gdd/
+superstoretycoon-plus-gdd/
 ├── README.md                ← You are here
 ├── generate_html.py         ← Builds one HTML page per GDD section
 ├── index.html               ← Navigation hub (GitHub Pages)
@@ -127,4 +127,4 @@ marketland-plus-gdd/
 
 ---
 
-*Marketland+ GDD · Version 3.0 · Built for Unity · Mobile-first Casual Simulation*
+*SuperStoreTycoon GDD · Version 3.0 · Built for Unity · Mobile-first Casual Simulation*

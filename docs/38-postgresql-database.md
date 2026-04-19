@@ -2,7 +2,7 @@
 
 > *Scalable to 10 Million Users*
 
-This document covers the full backend/cloud database architecture for Marketland+, complementing the Unity-side technical design in [Technical Systems](systems/36-technical-systems.md). Every table maps directly to a game system described elsewhere in this GDD.
+This document covers the full backend/cloud database architecture for SuperStoreTycoon, complementing the Unity-side technical design in [Technical Systems](systems/36-technical-systems.md). Every table maps directly to a game system described elsewhere in this GDD.
 
 ← [Technical Systems](systems/36-technical-systems.md) | [Back to README](../README.md)
 
@@ -10,7 +10,7 @@ This document covers the full backend/cloud database architecture for Marketland
 
 ## 🐘 Why PostgreSQL
 
-Marketland+ requires a relational database that can handle **highly consistent wallet transactions**, **flexible per-player game state**, and **time-series analytics** — all at mobile-game scale.
+SuperStoreTycoon requires a relational database that can handle **highly consistent wallet transactions**, **flexible per-player game state**, and **time-series analytics** — all at mobile-game scale.
 
 | Requirement | PostgreSQL Feature |
 |-------------|-------------------|
@@ -36,7 +36,7 @@ Marketland+ requires a relational database that can handle **highly consistent w
 
 ### Design Principles for 10 Million Users
 
-Marketland+'s write patterns are predictable and game-specific. At 10M active players:
+SuperStoreTycoon's write patterns are predictable and game-specific. At 10M active players:
 
 - **Crop timers** fire every 5–30 min per player → up to **~2M timer completion events/hour**
 - **Processing jobs** complete every 10–60 min → up to **~600K job events/hour**
@@ -942,7 +942,7 @@ For major schema changes (e.g., adding a new table or changing a partition schem
 
 ```sql
 -- V38__add_postgresql_core_schema.sql
--- Creates base tables for Marketland+ PostgreSQL backend
+-- Creates base tables for SuperStoreTycoon PostgreSQL backend
 
 BEGIN;
 

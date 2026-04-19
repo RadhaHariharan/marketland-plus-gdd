@@ -1,6 +1,6 @@
 # 👥 25 — Customer System
 
-Customers are the revenue engine of Marketland+. With 12 distinct customer types spanning from the penny-pinching Bargain Hunter to the lavish Royalty/VIP, the customer system creates a clear progression ladder tied to the player's Luxury Points score.
+Customers are the revenue engine of SuperStoreTycoon. With 12 distinct customer types spanning from the penny-pinching Bargain Hunter to the lavish Royalty/VIP, the customer system creates a clear progression ladder tied to the player's Luxury Points score.
 
 ---
 

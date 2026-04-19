@@ -1,6 +1,6 @@
 # 📦 39 — 3D Models Asset List with Grid Sizes
 
-This document is the complete reference for every 3D model required in Marketland Plus, organised by category. Each entry lists the model name, its **grid size in units (W×D)**, its **unlock level**, and relevant notes.
+This document is the complete reference for every 3D model required in SuperStoreTycoon Plus, organised by category. Each entry lists the model name, its **grid size in units (W×D)**, its **unlock level**, and relevant notes.
 
 > **Grid size convention:** 1 unit = 1 grid tile. W×D denotes width × depth in tiles.
 > Processing building grid sizes marked with ⚠️ are **proposed** and must be confirmed by the art/level design team before production begins.

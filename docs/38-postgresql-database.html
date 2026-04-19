@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>38 — PostgreSQL Database Design — Marketland+ GDD</title>
+  <title>38 — PostgreSQL Database Design — SuperStoreTycoon GDD</title>
   <style>
   :root {
     --bg: #0f1117;
@@ -280,7 +280,7 @@
 </head>
 <body>
   <nav class="topbar">
-    <a class="home-link" href="../index.html">🏪🌾 Marketland+</a>
+    <a class="home-link" href="../index.html">🏪🌾 SuperStoreTycoon</a>
     <span class="spacer"></span>
     <span class="group-badge">📖 Reference</span>
   </nav>
@@ -290,10 +290,10 @@
 <blockquote>
 <p><em>Scalable to 10 Million Users</em></p>
 </blockquote>
-<p>This document covers the full backend/cloud database architecture for Marketland+, complementing the Unity-side technical design in <a href="systems/36-technical-systems.html">Technical Systems</a>. Every table maps directly to a game system described elsewhere in this GDD.</p>
+<p>This document covers the full backend/cloud database architecture for SuperStoreTycoon, complementing the Unity-side technical design in <a href="systems/36-technical-systems.html">Technical Systems</a>. Every table maps directly to a game system described elsewhere in this GDD.</p>
 <hr />
 <h2>🐘 Why PostgreSQL</h2>
-<p>Marketland+ requires a relational database that can handle <strong>highly consistent wallet transactions</strong>, <strong>flexible per-player game state</strong>, and <strong>time-series analytics</strong> — all at mobile-game scale.</p>
+<p>SuperStoreTycoon requires a relational database that can handle <strong>highly consistent wallet transactions</strong>, <strong>flexible per-player game state</strong>, and <strong>time-series analytics</strong> — all at mobile-game scale.</p>
 <table>
 <thead>
 <tr>
@@ -340,7 +340,7 @@
 <hr />
 <h2>📐 Scaling Philosophy</h2>
 <h3>Design Principles for 10 Million Users</h3>
-<p>Marketland+'s write patterns are predictable and game-specific. At 10M active players:</p>
+<p>SuperStoreTycoon's write patterns are predictable and game-specific. At 10M active players:</p>
 <ul>
 <li><strong>Crop timers</strong> fire every 5–30 min per player → up to <strong>~2M timer completion events/hour</strong></li>
 <li><strong>Processing jobs</strong> complete every 10–60 min → up to <strong>~600K job events/hour</strong></li>
@@ -1177,7 +1177,7 @@ V40__add_supply_lane_queue.sql
 4. Switch load balancer to green; keep blue warm for 30-minute rollback window</p>
 <h3>Example Migration File</h3>
 <div class="highlight" style="background: #f8f8f8"><pre style="line-height: 125%;"><span></span><code><span style="color: #3D7B7B; font-style: italic">-- V38__add_postgresql_core_schema.sql</span>
-<span style="color: #3D7B7B; font-style: italic">-- Creates base tables for Marketland+ PostgreSQL backend</span>
+<span style="color: #3D7B7B; font-style: italic">-- Creates base tables for SuperStoreTycoon PostgreSQL backend</span>
 
 <span style="color: #008000; font-weight: bold">BEGIN</span>;
 

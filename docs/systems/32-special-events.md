@@ -1,6 +1,6 @@
 # 🎉 32 — Special Events
 
-Special Events are time-limited in-game celebrations tied to real-world seasons and festivals. They bring exclusive content, boosted rewards, new customers, and special decorations to Marketland+.
+Special Events are time-limited in-game celebrations tied to real-world seasons and festivals. They bring exclusive content, boosted rewards, new customers, and special decorations to SuperStoreTycoon.
 
 ---
 

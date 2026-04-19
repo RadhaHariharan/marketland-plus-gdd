@@ -1,6 +1,6 @@
 # 💰 03 — Currency System
 
-Marketland+ uses **three distinct currencies**, each with a clear role in the economy. This layered approach keeps the economy balanced, prevents inflation, and ensures that each type of progression feels distinct and rewarding.
+SuperStoreTycoon uses **three distinct currencies**, each with a clear role in the economy. This layered approach keeps the economy balanced, prevents inflation, and ensures that each type of progression feels distinct and rewarding.
 
 > 💡 **Design Change:** Farm Tokens have been removed. Players now use **Coins and Cash** for all farm and store operations, keeping the economy unified and simple.
 
